@@ -1,0 +1,110 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --foreground-rgb: 0, 0, 0;
+  --background-start-rgb: 245, 247, 250;
+  --background-end-rgb: 255, 255, 255;
+}
+
+body {
+  color: rgb(var(--foreground-rgb));
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    rgb(var(--background-end-rgb))
+  ) rgb(var(--background-start-rgb));
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a1a1a1;
+}
+
+/* Table styles */
+.data-table {
+  @apply w-full text-sm text-left;
+}
+
+.data-table th {
+  @apply bg-gray-50 text-gray-600 font-semibold px-4 py-3 border-b border-gray-200;
+}
+
+.data-table td {
+  @apply px-4 py-3 border-b border-gray-100;
+}
+
+.data-table tr:hover {
+  @apply bg-gray-50;
+}
+
+/* KPI Card styles */
+.kpi-card {
+  @apply bg-white rounded-lg shadow-sm border border-gray-100 p-4;
+}
+
+.kpi-card-value {
+  @apply text-2xl font-bold text-gray-900;
+}
+
+.kpi-card-label {
+  @apply text-sm text-gray-500;
+}
+
+.kpi-card-change {
+  @apply text-sm font-medium;
+}
+
+.kpi-card-change.positive {
+  @apply text-green-600;
+}
+
+.kpi-card-change.negative {
+  @apply text-red-600;
+}
+
+/* Chat styles */
+.chat-message {
+  @apply p-4 rounded-lg max-w-3xl;
+}
+
+.chat-message.user {
+  @apply bg-cox-blue-100 text-cox-blue-900 ml-auto;
+}
+
+.chat-message.assistant {
+  @apply bg-gray-100 text-gray-900;
+}
+
+/* Gauge chart styles */
+.gauge-container {
+  @apply relative flex items-center justify-center;
+}
+
+.gauge-text {
+  @apply absolute text-center;
+}
+
+.gauge-value {
+  @apply text-2xl font-bold text-gray-900;
+}
+
+.gauge-label {
+  @apply text-xs text-gray-500;
+}

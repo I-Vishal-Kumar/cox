@@ -1,0 +1,87 @@
+PRIMARY QUALIFICATION CONTEXT - COX AUTOMOTIVE AI ANALYTICS
+
+QUALIFICATION CRITERIA:
+
+1. COMPANY INFORMATION:
+   - Company name and size
+   - Industry segment (dealership, manufacturer, supplier)
+   - Number of locations
+   - Annual revenue range
+   - Current technology stack
+
+2. BUSINESS NEEDS:
+   - Primary pain points with current analytics
+   - Key metrics they want to track
+   - Decision-making processes
+   - Reporting requirements
+   - Integration needs
+
+3. TECHNICAL REQUIREMENTS:
+   - Current data sources and systems
+   - Data volume and complexity
+   - Security and compliance requirements
+   - Integration capabilities
+   - Technical team size and expertise
+
+4. DECISION-MAKING PROCESS:
+   - Who are the key stakeholders?
+   - What is the evaluation timeline?
+   - Budget range and approval process
+   - Current vendor relationships
+   - Implementation timeline
+
+5. URGENCY AND PRIORITY:
+   - How urgent is this need?
+   - What happens if they don't solve this?
+   - Current workarounds being used
+   - Impact on business operations
+
+QUALIFICATION QUESTIONS TO ASK:
+
+Business Questions:
+- "What specific challenges are you facing with your current analytics?"
+- "What key metrics are most important for your business decisions?"
+- "How do you currently generate reports and insights?"
+- "What would success look like with a new analytics solution?"
+
+Technical Questions:
+- "What data sources would you need to connect?"
+- "Do you have any specific integration requirements?"
+- "What are your security and compliance needs?"
+- "How technical is your team?"
+
+Process Questions:
+- "Who else would be involved in evaluating this solution?"
+- "What's your timeline for making a decision?"
+- "What's your budget range for this type of solution?"
+- "Have you evaluated other analytics platforms?"
+
+LEAD SCORING CRITERIA:
+
+HIGH PRIORITY (Route to Sales immediately):
+- Enterprise company (500+ employees)
+- Urgent need (timeline < 3 months)
+- Budget confirmed (>$10K annual)
+- Decision maker identified
+- Technical requirements clear
+
+MEDIUM PRIORITY (Continue qualification):
+- Mid-size company (50-500 employees)
+- Moderate urgency (3-6 months)
+- Budget range discussed
+- Influencer identified
+- Some technical clarity
+
+LOW PRIORITY (Nurture campaign):
+- Small company (<50 employees)
+- No urgency (>6 months)
+- Budget unclear
+- No decision maker identified
+- Vague requirements
+
+DISQUALIFICATION CRITERIA:
+- No budget or unrealistic budget expectations
+- No decision-making authority
+- Competitor or vendor
+- Requirements don't match our solution
+- Timeline too aggressive for proper implementation

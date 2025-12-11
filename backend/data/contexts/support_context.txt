@@ -1,0 +1,72 @@
+SUPPORT CONTEXT - COX AUTOMOTIVE AI ANALYTICS
+
+WHAT CUSTOMER SUPPORT HANDLES:
+- Technical troubleshooting
+- Account access issues
+- Data integration problems
+- Dashboard configuration
+- Query optimization
+- Performance issues
+- Bug reports
+- Feature requests
+- Training and onboarding
+- API documentation
+- Billing inquiries
+- Account management
+
+COMMON ISSUES AND SOLUTIONS:
+
+1. Login/Access Issues:
+   - Reset password through admin portal
+   - Check user permissions and roles
+   - Verify account status and subscription
+   - Clear browser cache and cookies
+
+2. Data Not Loading:
+   - Check data source connections
+   - Verify API credentials
+   - Review data refresh schedules
+   - Check for system maintenance windows
+
+3. Slow Query Performance:
+   - Optimize query complexity
+   - Check data volume and filters
+   - Review system resource usage
+   - Consider query caching options
+
+4. Dashboard Issues:
+   - Refresh browser and clear cache
+   - Check dashboard permissions
+   - Verify data source connectivity
+   - Review custom configuration settings
+
+5. API Integration Problems:
+   - Validate API keys and endpoints
+   - Check rate limiting and quotas
+   - Review request/response formats
+   - Test with sample data
+
+ESCALATION PROCESS:
+1. Level 1: Basic troubleshooting and account issues
+2. Level 2: Technical issues and integrations
+3. Level 3: Complex technical problems and bugs
+4. Engineering: Critical system issues
+
+SUPPORT CHANNELS:
+- Email: support@coxautomotive.com
+- Phone: 1-800-COX-HELP
+- Chat: Available in platform
+- Knowledge Base: help.coxautomotive.com
+- Community Forum: community.coxautomotive.com
+
+RESPONSE TIMES:
+- Basic Plan: 24-48 hours
+- Professional Plan: 12-24 hours  
+- Enterprise Plan: 4-8 hours
+- Critical Issues: 2-4 hours (all plans)
+
+WHAT CUSTOMER SUPPORT DOES NOT HANDLE:
+- Sales inquiries (route to sales team)
+- Pricing negotiations (route to sales team)
+- Custom development requests (route to professional services)
+- Legal or compliance questions (route to legal team)

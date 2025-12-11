@@ -1,0 +1,64 @@
+SALES CONTEXT - COX AUTOMOTIVE AI ANALYTICS
+
+PRODUCTS AND PRICING:
+
+1. Cox Automotive AI Analytics Platform
+   - Basic Plan: $299/month
+     * Natural language query processing
+     * Basic dashboards (F&I, Logistics)
+     * Up to 1,000 queries/month
+     * Email support
+   
+   - Professional Plan: $599/month
+     * Everything in Basic
+     * Advanced analytics and KPI monitoring
+     * Custom dashboards
+     * Up to 5,000 queries/month
+     * Priority support
+     * API access
+   
+   - Enterprise Plan: $1,299/month
+     * Everything in Professional
+     * Unlimited queries
+     * Custom integrations
+     * Dedicated support
+     * On-premise deployment option
+     * Advanced security features
+
+2. Add-on Services:
+   - Custom Dashboard Development: $2,500 one-time
+   - Data Integration Services: $150/hour
+   - Training and Onboarding: $1,500 per session
+   - Premium Support: $500/month
+
+FEATURES:
+- AI-powered natural language queries
+- Real-time F&I revenue analysis
+- Logistics and shipment tracking
+- Plant downtime monitoring
+- Marketing campaign ROI analysis
+- KPI alerts and monitoring
+- Interactive data visualizations
+- SQL query generation
+- Multi-agent conversation system
+
+COMPETITIVE ADVANTAGES:
+- Automotive industry-specific AI models
+- Real-time data processing
+- Conversational interface (no SQL knowledge required)
+- Comprehensive automotive data coverage
+- Proven ROI for dealerships
+- 24/7 support availability
+
+SALES PROCESS:
+1. Qualification (Primary Agent)
+2. Demo and needs assessment
+3. Pricing discussion
+4. Contract negotiation
+5. Implementation planning
+
+COMMON OBJECTIONS AND RESPONSES:
+- "Too expensive": Highlight ROI and cost savings from insights
+- "We have existing tools": Emphasize AI capabilities and ease of use
+- "Implementation complexity": Mention our support and training services
+- "Data security concerns": Highlight enterprise security features

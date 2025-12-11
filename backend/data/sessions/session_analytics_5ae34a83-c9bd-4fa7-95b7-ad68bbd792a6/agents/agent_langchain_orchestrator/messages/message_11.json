@@ -1,0 +1,10 @@
+{
+  "message": {
+    "role": "assistant",
+    "content": "[{'metric_name': 'Customer Satisfaction Score'}, {'metric_name': 'Email Open Rate'}, {'metric_name': 'F&I Revenue'}, {'metric_name': 'Gross Profit per Unit'}, {'metric_name': 'Marketing ROI'}, {'metric_name': 'On-Time Delivery Rate'}, {'metric_name': 'Service Contract Penetration'}, {'metric_name': 'Service Revenue'}]The types of KPIs currently in the database are:\n\n1. Customer Satisfaction Score\n2. Email Open Rate\n3. F&I Revenue\n4. Gross Profit per Unit\n5. Marketing ROI\n6. On-Time Delivery Rate\n7. Service Contract Penetration\n8. Service Revenue\n\nPlease let me know if you need detailed analysis on any of these KPIs."
+  },
+  "message_id": 11,
+  "redact_message": null,
+  "created_at": "2025-12-10T12:14:02.405154+00:00",
+  "updated_at": "2025-12-10T12:14:02.405170+00:00"
+}

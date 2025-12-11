@@ -1,0 +1,112 @@
+{
+  "fni_analysis": {
+    "revenue_comparison": {
+      "type": "horizontal_bar",
+      "title": "Top Programs by Revenue",
+      "x_axis": "revenue",
+      "y_axis": "program_name",
+      "description": "Revenue comparison across F&I programs"
+    },
+    "penetration_trend": {
+      "type": "line",
+      "title": "Penetration Rate Trend",
+      "x_axis": "date",
+      "y_axis": "penetration_rate",
+      "description": "F&I penetration rate over time"
+    }
+  },
+  "logistics_analysis": {
+    "delay_distribution": {
+      "type": "pie",
+      "title": "Delay Distribution",
+      "labels": "delay_reason",
+      "values": "count",
+      "description": "Distribution of shipment delays by cause"
+    },
+    "carrier_performance": {
+      "type": "bar",
+      "title": "Carrier Performance",
+      "x_axis": "carrier",
+      "y_axis": "delay_rate",
+      "description": "Delay rates by carrier"
+    }
+  },
+  "plant_analysis": {
+    "downtime_by_plant": {
+      "type": "horizontal_bar",
+      "title": "Downtime by Plant/Line",
+      "x_axis": "downtime_hours",
+      "y_axis": "plant_name",
+      "description": "Total downtime hours by plant"
+    },
+    "downtime_causes": {
+      "type": "pie",
+      "title": "Downtime Root Causes",
+      "labels": "reason_category",
+      "values": "downtime_hours",
+      "description": "Downtime distribution by cause"
+    }
+  },
+  "marketing_analysis": {
+    "campaign_revenue": {
+      "type": "horizontal_bar",
+      "title": "Top Programs by Revenue",
+      "x_axis": "revenue",
+      "y_axis": "campaign_name",
+      "description": "Revenue by marketing campaign"
+    },
+    "channel_performance": {
+      "type": "donut",
+      "title": "Channel Performance",
+      "labels": "category",
+      "values": "revenue",
+      "description": "Revenue distribution by channel"
+    },
+    "monthly_trend": {
+      "type": "line",
+      "title": "Monthly Trend",
+      "x_axis": "month",
+      "y_axis": "revenue",
+      "description": "Revenue trend over months"
+    }
+  },
+  "kpi_monitoring": {
+    "kpi_trend": {
+      "type": "line",
+      "title": "KPI Trend",
+      "x_axis": "date",
+      "y_axis": "value",
+      "description": "KPI value over time"
+    },
+    "kpi_comparison": {
+      "type": "bar",
+      "title": "KPI Comparison",
+      "x_axis": "metric_name",
+      "y_axis": "metric_value",
+      "description": "Comparison of multiple KPIs"
+    }
+  },
+  "service_analysis": {
+    "appointment_status": {
+      "type": "pie",
+      "title": "Appointment Status Distribution",
+      "labels": "status",
+      "values": "count",
+      "description": "Distribution of appointment statuses"
+    },
+    "technician_performance": {
+      "type": "bar",
+      "title": "Technician Performance",
+      "x_axis": "technician",
+      "y_axis": "revenue",
+      "description": "Revenue by technician"
+    }
+  },
+  "default": {
+    "type": "bar",
+    "title": "Data Visualization",
+    "x_axis": "category",
+    "y_axis": "value",
+    "description": "Default visualization"
+  }
+}

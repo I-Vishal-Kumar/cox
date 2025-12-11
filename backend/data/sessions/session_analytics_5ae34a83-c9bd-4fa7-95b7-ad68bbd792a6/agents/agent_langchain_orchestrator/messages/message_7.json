@@ -1,0 +1,10 @@
+{
+  "message": {
+    "role": "assistant",
+    "content": "Generated SQL: SELECT * \nFROM kpi_metrics \nWHERE date = date('now')\nLIMIT 100;\n\nError: No database session available to execute queryI apologize for the inconvenience. It seems there's an issue with the database connection at the moment. I'm unable to retrieve the current KPI data. Please try again later or contact your IT support team to resolve this issue."
+  },
+  "message_id": 7,
+  "redact_message": null,
+  "created_at": "2025-12-10T11:55:47.392388+00:00",
+  "updated_at": "2025-12-10T11:55:47.392407+00:00"
+}

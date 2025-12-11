@@ -1,0 +1,32 @@
+# Core
+fastapi
+uvicorn[standard]
+python-dotenv
+pydantic
+pydantic-settings
+
+# Database
+sqlalchemy
+aiosqlite
+
+# AI/ML
+langchain-core
+langchain-community
+langchain-openai
+langchain-anthropic
+langgraph
+openai
+
+# Data Processing
+pandas
+numpy
+
+# Visualization
+plotly
+
+# Utilities
+httpx
+python-multipart
+sse-starlette
+strands-agents
+langchain

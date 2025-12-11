@@ -1,0 +1,19 @@
+strands-agents
+strands-agents-tools>=0.2.0
+strands-agents-builder
+python-dotenv
+openai
+
+langchain
+langchain-core
+langchain-openai
+langchain-community
+
+# Web Framework
+fastapi
+uvicorn[standard]
+pydantic
+pydantic-settings
+# Utilities
+requests
+tqdm
