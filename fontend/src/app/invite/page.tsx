@@ -8,7 +8,7 @@ export default function InvitePage() {
     <div className="flex flex-col h-screen">
       <Header
         title="Invite Dashboard"
-        subtitle="Automotive Marketing Software - Targeted messages and special offers"
+        subtitle="Cox Automotive • Service Marketing Campaign Performance • Powered by Xtime"
       />
       <div className="flex-1 p-6 overflow-auto">
         <InviteDashboard />

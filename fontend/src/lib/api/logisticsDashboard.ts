@@ -27,11 +27,17 @@ export interface LogisticsDelayReason {
   count: number;
 }
 
+export interface DwellTimeComparison {
+  period: string;
+  [carrier: string]: string | number;
+}
+
 export interface LogisticsDashboardResponse {
   overall_stats: LogisticsOverallStats;
   carrier_breakdown: LogisticsCarrierData[];
   route_analysis: LogisticsRouteData[];
   delay_reasons: LogisticsDelayReason[];
+  dwell_time_comparison?: DwellTimeComparison[];
 }
 
 // Transform backend data to match frontend structure

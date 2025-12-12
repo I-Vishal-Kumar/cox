@@ -92,16 +92,18 @@ Three plants recorded significant downtime this week:
 
 interface ChatInterfaceProps {
   onDataReceived?: (data: Record<string, unknown>[]) => void;
+  initialQuery?: string;
 }
 
-export default function ChatInterface({ onDataReceived }: ChatInterfaceProps) {
+export default function ChatInterface({ onDataReceived, initialQuery }: ChatInterfaceProps) {
   const [messages, setMessages] = useState<ConversationMessage[]>([]);
-  const [input, setInput] = useState('');
+  const [input, setInput] = useState(initialQuery || '');
   const [isLoading, setIsLoading] = useState(false);
   const [showSqlQuery, setShowSqlQuery] = useState(false);
   const [backendStatus, setBackendStatus] = useState<'checking' | 'online' | 'offline'>('checking');
   const [conversationId, setConversationId] = useState<string>(() => SessionManager.getConversationId());
   const [currentSqlQuery, setCurrentSqlQuery] = useState<string | null>(null);
+  const [hasSentInitialQuery, setHasSentInitialQuery] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // Use TanStack Query for demo scenarios
@@ -118,6 +120,18 @@ export default function ChatInterface({ onDataReceived }: ChatInterfaceProps) {
     const interval = setInterval(checkBackend, 30000);
     return () => clearInterval(interval);
   }, []);
+
+  // Auto-send initial query if provided
+  useEffect(() => {
+    if (initialQuery && !hasSentInitialQuery && backendStatus !== 'checking') {
+      setHasSentInitialQuery(true);
+      // Small delay to ensure component is fully mounted
+      const timer = setTimeout(() => {
+        handleSend(initialQuery);
+      }, 500);
+      return () => clearTimeout(timer);
+    }
+  }, [initialQuery, hasSentInitialQuery, backendStatus]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -414,11 +428,20 @@ Try one of the demo questions to see detailed analysis with data visualizations.
       <div className="flex-1 overflow-y-auto p-6 space-y-4">
         {messages.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full text-center">
-            <SparklesIcon className="w-12 h-12 text-cox-blue-400 mb-4" />
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">
-              Ask anything about your data
-            </h3>
-            <p className="text-gray-500 mb-6 max-w-md">
+            <div className="flex items-center justify-center mb-4">
+              <div className="w-16 h-16 bg-gradient-to-br from-cox-blue-600 to-cox-blue-800 rounded-xl flex items-center justify-center shadow-lg">
+                <span className="text-white font-bold text-xl">CA</span>
+              </div>
+            </div>
+            <h3 className="text-xl font-semibold text-gray-900 mb-2">Welcome to Cox Automotive AI Analytics</h3>
+            <p className="text-gray-500 text-center max-w-md mb-2">
+              Powered by Xtime • Ask questions about your automotive data in natural language. Get instant insights,
+              visualizations, and recommendations.
+            </p>
+            <p className="text-xs text-gray-400 text-center mb-6">
+              The industry's only end-to-end automotive services partner
+            </p>
+            <p className="text-sm text-gray-600 mb-6 max-w-md">
               I can analyze F&I revenue, logistics delays, plant downtime, and more.
               Try one of the demo questions below:
             </p>
@@ -484,7 +507,7 @@ Try one of the demo questions to see detailed analysis with data visualizations.
                   {message.role === 'assistant' && (
                     <div className="flex items-center mb-2">
                       <SparklesIcon className="w-4 h-4 text-cox-blue-600 mr-2" />
-                      <span className="text-sm font-medium text-cox-blue-700">AI Analytics</span>
+                      <span className="text-sm font-medium text-cox-blue-700">Cox Automotive AI</span>
                     </div>
                   )}
                   <div className="prose prose-sm max-w-none">

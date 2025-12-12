@@ -1,0 +1,23 @@
+Test Query Response Summary
+---------------------------
+
+1. Query: "How is F&I revenue performing in the Midwest?"
+   Status: SUCCESS
+   Notes: Returned dealer-level + weekly trend data. Good tool calls. Minor post-processing failure.
+
+2. Query: "Show F&I revenue performance in the Midwest broken down by dealer"
+   Status: PARTIAL
+   Notes: SQL query generated correctly but execution failed. No fallback or final user output.
+
+3. Query: "Show weekly F&I revenue trends in the Midwest"
+   Status: PARTIAL
+   Notes: Correct multi-tool usage. Trend data returned but malformed. Missing final user message.
+
+4. Query: "Why did F&I revenue drop in the Midwest?"
+   Status: FAILED
+   Notes: No tool calls or analysis. No explanation generated.
+
+Overall Outcome:
+- 1 good result
+- 2 partial results
+- 1 full failure

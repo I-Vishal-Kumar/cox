@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import Header from '@/components/ui/Header';
+import FloatingChatBot from '@/components/ui/FloatingChatBot';
 import {
   ExclamationTriangleIcon,
   ExclamationCircleIcon,
@@ -9,9 +10,15 @@ import {
   CheckCircleIcon,
   ArrowTrendingDownIcon,
   ArrowTrendingUpIcon,
+  SparklesIcon,
+  MagnifyingGlassIcon,
 } from '@heroicons/react/24/outline';
 import clsx from 'clsx';
 import { useAlerts } from '@/hooks/useAlerts';
+import { alertsService, Alert } from '@/lib/api/alerts';
+import { useQueryClient } from '@tanstack/react-query';
+import { sendChatMessage } from '@/lib/api';
+import { SessionManager } from '@/utils/sessionManager';
 
 const severityConfig = {
   critical: {
@@ -40,6 +47,13 @@ const severityConfig = {
 export default function AlertsPage() {
   const [filter, setFilter] = useState<'all' | 'critical' | 'warning' | 'info'>('all');
   const [categoryFilter, setCategoryFilter] = useState<string>('all');
+  const [isDetecting, setIsDetecting] = useState(false);
+  const [isSeeding, setIsSeeding] = useState(false);
+  const [dismissingAlertId, setDismissingAlertId] = useState<string | null>(null);
+  const [investigatingAlertId, setInvestigatingAlertId] = useState<string | null>(null);
+  const [investigationChatOpen, setInvestigationChatOpen] = useState(false);
+
+  const queryClient = useQueryClient();
 
   // Use TanStack Query directly
   const { data: alerts = [], isLoading, error } = useAlerts();
@@ -58,9 +72,64 @@ export default function AlertsPage() {
     info: alerts.filter((a) => a.severity === 'info').length,
   };
 
+  // Prepare page context for the bot
+  const pageContext = useMemo(() => {
+    const criticalAlerts = alerts.filter(a => a.severity === 'critical');
+    const warningAlerts = alerts.filter(a => a.severity === 'warning');
+    const alertsByCategory = alerts.reduce((acc, alert) => {
+      if (!acc[alert.category]) acc[alert.category] = [];
+      acc[alert.category].push(alert);
+      return acc;
+    }, {} as Record<string, typeof alerts>);
+
+    return {
+      page: 'KPI Alerts',
+      alerts: {
+        total: alerts.length,
+        critical: alertCounts.critical,
+        warning: alertCounts.warning,
+        info: alertCounts.info,
+        criticalAlerts: criticalAlerts.map(a => ({
+          metric: a.metric_name,
+          message: a.message,
+          change: a.change_percent,
+          rootCause: a.root_cause,
+          category: a.category,
+        })),
+        warningAlerts: warningAlerts.map(a => ({
+          metric: a.metric_name,
+          message: a.message,
+          change: a.change_percent,
+          rootCause: a.root_cause,
+          category: a.category,
+        })),
+        byCategory: Object.entries(alertsByCategory).map(([category, categoryAlerts]) => ({
+          category,
+          count: categoryAlerts.length,
+          alerts: categoryAlerts.map(a => ({
+            metric: a.metric_name,
+            severity: a.severity,
+            message: a.message,
+          })),
+        })),
+        allAlerts: alerts.map(a => ({
+          id: a.id,
+          metric: a.metric_name,
+          severity: a.severity,
+          message: a.message,
+          change: a.change_percent,
+          rootCause: a.root_cause,
+          category: a.category,
+          currentValue: a.current_value,
+          previousValue: a.previous_value,
+        })),
+      },
+    };
+  }, [alerts, alertCounts]);
+
   return (
     <div className="flex flex-col h-screen">
-      <Header title="KPI Alerts" subtitle="Real-time monitoring and anomaly detection" />
+      <Header title="KPI Alerts" subtitle="Cox Automotive • Real-time monitoring and anomaly detection" />
       <div className="flex-1 p-6 overflow-auto">
         {/* Summary Cards */}
         <div className="grid grid-cols-4 gap-4 mb-6">
@@ -130,7 +199,7 @@ export default function AlertsPage() {
           </button>
         </div>
 
-        {/* Filters */}
+        {/* Filters and Actions */}
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center space-x-4">
             <select
@@ -146,9 +215,51 @@ export default function AlertsPage() {
               ))}
             </select>
           </div>
-          <button className="px-4 py-2 text-sm font-medium text-white bg-cox-blue-600 rounded-lg hover:bg-cox-blue-700">
-            Configure Alerts
-          </button>
+          <div className="flex items-center space-x-2">
+            <button
+              onClick={async () => {
+                setIsSeeding(true);
+                try {
+                  await alertsService.seedAnomalies();
+                  await queryClient.invalidateQueries({ queryKey: ['alerts'] });
+                  alert('Sample anomalies seeded successfully!');
+                } catch (error) {
+                  console.error('Failed to seed anomalies:', error);
+                  alert('Failed to seed anomalies. Please try again.');
+                } finally {
+                  setIsSeeding(false);
+                }
+              }}
+              disabled={isSeeding}
+              className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
+            >
+              <SparklesIcon className="w-4 h-4" />
+              <span>{isSeeding ? 'Seeding...' : 'Seed Anomalies'}</span>
+            </button>
+            <button
+              onClick={async () => {
+                setIsDetecting(true);
+                try {
+                  const result = await alertsService.detectAnomalies();
+                  await queryClient.invalidateQueries({ queryKey: ['alerts'] });
+                  alert(`Anomaly detection complete! Found ${result.anomalies_detected} anomalies, stored ${result.alerts_stored} new alerts.`);
+                } catch (error) {
+                  console.error('Failed to detect anomalies:', error);
+                  alert('Failed to detect anomalies. Please try again.');
+                } finally {
+                  setIsDetecting(false);
+                }
+              }}
+              disabled={isDetecting}
+              className="px-4 py-2 text-sm font-medium text-white bg-cox-blue-600 rounded-lg hover:bg-cox-blue-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
+            >
+              <SparklesIcon className="w-4 h-4" />
+              <span>{isDetecting ? 'Detecting...' : 'Detect Anomalies'}</span>
+            </button>
+            <button className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200">
+              Configure Alerts
+            </button>
+          </div>
         </div>
 
         {/* Alerts List */}
@@ -267,11 +378,34 @@ export default function AlertsPage() {
                       {new Date(alert.timestamp).toLocaleString()}
                     </p>
                     <div className="mt-2 space-x-2">
-                      <button className="px-3 py-1 text-xs font-medium text-cox-blue-700 bg-cox-blue-50 rounded hover:bg-cox-blue-100">
-                        Investigate
+                      <button
+                        onClick={async () => {
+                          setInvestigatingAlertId(alert.id);
+                          setInvestigationChatOpen(true);
+                        }}
+                        className="px-3 py-1 text-xs font-medium text-cox-blue-700 bg-cox-blue-50 rounded hover:bg-cox-blue-100 flex items-center space-x-1"
+                      >
+                        <MagnifyingGlassIcon className="w-3 h-3" />
+                        <span>Investigate</span>
                       </button>
-                      <button className="px-3 py-1 text-xs font-medium text-gray-600 bg-gray-100 rounded hover:bg-gray-200">
-                        Dismiss
+                      <button
+                        onClick={async () => {
+                          if (!confirm('Are you sure you want to dismiss this alert?')) return;
+                          setDismissingAlertId(alert.id);
+                          try {
+                            await alertsService.dismissAlert(alert.id);
+                            await queryClient.invalidateQueries({ queryKey: ['alerts'] });
+                          } catch (error) {
+                            console.error('Failed to dismiss alert:', error);
+                            alert('Failed to dismiss alert. Please try again.');
+                          } finally {
+                            setDismissingAlertId(null);
+                          }
+                        }}
+                        disabled={dismissingAlertId === alert.id}
+                        className="px-3 py-1 text-xs font-medium text-gray-600 bg-gray-100 rounded hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        {dismissingAlertId === alert.id ? 'Dismissing...' : 'Dismiss'}
                       </button>
                     </div>
                   </div>
@@ -280,6 +414,177 @@ export default function AlertsPage() {
             );
           })
           )}
+        </div>
+      </div>
+
+      {/* Floating Chat Bot */}
+      <FloatingChatBot 
+        pageContext={pageContext}
+      />
+
+      {/* Investigation Chat Modal */}
+      {investigationChatOpen && investigatingAlertId && (
+        <InvestigationChatModal
+          alertId={investigatingAlertId}
+          alert={alerts.find(a => a.id === investigatingAlertId)}
+          onClose={() => {
+            setInvestigationChatOpen(false);
+            setInvestigatingAlertId(null);
+          }}
+        />
+      )}
+    </div>
+  );
+}
+
+// Investigation Chat Modal Component
+function InvestigationChatModal({ 
+  alertId, 
+  alert, 
+  onClose 
+}: { 
+  alertId: string; 
+  alert?: Alert; 
+  onClose: () => void;
+}) {
+  const [messages, setMessages] = useState<Array<{ role: 'user' | 'assistant'; content: string }>>([]);
+  const [input, setInput] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleSend = async () => {
+    if (!input.trim() || isLoading) return;
+
+    const userMessage = input.trim();
+    setInput('');
+    setMessages((prev) => [...prev, { role: 'user', content: userMessage }]);
+    setIsLoading(true);
+
+    try {
+      // Build context-aware query about the specific alert
+      const alertContext = alert ? `
+**Alert Details:**
+- Metric: ${alert.metric_name}
+- Severity: ${alert.severity}
+- Current Value: ${alert.current_value}
+- Previous Value: ${alert.previous_value}
+- Change: ${alert.change_percent}%
+- Category: ${alert.category}
+- Root Cause: ${alert.root_cause}
+- Message: ${alert.message}
+` : '';
+
+      const query = `${alertContext}
+
+User is investigating this specific alert (ID: ${alertId}). User query: ${userMessage}. 
+
+**Available Tools:**
+- **generate_sql_query**: Query related data to understand the root cause
+- **analyze_kpi_data**: Analyze KPI data to understand why this anomaly occurred
+- Use these tools to provide detailed analysis, root cause explanation, and actionable recommendations for this specific alert.`;
+
+      const conversationId = SessionManager.getConversationId();
+      const response = await sendChatMessage(query, conversationId);
+
+      if (response.conversation_id) {
+        SessionManager.refreshSession();
+      }
+
+      setMessages((prev) => [...prev, { role: 'assistant', content: response.message }]);
+    } catch (error) {
+      console.error('Chat error:', error);
+      setMessages((prev) => [
+        ...prev,
+        { role: 'assistant', content: 'Sorry, I encountered an error. Please try again.' }
+      ]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[80vh] flex flex-col">
+        {/* Header */}
+        <div className="p-4 border-b border-gray-200 flex items-center justify-between">
+          <div>
+            <h3 className="text-lg font-semibold text-gray-900">Investigate Alert</h3>
+            {alert && (
+              <p className="text-sm text-gray-500 mt-1">
+                {alert.metric_name} - {alert.severity.toUpperCase()}
+              </p>
+            )}
+          </div>
+          <button
+            onClick={onClose}
+            className="text-gray-400 hover:text-gray-600"
+          >
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        {/* Messages */}
+        <div className="flex-1 overflow-y-auto p-4 space-y-4">
+          {messages.length === 0 && (
+            <div className="text-center text-gray-500 py-8">
+              <p className="mb-2">Ask questions about this alert to get detailed analysis.</p>
+              <p className="text-sm">Example: "Why did this happen?" or "What should I do about this?"</p>
+            </div>
+          )}
+          {messages.map((msg, idx) => (
+            <div
+              key={idx}
+              className={clsx(
+                'flex',
+                msg.role === 'user' ? 'justify-end' : 'justify-start'
+              )}
+            >
+              <div
+                className={clsx(
+                  'max-w-[80%] rounded-lg p-3',
+                  msg.role === 'user'
+                    ? 'bg-cox-blue-600 text-white'
+                    : 'bg-gray-100 text-gray-900'
+                )}
+              >
+                <p className="text-sm whitespace-pre-wrap">{msg.content}</p>
+              </div>
+            </div>
+          ))}
+          {isLoading && (
+            <div className="flex justify-start">
+              <div className="bg-gray-100 rounded-lg p-3">
+                <p className="text-sm text-gray-500">Thinking...</p>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Input */}
+        <div className="p-4 border-t border-gray-200">
+          <div className="flex space-x-2">
+            <input
+              type="text"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                  e.preventDefault();
+                  handleSend();
+                }
+              }}
+              placeholder="Ask about this alert..."
+              className="flex-1 border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-cox-blue-500"
+            />
+            <button
+              onClick={handleSend}
+              disabled={!input.trim() || isLoading}
+              className="px-4 py-2 text-sm font-medium text-white bg-cox-blue-600 rounded-lg hover:bg-cox-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              Send
+            </button>
+          </div>
         </div>
       </div>
     </div>

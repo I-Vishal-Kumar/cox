@@ -1,7 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
+import { useRouter } from 'next/navigation';
 import Header from '@/components/ui/Header';
+import FloatingChatBot from '@/components/ui/FloatingChatBot';
 import {
   TableCellsIcon,
   MagnifyingGlassIcon,
@@ -13,19 +15,27 @@ import clsx from 'clsx';
 import { useQuery } from '@tanstack/react-query';
 import { dataCatalogService, transformTable } from '@/lib/api/dataCatalog';
 
-const categories = ['All', 'Reference', 'Transactions', 'Logistics', 'Manufacturing', 'Marketing', 'Analytics'];
-
 export default function CatalogPage() {
+  const router = useRouter();
   const [search, setSearch] = useState('');
   const [selectedTable, setSelectedTable] = useState<string | null>(null);
   const [categoryFilter, setCategoryFilter] = useState('All');
 
   // Use TanStack Query directly
-  const { data: tables = [], isLoading, error } = useQuery({
+  const { data: catalogData, isLoading, error } = useQuery({
     queryKey: ['dataCatalog'],
     queryFn: dataCatalogService.getTables,
-    select: (data) => data.tables.map(transformTable),
   });
+
+  const tables = useMemo(() => {
+    return catalogData?.tables.map(transformTable) || [];
+  }, [catalogData]);
+
+  // Get unique categories from tables
+  const categories = useMemo(() => {
+    const cats = Array.from(new Set(tables.map(t => t.category)));
+    return ['All', ...cats.sort()];
+  }, [tables]);
 
   const filteredTables = tables.filter((table) => {
     const matchesSearch =
@@ -38,11 +48,65 @@ export default function CatalogPage() {
 
   const selectedTableData = tables.find((t) => t.name === selectedTable);
 
+  // Prepare page context for the bot
+  const pageContext = useMemo(() => {
+    const tablesByCategory = tables.reduce((acc, table) => {
+      const cat = table.category || 'General';
+      if (!acc[cat]) acc[cat] = [];
+      acc[cat].push({
+        name: table.name,
+        description: table.description,
+        rowCount: table.rowCount,
+        columnCount: table.columns.length,
+        columns: table.columns.map(c => c.name),
+      });
+      return acc;
+    }, {} as Record<string, any[]>);
+
+    return {
+      page: 'Data Catalog',
+      catalog: {
+        totalTables: tables.length,
+        regions: catalogData?.regions || [],
+        kpiCategories: catalogData?.kpi_categories || [],
+        tables: tables.map(t => ({
+          name: t.name,
+          description: t.description,
+          rowCount: t.rowCount,
+          columnCount: t.columns.length,
+          columns: t.columns.map(c => ({
+            name: c.name,
+            type: c.type,
+            description: c.description,
+          })),
+          category: t.category,
+        })),
+        tablesByCategory: Object.entries(tablesByCategory).map(([category, tableList]) => ({
+          category,
+          count: tableList.length,
+          tables: tableList,
+        })),
+        selectedTable: selectedTableData ? {
+          name: selectedTableData.name,
+          description: selectedTableData.description,
+          rowCount: selectedTableData.rowCount,
+          columns: selectedTableData.columns.map(c => ({
+            name: c.name,
+            type: c.type,
+            description: c.description,
+          })),
+          category: selectedTableData.category,
+          sampleQuery: `SELECT * FROM ${selectedTableData.name} LIMIT 10;`,
+        } : null,
+      },
+    };
+  }, [tables, catalogData, selectedTableData]);
+
   return (
     <div className="flex flex-col h-screen">
       <Header
         title="Data Catalog"
-        subtitle="Explore available datasets, tables, and columns"
+        subtitle="Cox Automotive • Explore available datasets, tables, and columns"
       />
       <div className="flex-1 flex overflow-hidden">
         {/* Left Panel - Table List */}
@@ -230,7 +294,13 @@ export default function CatalogPage() {
 FROM ${selectedTableData.name}
 LIMIT 10;`}
                 </pre>
-                <button className="mt-4 px-4 py-2 text-sm font-medium text-white bg-cox-blue-600 rounded-lg hover:bg-cox-blue-700">
+                <button 
+                  onClick={() => {
+                    const query = `Show me data from ${selectedTableData.name} table`;
+                    router.push(`/?query=${encodeURIComponent(query)}`);
+                  }}
+                  className="mt-4 px-4 py-2 text-sm font-medium text-white bg-cox-blue-600 rounded-lg hover:bg-cox-blue-700 transition-colors"
+                >
                   Run in AI Chat
                 </button>
               </div>
@@ -249,6 +319,11 @@ LIMIT 10;`}
           )}
         </div>
       </div>
+
+      {/* Floating Chat Bot */}
+      <FloatingChatBot 
+        pageContext={pageContext}
+      />
     </div>
   );
 }

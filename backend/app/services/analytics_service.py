@@ -4,9 +4,10 @@ from typing import Dict, Any, List, Optional
 from datetime import date, datetime, timedelta
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import text, select, func
+import json
 from app.db.models import (
     Dealer, FNITransaction, Shipment, Plant, PlantDowntime,
-    MarketingCampaign, ServiceAppointment, KPIMetric
+    MarketingCampaign, ServiceAppointment, KPIMetric, RepairOrder, Customer, KPIAlert
 )
 
 
@@ -70,7 +71,7 @@ class AnalyticsService:
 
         performance_data = await self.execute_sql(performance_query)
 
-        # Monthly Trend
+        # Monthly Trend - Get last 6 months ordered by month name
         monthly_query = """
             SELECT
                 month,
@@ -79,17 +80,81 @@ class AnalyticsService:
                 SUM(ro_count) as ro_count,
                 ROUND(SUM(revenue), 2) as revenue
             FROM marketing_campaigns
+            WHERE send_date >= date('now', '-180 days')
             GROUP BY month
-            ORDER BY send_date DESC
+            ORDER BY 
+                CASE month
+                    WHEN 'Jan' THEN 1
+                    WHEN 'Feb' THEN 2
+                    WHEN 'Mar' THEN 3
+                    WHEN 'Apr' THEN 4
+                    WHEN 'May' THEN 5
+                    WHEN 'Jun' THEN 6
+                    WHEN 'Jul' THEN 7
+                    WHEN 'Aug' THEN 8
+                    WHEN 'Sep' THEN 9
+                    WHEN 'Oct' THEN 10
+                    WHEN 'Nov' THEN 11
+                    WHEN 'Dec' THEN 12
+                    ELSE 99
+                END DESC
             LIMIT 6
         """
 
         monthly_data = await self.execute_sql(monthly_query)
 
+        # Channel Performance Breakdown (Email, SMS, Direct Mail)
+        channel_query = """
+            SELECT
+                category,
+                SUM(emails_sent) as total_sent,
+                SUM(unique_opens) as total_opens,
+                ROUND(SUM(unique_opens) * 100.0 / NULLIF(SUM(emails_sent), 0), 1) as open_rate,
+                SUM(ro_count) as ro_count,
+                ROUND(SUM(revenue), 2) as revenue
+            FROM marketing_campaigns
+            WHERE send_date >= date('now', '-30 days')
+            GROUP BY category
+        """
+        if dealer_id:
+            channel_query += f" AND dealer_id = {dealer_id}"
+        
+        channel_data = await self.execute_sql(channel_query)
+        
+        # Transform channel data to a dictionary for easy lookup
+        channel_performance = {}
+        for channel in channel_data:
+            cat = channel.get('category', '').lower()
+            if 'email' in cat:
+                channel_performance['email'] = {
+                    'open_rate': channel.get('open_rate', 0),
+                    'total_sent': channel.get('total_sent', 0),
+                    'total_opens': channel.get('total_opens', 0),
+                    'ro_count': channel.get('ro_count', 0),
+                    'revenue': channel.get('revenue', 0),
+                }
+            elif 'sms' in cat or 'text' in cat:
+                channel_performance['sms'] = {
+                    'open_rate': channel.get('open_rate', 0),
+                    'total_sent': channel.get('total_sent', 0),
+                    'total_opens': channel.get('total_opens', 0),
+                    'ro_count': channel.get('ro_count', 0),
+                    'revenue': channel.get('revenue', 0),
+                }
+            elif 'mail' in cat or 'direct' in cat:
+                channel_performance['direct_mail'] = {
+                    'open_rate': channel.get('open_rate', 0),
+                    'total_sent': channel.get('total_sent', 0),
+                    'total_opens': channel.get('total_opens', 0),
+                    'ro_count': channel.get('ro_count', 0),
+                    'revenue': channel.get('revenue', 0),
+                }
+
         return {
             "program_summary": summary_data[0] if summary_data else {},
             "program_performance": performance_data,
             "monthly_metrics": monthly_data,
+            "channel_performance": channel_performance,
             "last_updated": datetime.now().isoformat()
         }
 
@@ -222,11 +287,64 @@ class AnalyticsService:
 
         reason_data = await self.execute_sql(reason_query)
 
+        # Dwell time comparison (this week vs last week by carrier)
+        dwell_time_comparison_query = """
+            WITH carrier_dwell AS (
+                SELECT
+                    carrier,
+                    CASE
+                        WHEN scheduled_departure >= datetime('now', '-7 days') THEN 'this_week'
+                        WHEN scheduled_departure >= datetime('now', '-14 days') AND scheduled_departure < datetime('now', '-7 days') THEN 'last_week'
+                    END as period,
+                    ROUND(AVG(dwell_time_hours), 2) as avg_dwell_time
+                FROM shipments
+                WHERE scheduled_departure >= datetime('now', '-14 days')
+                AND dwell_time_hours IS NOT NULL
+                GROUP BY carrier, period
+            )
+            SELECT
+                carrier,
+                MAX(CASE WHEN period = 'this_week' THEN avg_dwell_time END) as this_week_dwell,
+                MAX(CASE WHEN period = 'last_week' THEN avg_dwell_time END) as last_week_dwell
+            FROM carrier_dwell
+            WHERE carrier IS NOT NULL
+            GROUP BY carrier
+            HAVING this_week_dwell IS NOT NULL AND last_week_dwell IS NOT NULL
+            ORDER BY carrier
+            LIMIT 10
+        """
+        
+        dwell_comparison_raw = await self.execute_sql(dwell_time_comparison_query)
+        
+        # Transform to frontend format
+        dwell_time_comparison = []
+        if dwell_comparison_raw:
+            # Get unique carriers
+            carriers = list(set([row['carrier'] for row in dwell_comparison_raw]))
+            
+            # Build comparison data
+            last_week_data = {row['carrier']: row['last_week_dwell'] for row in dwell_comparison_raw}
+            this_week_data = {row['carrier']: row['this_week_dwell'] for row in dwell_comparison_raw}
+            
+            # Create period-based structure
+            last_week_row = {'period': 'Last Week'}
+            this_week_row = {'period': 'This Week'}
+            
+            for carrier in carriers:
+                if carrier in last_week_data:
+                    last_week_row[carrier] = last_week_data[carrier]
+                if carrier in this_week_data:
+                    this_week_row[carrier] = this_week_data[carrier]
+            
+            if last_week_row.get('period') and len(last_week_row) > 1:
+                dwell_time_comparison = [last_week_row, this_week_row]
+
         return {
             "overall_stats": delay_stats[0] if delay_stats else {},
             "carrier_breakdown": carrier_data,
             "route_analysis": route_data,
-            "delay_reasons": reason_data
+            "delay_reasons": reason_data,
+            "dwell_time_comparison": dwell_time_comparison
         }
 
     async def get_plant_downtime_analysis(self) -> Dict[str, Any]:
@@ -251,12 +369,14 @@ class AnalyticsService:
         detail_query = """
             SELECT
                 p.name as plant_name,
+                p.plant_code,
                 pd.line_number,
                 pd.downtime_hours,
                 pd.reason_category,
                 pd.reason_detail,
                 pd.is_planned,
-                pd.supplier
+                pd.supplier,
+                pd.event_date
             FROM plants p
             JOIN plant_downtime pd ON p.id = pd.plant_id
             WHERE pd.event_date >= date('now', '-7 days')
@@ -264,6 +384,24 @@ class AnalyticsService:
         """
 
         detail_data = await self.execute_sql(detail_query)
+
+        # Calculate unplanned downtime per plant
+        unplanned_query = """
+            SELECT
+                p.plant_code,
+                SUM(CASE WHEN pd.is_planned = 0 THEN pd.downtime_hours ELSE 0 END) as unplanned
+            FROM plants p
+            JOIN plant_downtime pd ON p.id = pd.plant_id
+            WHERE pd.event_date >= date('now', '-7 days')
+            GROUP BY p.plant_code
+        """
+        unplanned_data = await self.execute_sql(unplanned_query)
+        unplanned_map = {row['plant_code']: row['unplanned'] for row in unplanned_data}
+
+        # Add event count and unplanned to plant summary
+        for plant in plant_summary:
+            plant['events'] = len([d for d in detail_data if d.get('plant_code') == plant.get('plant_code')])
+            plant['unplanned'] = unplanned_map.get(plant.get('plant_code'), 0)
 
         # Cause breakdown
         cause_query = """
@@ -281,7 +419,7 @@ class AnalyticsService:
 
         return {
             "plant_summary": plant_summary,
-            "detailed_events": detail_data,
+            "downtime_details": detail_data,
             "cause_breakdown": cause_data
         }
 
@@ -312,27 +450,441 @@ class AnalyticsService:
         return await self.execute_sql(query)
 
     async def get_alerts(self) -> List[Dict[str, Any]]:
-        """Get current KPI alerts based on anomaly detection."""
-        # Find metrics with significant variance
-        alert_query = """
-            SELECT
-                metric_name,
-                metric_date,
-                metric_value as current_value,
-                target_value,
-                variance,
-                region,
-                category,
-                CASE
-                    WHEN ABS(variance) > 15 THEN 'critical'
-                    WHEN ABS(variance) > 10 THEN 'warning'
-                    ELSE 'info'
-                END as severity
-            FROM kpi_metrics
-            WHERE metric_date >= date('now', '-7 days')
-            AND ABS(variance) > 8
-            ORDER BY ABS(variance) DESC
-            LIMIT 10
-        """
+        """Get current KPI alerts from stored KPIAlert table."""
+        query = select(KPIAlert).where(
+            KPIAlert.status == 'active'
+        ).order_by(
+            func.case(
+                (KPIAlert.severity == 'critical', 1),
+                (KPIAlert.severity == 'warning', 2),
+                else_=3
+            ),
+            KPIAlert.detected_at.desc()
+        ).limit(50)
+        
+        result = await self.session.execute(query)
+        alerts = result.scalars().all()
+        
+        return [{
+            'id': alert.alert_id,
+            'metric_name': alert.metric_name,
+            'timestamp': alert.detected_at.isoformat() if alert.detected_at else datetime.now().isoformat(),
+            'current_value': alert.current_value,
+            'previous_value': alert.previous_value,
+            'change_percent': alert.change_percent,
+            'severity': alert.severity,
+            'message': alert.message,
+            'region': alert.region or 'All',
+            'category': alert.category or 'General',
+            'root_cause': alert.root_cause,
+        } for alert in alerts]
 
-        return await self.execute_sql(alert_query)
+    async def detect_and_store_anomalies(self) -> Dict[str, Any]:
+        """Detect anomalies using the detect_anomalies tool and store them in KPIAlert table."""
+        from app.agents.advanced_tools import detect_anomalies
+        import uuid
+        
+        # Use the detect_anomalies tool (it's a @tool decorated function, call it directly)
+        anomalies_json = await detect_anomalies(
+            user_query="Detect all anomalies in sales, service, and logistics metrics for the last 7 days"
+        )
+        
+        # Parse the JSON response
+        if isinstance(anomalies_json, str):
+            anomalies_data = json.loads(anomalies_json)
+        else:
+            anomalies_data = anomalies_json
+        
+        anomaly_list = anomalies_data.get('anomaly_detection', {}).get('anomalies', [])
+        stored_count = 0
+        
+        for idx, anomaly in enumerate(anomaly_list):
+            # Generate unique alert_id with timestamp and UUID to ensure uniqueness
+            unique_suffix = uuid.uuid4().hex[:8]
+            timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+            alert_id = f"{anomaly.get('type', 'unknown')}_{anomaly.get('metric', 'unknown')}_{anomaly.get('region', 'all')}_{timestamp}_{unique_suffix}"
+            
+            # Check if alert already exists (by metric, region, and similar values)
+            # We'll check for alerts with same metric and region in last hour to avoid duplicates
+            metric_name = anomaly.get('metric', 'Unknown Metric')
+            region = anomaly.get('region') or 'All'
+            existing_query = select(KPIAlert).where(
+                KPIAlert.metric_name == metric_name,
+                KPIAlert.region == region,
+                KPIAlert.status == 'active',
+                KPIAlert.detected_at >= datetime.now() - timedelta(hours=1)
+            )
+            existing_result = await self.session.execute(existing_query)
+            if existing_result.scalar_one_or_none():
+                continue  # Skip if similar alert exists in last hour
+            
+            # Determine severity
+            severity = anomaly.get('severity', 'medium')
+            if severity == 'high':
+                severity = 'critical'
+            elif severity == 'medium':
+                severity = 'warning'
+            else:
+                severity = 'info'
+            
+            # Get values
+            current_val = anomaly.get('current_value') or anomaly.get('current_avg', 0)
+            previous_val = anomaly.get('previous_value') or anomaly.get('previous_avg')
+            change_pct = anomaly.get('change_percent', 0)
+            
+            # Create alert
+            alert = KPIAlert(
+                alert_id=alert_id,
+                metric_name=anomaly.get('metric', 'Unknown Metric'),
+                current_value=float(current_val) if current_val else 0.0,
+                previous_value=float(previous_val) if previous_val else None,
+                change_percent=float(change_pct) if change_pct else 0.0,
+                severity=severity,
+                message=anomaly.get('contextual_message', 'Anomaly detected'),
+                root_cause=anomaly.get('suggested_root_cause'),
+                region=anomaly.get('region') or 'All',
+                category=self._infer_category(anomaly.get('metric', '')),
+                status='active',
+                detected_at=datetime.now()
+            )
+            
+            self.session.add(alert)
+            stored_count += 1
+        
+        await self.session.commit()
+        
+        return {
+            'anomalies_detected': len(anomaly_list),
+            'alerts_stored': stored_count,
+            'timestamp': datetime.now().isoformat()
+        }
+    
+    def _infer_category(self, metric_name: str) -> str:
+        """Infer category from metric name."""
+        metric_lower = metric_name.lower()
+        if 'f&i' in metric_lower or 'finance' in metric_lower or 'revenue' in metric_lower:
+            return 'F&I'
+        elif 'service' in metric_lower or 'appointment' in metric_lower:
+            return 'Service'
+        elif 'shipment' in metric_lower or 'carrier' in metric_lower or 'logistics' in metric_lower:
+            return 'Logistics'
+        elif 'sales' in metric_lower:
+            return 'Sales'
+        elif 'marketing' in metric_lower or 'campaign' in metric_lower:
+            return 'Marketing'
+        return 'General'
+    
+    async def dismiss_alert(self, alert_id: str, dismissed_by: str = "system") -> bool:
+        """Dismiss an alert by setting status to dismissed."""
+        query = select(KPIAlert).where(
+            KPIAlert.alert_id == alert_id,
+            KPIAlert.status == 'active'
+        )
+        result = await self.session.execute(query)
+        alert = result.scalar_one_or_none()
+        
+        if alert:
+            alert.status = 'dismissed'
+            alert.dismissed_at = datetime.now()
+            alert.dismissed_by = dismissed_by
+            await self.session.commit()
+            return True
+        return False
+    
+    async def get_alert_by_id(self, alert_id: str) -> Optional[Dict[str, Any]]:
+        """Get a specific alert by ID for investigation."""
+        query = select(KPIAlert).where(KPIAlert.alert_id == alert_id)
+        result = await self.session.execute(query)
+        alert = result.scalar_one_or_none()
+        
+        if alert:
+            return {
+                'id': alert.alert_id,
+                'metric_name': alert.metric_name,
+                'timestamp': alert.detected_at.isoformat() if alert.detected_at else None,
+                'current_value': alert.current_value,
+                'previous_value': alert.previous_value,
+                'change_percent': alert.change_percent,
+                'severity': alert.severity,
+                'message': alert.message,
+                'region': alert.region,
+                'category': alert.category,
+                'root_cause': alert.root_cause,
+                'status': alert.status,
+                'investigation_notes': alert.investigation_notes,
+            }
+        return None
+
+    async def get_data_catalog(self) -> Dict[str, Any]:
+        """Get data catalog information - tables, columns, row counts, regions, categories."""
+        from app.utils.schema_utils import get_database_schema
+        
+        # Get all table names
+        tables_query = text("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%' ORDER BY name")
+        result = await self.session.execute(tables_query)
+        table_names = [row[0] for row in result.fetchall()]
+        
+        tables = []
+        table_descriptions = {
+            'dealers': 'Dealer information including location and region',
+            'fni_transactions': 'Finance & Insurance transaction records',
+            'shipments': 'Vehicle shipment and logistics data',
+            'plants': 'Manufacturing plant information',
+            'plant_downtime': 'Manufacturing plant downtime events',
+            'marketing_campaigns': 'Marketing campaign performance (Invite)',
+            'service_appointments': 'Service appointment records with customer information',
+            'kpi_metrics': 'Daily KPI metric values and targets',
+            'kpi_alerts': 'Stored KPI alerts and anomalies',
+            'customers': 'Customer information for personalized experience',
+            'repair_orders': 'Repair order (RO) data for inspection dashboard',
+        }
+        
+        for table_name in table_names:
+            # Get column information
+            columns_query = text(f"PRAGMA table_info({table_name})")
+            columns_result = await self.session.execute(columns_query)
+            columns_data = columns_result.fetchall()
+            columns = [col[1] for col in columns_data]  # col[1] is column name
+            
+            # Get row count
+            count_query = text(f"SELECT COUNT(*) FROM {table_name}")
+            count_result = await self.session.execute(count_query)
+            row_count = count_result.scalar() or 0
+            
+            tables.append({
+                'name': table_name,
+                'description': table_descriptions.get(table_name, f'{table_name} table'),
+                'columns': columns,
+                'row_count': f'~{row_count:,}' if row_count > 0 else '0'
+            })
+        
+        # Get unique regions from dealers table
+        regions_query = text("SELECT DISTINCT region FROM dealers WHERE region IS NOT NULL ORDER BY region")
+        regions_result = await self.session.execute(regions_query)
+        regions = [row[0] for row in regions_result.fetchall()] or ['Midwest', 'Northeast', 'Southeast', 'West']
+        
+        # Get unique KPI categories from kpi_metrics table
+        categories_query = text("SELECT DISTINCT category FROM kpi_metrics WHERE category IS NOT NULL ORDER BY category")
+        categories_result = await self.session.execute(categories_query)
+        kpi_categories = [row[0] for row in categories_result.fetchall()] or ['Sales', 'Service', 'F&I', 'Marketing', 'Logistics']
+        
+        return {
+            'tables': tables,
+            'regions': regions,
+            'kpi_categories': kpi_categories
+        }
+
+    async def get_repair_orders(
+        self,
+        ro_type: Optional[str] = None,
+        shop_type: Optional[str] = None,
+        waiter: Optional[str] = None,
+        search: Optional[str] = None
+    ) -> List[Dict[str, Any]]:
+        """Get repair orders with optional filtering."""
+        query = """
+            SELECT
+                ro.id,
+                ro.ro_number as ro,
+                ro.priority as p,
+                ro.tag,
+                ro.promised_time as promised,
+                ro.promised_date,
+                ro.indicator as e,
+                ro.customer_name as customer,
+                ro.advisor_id as adv,
+                ro.technician_id as tech,
+                ro.metric_time as mt,
+                CASE 
+                    WHEN ro.process_time_days = 0 THEN ''
+                    ELSE ro.process_time_days || 'd'
+                END as pt,
+                ro.status,
+                ro.ro_type,
+                ro.shop_type,
+                ro.waiter,
+                ro.is_overdue,
+                ro.is_urgent
+            FROM repair_orders ro
+            WHERE 1=1
+        """
+        
+        if ro_type and ro_type != 'All':
+            query += f" AND ro.ro_type = '{ro_type}'"
+        if shop_type and shop_type != 'All':
+            query += f" AND ro.shop_type = '{shop_type}'"
+        if waiter and waiter != 'All':
+            query += f" AND ro.waiter = '{waiter}'"
+        if search:
+            query += f" AND (ro.ro_number LIKE '%{search}%' OR ro.customer_name LIKE '%{search}%')"
+        
+        query += " ORDER BY ro.priority, ro.promised_date DESC, ro.ro_number"
+        
+        return await self.execute_sql(query)
+
+    async def get_service_appointments(
+        self,
+        appointment_date: Optional[date] = None,
+        advisor: Optional[str] = None,
+        status: Optional[str] = None,
+        search: Optional[str] = None
+    ) -> List[Dict[str, Any]]:
+        """Get service appointments for Engage page with customer information."""
+        if appointment_date is None:
+            appointment_date = date.today()
+        
+        # First, check which columns and tables exist
+        try:
+            columns_check = await self.session.execute(text("PRAGMA table_info(service_appointments)"))
+            existing_columns = {row[1]: row[2] for row in columns_check.fetchall()}
+        except:
+            existing_columns = {}
+        
+        # Check if customers table exists
+        try:
+            table_check = await self.session.execute(text("""
+                SELECT name FROM sqlite_master 
+                WHERE type='table' AND name='customers'
+            """))
+            customers_table_exists = table_check.fetchone() is not None
+        except:
+            customers_table_exists = False
+        
+        # Build query with customer join - only select columns that exist
+        # Core required columns
+        select_fields = [
+            "sa.id",
+            "sa.appointment_date",
+            "sa.appointment_time",
+            "sa.service_type",
+            "sa.vehicle_vin",
+            "sa.vehicle_year",
+            "sa.vehicle_make",
+            "sa.vehicle_model",
+            "sa.customer_name",
+            "sa.advisor",
+            "sa.status",
+        ]
+        
+        # Optional columns (only if they exist)
+        optional_fields = [
+            ("sa.estimated_duration", "estimated_duration"),
+            ("sa.vehicle_mileage", "vehicle_mileage"),
+            ("sa.vehicle_icon_color", "vehicle_icon_color"),
+            ("sa.secondary_contact", "secondary_contact"),
+            ("sa.ro_number", "ro_number"),
+            ("sa.code", "code"),
+            ("sa.notes", "notes"),
+        ]
+        
+        for field, col_name in optional_fields:
+            if col_name in existing_columns:
+                select_fields.append(field)
+            else:
+                # Add NULL as placeholder for missing columns
+                select_fields.append(f"NULL as {col_name}")
+        
+        # Customer fields (only if customers table exists)
+        if customers_table_exists:
+            select_fields.extend([
+                "c.id as customer_id",
+                "c.phone",
+                "c.email",
+                "c.loyalty_tier",
+                "c.preferred_services",
+                "c.service_history_count",
+                "c.last_visit_date"
+            ])
+            join_clause = "LEFT JOIN customers c ON sa.customer_id = c.id"
+        else:
+            # Add NULL placeholders if customers table doesn't exist
+            select_fields.extend([
+                "NULL as customer_id",
+                "NULL as phone",
+                "NULL as email",
+                "NULL as loyalty_tier",
+                "NULL as preferred_services",
+                "NULL as service_history_count",
+                "NULL as last_visit_date"
+            ])
+            join_clause = ""
+        
+        query = f"""
+            SELECT 
+                {', '.join(select_fields)}
+            FROM service_appointments sa
+            {join_clause}
+            WHERE sa.appointment_date = :appointment_date
+        """
+        
+        params = {"appointment_date": appointment_date}
+        
+        if advisor and advisor != 'All':
+            query += " AND sa.advisor = :advisor"
+            params["advisor"] = advisor
+        
+        if status and status != 'All':
+            query += " AND sa.status = :status"
+            params["status"] = status
+        
+        if search:
+            query += " AND (sa.customer_name LIKE :search OR sa.vehicle_vin LIKE :search OR sa.vehicle_make LIKE :search OR sa.vehicle_model LIKE :search OR sa.ro_number LIKE :search)"
+            params["search"] = f"%{search}%"
+        
+        query += " ORDER BY sa.appointment_time"
+        
+        result = await self.session.execute(text(query), params)
+        rows = result.fetchall()
+        columns = result.keys()
+        
+        appointments = []
+        for row in rows:
+            apt_dict = dict(zip(columns, row))
+            # Parse preferred_services JSON if present
+            if apt_dict.get('preferred_services'):
+                try:
+                    apt_dict['preferred_services'] = json.loads(apt_dict['preferred_services'])
+                except:
+                    apt_dict['preferred_services'] = []
+            else:
+                apt_dict['preferred_services'] = []
+            appointments.append(apt_dict)
+        
+        return appointments
+
+    async def check_in_appointment(self, appointment_id: int) -> Dict[str, Any]:
+        """Check in a service appointment."""
+        query = text("""
+            UPDATE service_appointments
+            SET status = 'checked_in',
+                updated_at = :updated_at
+            WHERE id = :appointment_id
+            RETURNING id, status
+        """)
+        
+        result = await self.session.execute(
+            query,
+            {"appointment_id": appointment_id, "updated_at": datetime.utcnow()}
+        )
+        await self.session.commit()
+        
+        row = result.fetchone()
+        if row:
+            return {"id": row[0], "status": row[1], "success": True}
+        return {"success": False, "message": "Appointment not found"}
+
+    async def get_appointment_needs_action_count(self, appointment_date: Optional[date] = None) -> int:
+        """Get count of appointments that need action (not_arrived, overdue, etc.)."""
+        if appointment_date is None:
+            appointment_date = date.today()
+        
+        query = text("""
+            SELECT COUNT(*) as count
+            FROM service_appointments
+            WHERE appointment_date = :appointment_date
+            AND status = 'not_arrived'
+        """)
+        
+        result = await self.session.execute(query, {"appointment_date": appointment_date})
+        row = result.fetchone()
+        return row[0] if row else 0

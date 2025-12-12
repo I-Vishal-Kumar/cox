@@ -9,11 +9,16 @@ export const apiClient = {
     return response.json();
   },
   
-  post: async <T>(endpoint: string, data: any): Promise<T> => {
-    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+  post: async <T>(endpoint: string, data: any = null, options?: { params?: Record<string, string> }): Promise<T> => {
+    let url = `${API_BASE_URL}${endpoint}`;
+    if (options?.params) {
+      const searchParams = new URLSearchParams(options.params);
+      url += `?${searchParams.toString()}`;
+    }
+    const response = await fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
+      body: data ? JSON.stringify(data) : null,
     });
     if (!response.ok) {
       throw new Error(`API Error: ${response.status} - ${response.statusText}`);

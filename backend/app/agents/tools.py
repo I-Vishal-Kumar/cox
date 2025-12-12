@@ -182,18 +182,17 @@ async def generate_sql_query(
     Returns:
         String representation of query results (list of dictionaries) or error message
     """
-    from langchain_openai import ChatOpenAI
+    from langchain_anthropic import ChatAnthropic
     from langchain_core.prompts import ChatPromptTemplate
     from app.core.config import settings
     from app.utils.schema_utils import get_cached_schema, get_fallback_schema
     from sqlalchemy import text
     from app.db.database import get_db
     
-    llm = ChatOpenAI(
-        model=settings.openrouter_model,
-        temperature=0,
-        api_key=settings.openrouter_api_key,
-        base_url=settings.openrouter_base_url
+    llm = ChatAnthropic(
+        model=settings.anthropic_model,
+        temperature=0.2,
+        api_key=settings.anthropic_api_key
     )
     
     # Get database session
@@ -246,7 +245,11 @@ async def generate_sql_query(
             
             7. **Ordering**: Add ORDER BY for meaningful sorting
             
-            8. **Limits**: Limit results to 100 rows unless specifically asked for more
+            8. **Limits**: ALWAYS use LIMIT clauses to avoid querying all records
+               - For analysis queries: Use LIMIT 20-50 (enough for root cause analysis)
+               - For dashboard queries: Use LIMIT 100
+               - For time-based comparisons: Query both periods separately with LIMIT
+               - NEVER query all 3000 records - always filter and limit
             
             9. **Percentages**: Multiply rates by 100 for percentage display
             
@@ -325,7 +328,7 @@ async def analyze_kpi_data(
     Returns:
         Dictionary containing analysis text, recommendations list, and timestamp
     """
-    from langchain_openai import ChatOpenAI
+    from langchain_anthropic import ChatAnthropic
     from langchain_core.prompts import ChatPromptTemplate
     from app.core.config import settings
     from datetime import datetime
@@ -345,11 +348,10 @@ async def analyze_kpi_data(
     except Exception as e:
         parsed_data = []
     
-    llm = ChatOpenAI(
-        model=settings.openrouter_model,
-        temperature=0,
-        api_key=settings.openrouter_api_key,
-        base_url=settings.openrouter_base_url
+    llm = ChatAnthropic(
+        model=settings.anthropic_model,
+        temperature=0.2,
+        api_key=settings.anthropic_api_key
     )
     
     system_prompt = """You are an expert automotive industry analyst specializing in KPI monitoring and root cause analysis.
@@ -458,28 +460,28 @@ Analysis:""")
 
 
 @tool
-async def analyze_fni_revenue_drop(data: List[Dict[str, Any]]) -> Dict[str, Any]:
+async def analyze_fni_revenue_drop(data: str) -> Dict[str, Any]:
     """Analyze F&I (Finance & Insurance) revenue drops and identify root causes.
     
     Use this tool specifically for F&I revenue analysis scenarios where you need
     to identify why revenue declined and which dealers or factors are responsible.
     
     Args:
-        data: Comparison data showing F&I revenue metrics across dealers and time periods
+        data: String representation of data from generate_sql_query (will be parsed automatically)
+              Should be a string like "[{'dealer_name': 'ABC', 'revenue': 1000}, ...]"
         
     Returns:
         Dictionary containing detailed analysis, root causes, and recommendations
     """
-    from langchain_openai import ChatOpenAI
+    from langchain_anthropic import ChatAnthropic
     from langchain_core.prompts import ChatPromptTemplate
     from app.core.config import settings
     from datetime import datetime
     
-    llm = ChatOpenAI(
-        model=settings.openrouter_model,
-        temperature=0,
-        api_key=settings.openrouter_api_key,
-        base_url=settings.openrouter_base_url
+    llm = ChatAnthropic(
+        model=settings.anthropic_model,
+        temperature=0.2,
+        api_key=settings.anthropic_api_key
     )
     
     system_prompt = """You are an expert automotive F&I analyst specializing in root cause analysis.
@@ -494,6 +496,23 @@ Focus on:
 
 Provide specific numbers, percentages, and actionable recommendations."""
     
+    # Parse string data to List[Dict]
+    import ast
+    import json
+    
+    try:
+        # Try to parse as Python literal (from generate_sql_query)
+        parsed_data = ast.literal_eval(data) if isinstance(data, str) else data
+    except:
+        try:
+            # Try JSON parsing
+            parsed_data = json.loads(data) if isinstance(data, str) else data
+        except:
+            parsed_data = []
+    
+    if not isinstance(parsed_data, list):
+        parsed_data = []
+    
     # Format data
     def format_data(data: List[Dict]) -> str:
         if not data:
@@ -507,24 +526,37 @@ Provide specific numbers, percentages, and actionable recommendations."""
     
     prompt = ChatPromptTemplate.from_messages([
         ("system", system_prompt),
-        ("human", """Analyze this F&I revenue data:
+        ("human", """Analyze this F&I revenue data and provide a comprehensive root cause analysis:
 
 Data:
 {data}
 
-Why did F&I revenue drop? Identify the main drivers and affected dealers.
+Answer in this EXACT format:
 
-Provide:
-1. Overall revenue change and percentage
-2. Top contributing dealers to the decline
-3. Root causes (penetration rates, pricing, volume, etc.)
-4. Specific recommendations for improvement
+**F&I Revenue Analysis - [Region]**
+
+F&I revenue in the [region] region [declined/increased] **[X]% vs last week**.
+
+**Key Findings:**
+• **[X]%** of the decline came from [top 3 dealers with specific names]
+• The main driver was [specific cause: penetration rates, volume, pricing, etc.] with specific numbers
+• [Finance manager name] at [dealer name] accounted for a **[X-point drop]** in attachment rate
+
+**Root Cause Analysis:**
+[Table or list showing dealer-by-dealer breakdown with this week vs last week revenue and change %]
+
+**Recommendations:**
+1. [Specific actionable recommendation]
+2. [Specific actionable recommendation]
+3. [Specific actionable recommendation]
+
+Provide specific numbers, percentages, dealer names, and finance manager names from the data.
 
 Analysis:""")
     ])
     
     chain = prompt | llm
-    response = await chain.ainvoke({"data": format_data(data)})
+    response = await chain.ainvoke({"data": format_data(parsed_data)})
     
     analysis = response.content
     
@@ -552,28 +584,28 @@ Analysis:""")
 
 
 @tool
-async def analyze_logistics_delays(data: List[Dict[str, Any]]) -> Dict[str, Any]:
+async def analyze_logistics_delays(data: str) -> Dict[str, Any]:
     """Analyze logistics and shipment delays to identify root causes.
     
     Use this tool for logistics analysis scenarios where you need to determine
     whether delays are caused by carriers, routes, weather, or other factors.
     
     Args:
-        data: Shipment delay data including carriers, routes, and delay reasons
+        data: String representation of data from generate_sql_query (will be parsed automatically)
+              Should be a string like "[{'carrier': 'X', 'delayed_count': 24}, ...]"
         
     Returns:
         Dictionary containing delay analysis, root causes, and recommendations
     """
-    from langchain_openai import ChatOpenAI
+    from langchain_anthropic import ChatAnthropic
     from langchain_core.prompts import ChatPromptTemplate
     from app.core.config import settings
     from datetime import datetime
     
-    llm = ChatOpenAI(
-        model=settings.openrouter_model,
-        temperature=0,
-        api_key=settings.openrouter_api_key,
-        base_url=settings.openrouter_base_url
+    llm = ChatAnthropic(
+        model=settings.anthropic_model,
+        temperature=0.2,
+        api_key=settings.anthropic_api_key
     )
     
     system_prompt = """You are an expert logistics analyst specializing in supply chain optimization.
@@ -587,6 +619,21 @@ Focus on:
 
 Provide specific metrics and actionable recommendations for improvement."""
     
+    # Parse string data to List[Dict]
+    import ast
+    import json
+    
+    try:
+        parsed_data = ast.literal_eval(data) if isinstance(data, str) else data
+    except:
+        try:
+            parsed_data = json.loads(data) if isinstance(data, str) else data
+        except:
+            parsed_data = []
+    
+    if not isinstance(parsed_data, list):
+        parsed_data = []
+    
     # Format data
     def format_data(data: List[Dict]) -> str:
         if not data:
@@ -600,25 +647,37 @@ Provide specific metrics and actionable recommendations for improvement."""
     
     prompt = ChatPromptTemplate.from_messages([
         ("system", system_prompt),
-        ("human", """Analyze this shipment delay data:
+        ("human", """Analyze this shipment delay data and provide a comprehensive root cause analysis:
 
 Data:
 {data}
 
-Who delayed — carrier, route, or weather? Analyze the shipment delays.
+Answer in this EXACT format:
 
-Provide:
-1. Overall delay rate and impact
-2. Primary delay causes (carrier, route, weather)
-3. Specific carriers and routes with issues
-4. Dwell time analysis
-5. Recommendations for mitigation
+**Logistics Delay Analysis - Past 7 Days**
+
+Over the past 7 days, **[X]%** of shipments arrived late.
+
+**Delay Attribution:**
+• **[X]%** of delays are concentrated on **[Carrier Name]** on [specific routes]
+• Weather was a [minor/major] factor ([X] delays tagged to storms)
+• Average dwell time at the origin yard for [Carrier Name] increased from **[X.X] to [X.X] hours**
+
+**Carrier Performance:**
+[Table showing carrier, total shipments, delayed count, delay rate, avg dwell time]
+
+**Recommendations:**
+1. [Specific actionable recommendation]
+2. [Specific actionable recommendation]
+3. [Specific actionable recommendation]
+
+Provide specific numbers, percentages, carrier names, routes, and delay reasons from the data.
 
 Analysis:""")
     ])
     
     chain = prompt | llm
-    response = await chain.ainvoke({"data": format_data(data)})
+    response = await chain.ainvoke({"data": format_data(parsed_data)})
     
     analysis = response.content
     
@@ -646,7 +705,7 @@ Analysis:""")
 
 
 @tool
-async def analyze_plant_downtime(data: List[Dict[str, Any]]) -> Dict[str, Any]:
+async def analyze_plant_downtime(data: str) -> Dict[str, Any]:
     """Analyze manufacturing plant downtime and identify root causes.
     
     Use this tool for plant operations analysis where you need to understand
@@ -658,16 +717,15 @@ async def analyze_plant_downtime(data: List[Dict[str, Any]]) -> Dict[str, Any]:
     Returns:
         Dictionary containing downtime analysis, root causes, and recommendations
     """
-    from langchain_openai import ChatOpenAI
+    from langchain_anthropic import ChatAnthropic
     from langchain_core.prompts import ChatPromptTemplate
     from app.core.config import settings
     from datetime import datetime
     
-    llm = ChatOpenAI(
-        model=settings.openrouter_model,
-        temperature=0,
-        api_key=settings.openrouter_api_key,
-        base_url=settings.openrouter_base_url
+    llm = ChatAnthropic(
+        model=settings.anthropic_model,
+        temperature=0.2,
+        api_key=settings.anthropic_api_key
     )
     
     system_prompt = """You are an expert manufacturing operations analyst specializing in plant efficiency.
@@ -680,6 +738,21 @@ Focus on:
 - Impact on production capacity
 
 Provide specific metrics and actionable recommendations for reducing downtime."""
+    
+    # Parse string data to List[Dict]
+    import ast
+    import json
+    
+    try:
+        parsed_data = ast.literal_eval(data) if isinstance(data, str) else data
+    except:
+        try:
+            parsed_data = json.loads(data) if isinstance(data, str) else data
+        except:
+            parsed_data = []
+    
+    if not isinstance(parsed_data, list):
+        parsed_data = []
     
     # Format data
     def format_data(data: List[Dict]) -> str:
@@ -694,26 +767,43 @@ Provide specific metrics and actionable recommendations for reducing downtime.""
     
     prompt = ChatPromptTemplate.from_messages([
         ("system", system_prompt),
-        ("human", """Analyze this plant downtime data:
+        ("human", """Analyze this plant downtime data and provide a comprehensive root cause analysis:
 
 Data:
 {data}
 
-Which plants showed downtime and why? Provide root cause analysis.
+Answer in this EXACT format:
 
-Provide:
-1. Total downtime hours by plant
-2. Breakdown by production line
-3. Root cause analysis (maintenance, quality, supply, equipment)
-4. Planned vs unplanned downtime
-5. Supplier-related issues if any
-6. Recommendations for reducing downtime
+**Plant Downtime Analysis - This Week**
+
+[Number] plants recorded significant downtime this week:
+
+**Plant [Name] — [Location]** ([X.X] hours total)
+• Mostly on [Line Number]
+• [Root cause 1]: **[X.X hours]** - [specific detail]
+• [Root cause 2]: **[X.X hours]** - [specific detail]
+• [Additional detail if relevant, e.g., defect rate is X.X normal]
+
+**Plant [Name] — [Location]** ([X.X] hours)
+• [Line Number] stoppage
+• [Root cause]: **[X.X hours]** - [specific detail, e.g., component shortage from Supplier X]
+
+**Plant [Name] — [Location]** ([X.X] hours)
+• [Line Number]
+• [Root cause]: **[X.X hours]** - [specific detail]
+
+**Recommendations:**
+1. **[Plant Name]**: [Specific actionable recommendation]
+2. **[Plant Name]**: [Specific actionable recommendation]
+3. **[Plant Name]**: [Specific actionable recommendation]
+
+Provide specific numbers, plant names, line numbers, downtime hours, and root cause details from the data.
 
 Analysis:""")
     ])
     
     chain = prompt | llm
-    response = await chain.ainvoke({"data": format_data(data)})
+    response = await chain.ainvoke({"data": format_data(parsed_data)})
     
     analysis = response.content
     

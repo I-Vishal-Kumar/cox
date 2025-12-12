@@ -1,0 +1,73 @@
+{
+  "test_suite": {
+    "kpi_monitoring": {
+      "description": "KPI scanning, variance detection, RCA, forecasting, action recommendations.",
+      "questions": [
+        "How are my KPIs trending today across sales, inventory, warranty, and production?",
+        "Generate today’s KPI Health Score and tell me what needs attention.",
+        "Which KPI deviated most from target this week?",
+        "Why is Midwest warranty cost 18% above target?",
+        "Explain the drop in production uptime yesterday.",
+        "Predict next week’s sales variance vs target.",
+        "Break down the change in revenue using price vs mix vs volume.",
+        "What caused the spike in service workload last Friday?",
+        "Give me three recommended actions to stabilize inventory turns.",
+        "Should we check supplier X? Any signs of delay?"
+      ]
+    },
+
+    "executive_digests": {
+      "description": "CEO/COO/CFO/VP Sales weekly digests, forecasts, anomaly summaries, narrative-linked visuals.",
+      "questions": [
+        "Create the weekly CEO digest with wins, risks, and forecast.",
+        "Send me the CFO view of margin risks for this quarter.",
+        "What should the VP of Sales know about this week’s performance?",
+        "Summarize top anomalies and sentiment drivers for the COO.",
+        "Generate a downloadable report with charts linked to the narrative.",
+        "Show me the top 5 risks with visuals and one-click drilldowns.",
+        "Ask deeper: break down the margin drop by region.",
+        "Drill into the forecast deviation by SKU."
+      ]
+    },
+
+    "data_catalog_lineage": {
+      "description": "Dataset discovery, schemas, lineage, quality scores, recommended datasets.",
+      "questions": [
+        "Where can I find dealership service history data?",
+        "Which tables contain supplier performance metrics?",
+        "Show example rows from the warranty_claims table.",
+        "Are any of the sales datasets outdated or low quality?",
+        "What’s the lineage for the monthly revenue table?",
+        "Which dataset should I use for analyzing regional mix shifts?"
+      ]
+    },
+
+    "anomaly_detection": {
+      "description": "Detection of unusual movements, contextual reasoning, drilldowns, notifications.",
+      "questions": [
+        "Any unusual movement in defects this week?",
+        "Alert me on spikes in inventory aging.",
+        "Brake sensor claims increased—what’s driving it?",
+        "Are cold-weather conditions affecting warranty claims?",
+        "Predict which region is at risk for service load spikes next week.",
+        "Drill into the service workload spike by dealer and technician.",
+        "Show the SKU-level breakdown for the defect increase.",
+        "Send this anomaly report to Teams for the quality engineering group."
+      ]
+    },
+
+    "self_service_automation": {
+      "description": "HR/Finance/IT automations, ticket creation, password resets, multilingual support.",
+      "questions": [
+        "Create a service ticket to unlock my account.",
+        "Reset my payroll portal password.",
+        "What is the PTO policy for contractors?",
+        "Show the status of my laptop replacement request.",
+        "This error keeps happening—any recommended instant fixes?",
+        "Summarize the top recurring IT tickets this month.",
+        "Explain my benefits package in Spanish.",
+        "Give me the travel reimbursement steps for mobile users."
+      ]
+    }
+  }
+}

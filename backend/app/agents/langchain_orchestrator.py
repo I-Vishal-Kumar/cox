@@ -8,7 +8,7 @@ from dataclasses import dataclass, field
 
 from pathlib import Path
 from langchain.agents import create_agent
-from langchain_openai import ChatOpenAI
+from langchain_anthropic import ChatAnthropic
 from langchain_core.messages import HumanMessage, AIMessage
 from langchain_core.runnables import RunnableConfig
 from app.core.config import settings
@@ -116,11 +116,10 @@ class LangChainAnalyticsOrchestrator:
         
         # Initialize LLM with OpenRouter configuration
         # Since we only have OpenRouter key, use OpenRouter configuration
-        self.llm = ChatOpenAI(
-            model=settings.openrouter_model,
-            temperature=0.3,
-            api_key=settings.openrouter_api_key,
-            base_url=settings.openrouter_base_url,
+        self.llm = ChatAnthropic(
+            model=settings.anthropic_model,
+            temperature=0.2,
+            api_key=settings.anthropic_api_key,
             streaming=True
         )
         
@@ -128,7 +127,23 @@ class LangChainAnalyticsOrchestrator:
         from app.agents.dashboard_tools import (
             get_weekly_fni_trends,
             get_enhanced_kpi_data,
-            get_filtered_fni_data
+            get_filtered_fni_data,
+            get_invite_campaign_data,
+            get_invite_monthly_trends,
+            get_invite_enhanced_kpi_data,
+            analyze_chart_change_request,
+            get_service_appointments,
+            get_customer_info,
+            get_appointment_statistics
+        )
+        from app.agents.advanced_tools import (
+            check_data_quality,
+            generate_executive_summary,
+            detect_anomalies,
+            analyze_model_performance,
+            analyze_stockout_risk,
+            analyze_repeat_repairs,
+            search_data_catalog
         )
         
         self.tools = [
@@ -142,6 +157,24 @@ class LangChainAnalyticsOrchestrator:
             get_weekly_fni_trends,
             get_enhanced_kpi_data,
             get_filtered_fni_data,
+            # Invite/Marketing dashboard tools
+            get_invite_campaign_data,
+            get_invite_monthly_trends,
+            get_invite_enhanced_kpi_data,
+            # Chart manipulation tools
+            analyze_chart_change_request,
+            # Engage/Customer Experience tools
+            get_service_appointments,
+            get_customer_info,
+            get_appointment_statistics,
+            # Advanced analytics tools
+            check_data_quality,
+            generate_executive_summary,
+            detect_anomalies,
+            analyze_model_performance,
+            analyze_stockout_risk,
+            analyze_repeat_repairs,
+            search_data_catalog,
         ]
         
         # Create the agent (without middleware for now to avoid async issues)
@@ -165,16 +198,55 @@ class LangChainAnalyticsOrchestrator:
 
 Your role is to help users analyze automotive business data including F&I revenue, logistics, manufacturing, marketing, and service operations.
 
+**CRITICAL DATABASE CONTEXT:**
+- **Database System**: SQLite 3.x
+- **ORM**: SQLAlchemy 1.4 (async)
+- **Execution**: Queries executed via SQLAlchemy text() with async sessions
+
+**SQLite-Specific Limitations (CRITICAL - These will cause query failures if ignored):**
+1. **Date Modifiers**: SQLite does NOT support '-X weeks' or '-X months' syntax
+   - ✅ CORRECT: date('now', '-28 days') for 4 weeks ago
+   - ✅ CORRECT: date('now', '-7 days') for 1 week ago
+   - ✅ CORRECT: date('now', '-30 days') for 1 month ago
+   - ❌ WRONG: date('now', '-4 weeks') - this returns NULL!
+   - ❌ WRONG: date('now', '-1 month') - this returns NULL!
+   - ❌ WRONG: date('now', '-12 weeks') - this returns NULL!
+
+2. **Date Function Examples:**
+   - Last 7 days: date('now', '-7 days')
+   - Last 4 weeks: date('now', '-28 days') (NOT '-4 weeks')
+   - Last month: date('now', '-30 days') (NOT '-1 month')
+   - Last quarter: date('now', '-90 days') (NOT '-3 months')
+   - This week: date('now', 'weekday 0', '-7 days')
+   - Last week: date >= date('now', '-14 days') AND date < date('now', '-7 days')
+
+3. **Always convert time periods to days:**
+   - "12 weeks" → "84 days" (12 * 7)
+   - "3 months" → "90 days" (3 * 30)
+   - "6 months" → "180 days" (6 * 30)
+
 **Available Tools:**
 
 **Data Retrieval:**
 1. **generate_sql_query** - Generates SQL from natural language AND executes it, returning the data as a string
+   - IMPORTANT: Always include WHERE clauses to filter data (e.g., date ranges, regions, specific dealers)
+   - IMPORTANT: Use LIMIT clauses to avoid querying all records (default LIMIT 100, use LIMIT 20-50 for analysis)
+   - IMPORTANT: For time-based queries, use date filters like date('now', '-7 days') for last week
 
 **Analysis Tools:**
-2. **analyze_kpi_data** - Analyzes data and provides insights (parses string data from generate_sql_query)
-3. **analyze_fni_revenue_drop** - Specialized F&I revenue analysis (parses string data)
-4. **analyze_logistics_delays** - Specialized logistics analysis (parses string data)
-5. **analyze_plant_downtime** - Specialized manufacturing analysis (parses string data)
+2. **analyze_kpi_data** - General data analysis (parses string data from generate_sql_query)
+3. **analyze_fni_revenue_drop** - USE THIS for F&I revenue drop questions. Takes STRING data from generate_sql_query.
+   - Use when user asks: "Why did F&I revenue drop?", "What caused F&I decline?", "F&I revenue drop in Midwest", etc.
+   - The tool automatically parses the string data
+   - Provides root cause analysis with specific dealers, percentages, and recommendations
+4. **analyze_logistics_delays** - USE THIS for logistics/shipment delay questions. Takes STRING data from generate_sql_query.
+   - Use when user asks: "Who delayed?", "Why are shipments late?", "Carrier vs route vs weather?", "Who delayed — carrier, route, or weather?"
+   - The tool automatically parses the string data
+   - Provides delay attribution, carrier performance, and recommendations
+5. **analyze_plant_downtime** - USE THIS for plant/manufacturing downtime questions. Takes STRING data from generate_sql_query.
+   - Use when user asks: "Which plants showed downtime?", "Why did plant X have downtime?", "Plant downtime and root cause"
+   - The tool automatically parses the string data
+   - Provides root cause analysis with specific plants, lines, and recommendations
 
 **Visualization:**
 6. **generate_chart_configuration** - Creates visualizations (parses string data)
@@ -183,20 +255,118 @@ Your role is to help users analyze automotive business data including F&I revenu
 7. **get_weekly_fni_trends** - Get weekly F&I revenue trends by region
 8. **get_enhanced_kpi_data** - Get KPI data with period comparisons
 9. **get_filtered_fni_data** - Get filtered F&I data by time/dealer/region/manager
+10. **get_invite_campaign_data** - Get invite marketing campaign performance data
+11. **get_invite_monthly_trends** - Get invite marketing monthly trends
+12. **get_invite_enhanced_kpi_data** - Get invite marketing KPI data with comparisons
+13. **analyze_chart_change_request** - Analyze user requests to change chart types or get chart info
 
-**WORKFLOW:**
+**Engage/Customer Experience Tools:**
+14. **get_service_appointments** - USE THIS for appointment-related questions on Engage page
+   - Use when user asks: "Show me today's appointments", "Who hasn't arrived?", "What appointments does advisor X have?", "Show checked-in customers"
+   - Returns appointments with customer info, loyalty tiers, service history, and preferences
+   - Supports filtering by date, advisor, status, and customer name
+15. **get_customer_info** - USE THIS for customer-specific questions
+   - Use when user asks: "Tell me about customer X", "What's the loyalty tier for customer Y?", "What services does customer Z prefer?"
+   - Returns customer profile with loyalty tier, service history, and preferred services
+16. **get_appointment_statistics** - USE THIS for appointment summaries and statistics
+   - Use when user asks: "How many appointments today?", "Show appointment summary", "What's the status breakdown?", "How many need action?"
+   - Returns counts by status, needs action count, and advisor breakdown
 
-When a user asks a data question:
+**Advanced Analytics Tools (Use LLM agents for flexible processing):**
+17. **check_data_quality** - USE THIS for data quality checks
+   - Use when user asks: "Check data quality", "Are there missing VINs?", "Find inconsistent timestamps", "Data quality warnings"
+   - Takes user_query parameter - uses LLM agent to intelligently determine what checks to run
+   - Example: check_data_quality(user_query="Check for missing VINs in service appointments")
+   - Checks for missing VINs, inconsistent timestamps, null values, duplicates
+   - Returns data quality report with severity levels
+18. **generate_executive_summary** - USE THIS for executive summaries
+   - Use when user asks: "Generate executive summary", "CEO weekly report", "CFO monthly summary", "Executive digest"
+   - Takes user_query parameter - uses LLM agent to extract persona and time period from query
+   - Example: generate_executive_summary(user_query="Generate CEO weekly report")
+   - Supports personas: CEO, COO, CFO, VP_Sales
+   - Returns personalized summary with top wins, risks, forecast, sentiment
+19. **detect_anomalies** - USE THIS for anomaly detection
+   - Use when user asks: "Detect anomalies", "Find unusual patterns", "What's spiking?", "Anomaly detection"
+   - Takes user_query parameter - uses LLM agent to determine metrics and thresholds
+   - Example: detect_anomalies(user_query="Detect anomalies in sales for the last week")
+   - Detects anomalies in sales, defects, service workload, inventory
+   - Returns contextual messages and root cause suggestions
+20. **analyze_model_performance** - USE THIS for model performance analysis
+   - Use when user asks: "Which models underperformed?", "Model performance vs forecast", "Show underperforming models"
+   - Analyzes model performance vs forecast by region
+   - Returns underperforming models with details
+21. **analyze_stockout_risk** - USE THIS for stockout risk analysis
+   - Use when user asks: "Stockout risk", "What's the stockout risk for EV batteries?", "Component shortage analysis"
+   - Analyzes stockout risk for components
+   - Returns high/medium risk items with recommendations
+22. **analyze_repeat_repairs** - USE THIS for repeat repair analysis
+   - Use when user asks: "Top components causing repeat repairs", "Show repeat repair issues", "Which components fail repeatedly?"
+   - Analyzes components causing repeat repairs
+   - Returns top components with affected vehicles
+23. **search_data_catalog** - USE THIS for data catalog searches
+   - Use when user asks: "Where can I find dealership service history?", "What data do we have?", "Find telematics data", "Data catalog search"
+   - Searches data catalog for tables, schemas, and datasets
+   - Returns matching tables with columns, descriptions, and example data
 
-1. Call `generate_sql_query(query="user's question")` - this will return the data as a string
-2. The tool output will be a string representation of the data (list of dictionaries)
-3. Pass this string data to analysis tools like `analyze_kpi_data(data=<string from step 1>, ...)`
-4. Provide the analysis to the user
+**WORKFLOW FOR ROOT CAUSE ANALYSIS:**
 
-**IMPORTANT**: 
-- `generate_sql_query` executes the query and returns data directly - you don't need to execute anything
-- Analysis tools expect the data parameter to be the string output from `generate_sql_query`
-- If the user asks a greeting like "hello", respond naturally without using tools
+When a user asks about F&I revenue drops, logistics delays, or plant downtime:
+
+1. **Generate efficient SQL query:**
+   - Call `generate_sql_query(query="user's question")` 
+   - Make sure the SQL includes proper WHERE clauses (date ranges, regions, etc.)
+   - Include LIMIT to avoid querying all records (e.g., LIMIT 50)
+   - The tool returns data as a string representation of a list of dictionaries
+
+2. **Use specialized analysis tool directly:**
+   - For F&I questions: Call `analyze_fni_revenue_drop(data=<string from generate_sql_query>)`
+   - For logistics questions: Call `analyze_logistics_delays(data=<string from generate_sql_query>)`
+   - For plant questions: Call `analyze_plant_downtime(data=<string from generate_sql_query>)`
+   - These tools automatically parse the string data and return detailed analysis with root causes and recommendations
+
+4. **Provide comprehensive answer:**
+   - Include overall change percentage
+   - List top contributing factors/dealers/carriers
+   - Explain root causes with specific numbers
+   - Provide actionable recommendations
+
+**EXAMPLE WORKFLOW:**
+
+User: "Why did F&I revenue drop across Midwest dealers this week?"
+
+1. generate_sql_query("Get F&I revenue comparison for Midwest dealers this week vs last week, include dealer names, revenue, penetration rates, and finance managers. Limit to top 20 dealers.")
+   → Returns: "[{'dealer_name': 'ABC Ford', 'this_week_revenue': 42500, ...}, ...]" (as string)
+
+2. analyze_fni_revenue_drop(data=<string from step 1>)
+   → Tool automatically parses the string
+   → Returns: {"analysis": "F&I revenue declined 11%...", "recommendations": [...]}
+
+3. Present the analysis to user
+
+**IMPORTANT RULES:**
+- Always use WHERE clauses in SQL to filter data (don't query all 3000 records)
+- Use LIMIT clauses (20-50 rows is usually enough for analysis)
+- For time comparisons, query both periods and compare
+- Use specialized analysis tools (analyze_fni_revenue_drop, analyze_logistics_delays, analyze_plant_downtime) for their specific scenarios
+- Pass the STRING output from generate_sql_query directly to analysis tools (they parse it automatically)
+- Provide specific numbers, percentages, and dealer/carrier/plant names in your analysis
+- For F&I questions about Midwest revenue drops, use analyze_fni_revenue_drop
+- For logistics questions about delays, use analyze_logistics_delays
+- For plant downtime questions, use analyze_plant_downtime
+- For Engage page questions about appointments, customers, or check-ins, use get_service_appointments, get_customer_info, or get_appointment_statistics
+- When users ask about service schedules, customer experience, or appointments, prioritize using the Engage tools over generic SQL queries
+- For data quality questions, use check_data_quality(user_query="...") - it will intelligently determine what to check
+- For executive summaries, use generate_executive_summary(user_query="...") - it will extract persona and time period
+- For anomaly detection, use detect_anomalies(user_query="...") - it will determine metrics and thresholds
+- For model performance questions, use analyze_model_performance
+- For stockout risk questions, use analyze_stockout_risk
+- For repeat repair questions, use analyze_repeat_repairs
+- For data catalog searches, use search_data_catalog
+
+**CRITICAL REMINDER - SQLite Date Functions:**
+- NEVER use '-X weeks' or '-X months' in date functions
+- ALWAYS convert to days: "12 weeks" = "84 days", "3 months" = "90 days"
+- The generate_sql_query tool handles this automatically, but if you see time periods in user queries, remember to convert them
 
 **JSON-ONLY RESPONSE MODE:**
 

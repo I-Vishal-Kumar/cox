@@ -23,6 +23,7 @@ import {
 import KPICard from '@/components/ui/KPICard';
 import DataTable from '@/components/ui/DataTable';
 import GaugeChart from '@/components/ui/GaugeChart';
+import FloatingChatBot from '@/components/ui/FloatingChatBot';
 import {
   EnvelopeIcon,
   CurrencyDollarIcon,
@@ -31,40 +32,10 @@ import {
   WrenchScrewdriverIcon,
   CalendarDaysIcon,
   ArrowPathIcon,
+  ChartBarIcon,
 } from '@heroicons/react/24/outline';
 
-// Mock data matching the Invite dashboard from PDF
-const programPerformanceData = [
-  { campaign_name: '1st Service Due', category: 'Service Reminder', emails_sent: 2145, unique_opens: 687, open_rate: 32.0, ro_count: 89, revenue: 26700 },
-  { campaign_name: '6-Month Checkup', category: 'Service Reminder', emails_sent: 1823, unique_opens: 547, open_rate: 30.0, ro_count: 71, revenue: 19880 },
-  { campaign_name: 'A Service Due', category: 'Maintenance', emails_sent: 1567, unique_opens: 438, open_rate: 28.0, ro_count: 52, revenue: 18200 },
-  { campaign_name: 'Alignment Check', category: 'Maintenance', emails_sent: 1342, unique_opens: 375, open_rate: 27.9, ro_count: 45, revenue: 9900 },
-  { campaign_name: 'B Service Due', category: 'Maintenance', emails_sent: 1298, unique_opens: 350, open_rate: 27.0, ro_count: 42, revenue: 14700 },
-  { campaign_name: 'Battery Check', category: 'Seasonal', emails_sent: 1876, unique_opens: 525, open_rate: 28.0, ro_count: 63, revenue: 11970 },
-  { campaign_name: 'Brake Service', category: 'Safety', emails_sent: 987, unique_opens: 276, open_rate: 28.0, ro_count: 33, revenue: 13200 },
-  { campaign_name: 'C Service Due', category: 'Maintenance', emails_sent: 1145, unique_opens: 309, open_rate: 27.0, ro_count: 37, revenue: 12950 },
-  { campaign_name: 'Cabin Air Filter', category: 'Maintenance', emails_sent: 1432, unique_opens: 401, open_rate: 28.0, ro_count: 48, revenue: 7200 },
-  { campaign_name: 'Coolant Flush', category: 'Maintenance', emails_sent: 1198, unique_opens: 335, open_rate: 28.0, ro_count: 40, revenue: 8000 },
-  { campaign_name: 'D Service Due', category: 'Maintenance', emails_sent: 1087, unique_opens: 294, open_rate: 27.0, ro_count: 35, revenue: 12250 },
-  { campaign_name: 'Declined Service Follow-up', category: 'Follow-up', emails_sent: 2341, unique_opens: 702, open_rate: 30.0, ro_count: 84, revenue: 21000 },
-  { campaign_name: 'Engine Air Filter', category: 'Maintenance', emails_sent: 1543, unique_opens: 432, open_rate: 28.0, ro_count: 52, revenue: 7800 },
-  { campaign_name: 'Express Lube', category: 'Quick Service', emails_sent: 2876, unique_opens: 920, open_rate: 32.0, ro_count: 110, revenue: 8250 },
-  { campaign_name: 'Factory Scheduled Maintenance', category: 'Maintenance', emails_sent: 1654, unique_opens: 463, open_rate: 28.0, ro_count: 56, revenue: 22400 },
-  { campaign_name: 'Multi Point Inspection Due', category: 'Inspection', emails_sent: 1987, unique_opens: 596, open_rate: 30.0, ro_count: 72, revenue: 14400 },
-  { campaign_name: 'Oil Change', category: 'Quick Service', emails_sent: 3245, unique_opens: 1038, open_rate: 32.0, ro_count: 125, revenue: 9375 },
-  { campaign_name: 'Tire Rotation', category: 'Quick Service', emails_sent: 2654, unique_opens: 797, open_rate: 30.0, ro_count: 96, revenue: 4800 },
-  { campaign_name: 'Transmission Service', category: 'Maintenance', emails_sent: 876, unique_opens: 245, open_rate: 28.0, ro_count: 29, revenue: 11600 },
-  { campaign_name: 'Winter Prep', category: 'Seasonal', emails_sent: 1654, unique_opens: 463, open_rate: 28.0, ro_count: 56, revenue: 16800 },
-];
-
-const monthlyData = [
-  { month: 'Jul', emails: 28500, opens: 8550, ro: 1026, revenue: 168570 },
-  { month: 'Aug', emails: 29200, opens: 8760, ro: 1051, revenue: 159533 },
-  { month: 'Sep', emails: 31500, opens: 9450, ro: 1134, revenue: 180360 },
-  { month: 'Oct', emails: 32100, opens: 9630, ro: 1156, revenue: 190460 },
-  { month: 'Nov', emails: 30800, opens: 9240, ro: 1109, revenue: 175510 },
-  { month: 'Dec', emails: 29500, opens: 8850, ro: 1062, revenue: 164740 },
-];
+// Removed hardcoded data - now using data from backend API
 
 const columns = [
   { key: 'campaign_name', header: 'Program', align: 'left' as const },
@@ -90,6 +61,8 @@ export default function InviteDashboard() {
   const [filter, setFilter] = useState('all');
   const [dateRange, setDateRange] = useState('Dec 2024');
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [topProgramsChartType, setTopProgramsChartType] = useState<'bar' | 'pie' | 'line' | 'area'>('bar');
+  const [categoryChartType, setCategoryChartType] = useState<'bar' | 'pie' | 'line' | 'area'>('pie');
 
   // Fetch invite dashboard data
   const { data: inviteData, isLoading, error } = useQuery({
@@ -125,40 +98,39 @@ export default function InviteDashboard() {
     staleTime: 2 * 60 * 1000, // Consider data stale after 2 minutes
   });
 
-  // Transform data for frontend use
-  const campaignPerformanceData = campaignData?.map(transformCampaignData) || programPerformanceData;
+  // Use data from direct REST API endpoint (primary source)
+  const campaignPerformanceData = inviteData?.campaign_performance && inviteData.campaign_performance.length > 0
+    ? inviteData.campaign_performance.map(transformCampaignData)
+    : (campaignData && campaignData.length > 0 
+        ? campaignData.map(transformCampaignData) 
+        : []); // Empty array instead of hardcoded data
   
-  // Debug logging
-  console.log('Campaign data from API:', campaignData);
-  console.log('Transformed campaign data:', campaignPerformanceData);
-  console.log('Enhanced KPI data:', enhancedKPIData);
-  const monthlyData = monthlyTrendsData?.map(transformMonthlyData) || [
-    { month: 'Jul', emails: 28500, opens: 8550, ro: 1026, revenue: 168570 },
-    { month: 'Aug', emails: 29200, opens: 8760, ro: 1051, revenue: 159533 },
-    { month: 'Sep', emails: 31500, opens: 9450, ro: 1134, revenue: 180360 },
-    { month: 'Oct', emails: 32100, opens: 9630, ro: 1156, revenue: 190460 },
-    { month: 'Nov', emails: 30800, opens: 9240, ro: 1109, revenue: 175510 },
-    { month: 'Dec', emails: 29500, opens: 8850, ro: 1062, revenue: 164740 },
-  ];
+  // Use monthly data from direct REST API endpoint (primary source)
+  const monthlyData = inviteData?.monthly_trends && inviteData.monthly_trends.length > 0
+    ? inviteData.monthly_trends.map(transformMonthlyData)
+    : (monthlyTrendsData?.map(transformMonthlyData) || []); // Empty array instead of hardcoded data
 
-  // Calculate summary metrics from live or fallback data with NaN protection
-  const campaignTotals = {
+  // Calculate summary metrics from live data with NaN protection
+  const campaignTotals = campaignPerformanceData.length > 0 ? {
     emails: campaignPerformanceData.reduce((sum, p) => sum + (p.emails_sent || 0), 0),
     opens: campaignPerformanceData.reduce((sum, p) => sum + (p.unique_opens || 0), 0),
     ros: campaignPerformanceData.reduce((sum, p) => sum + (p.ro_count || 0), 0),
     revenue: campaignPerformanceData.reduce((sum, p) => sum + (p.revenue || 0), 0),
-  };
+  } : { emails: 0, opens: 0, ros: 0, revenue: 0 };
 
+  // Use data from inviteData (direct REST API) if available, otherwise from enhanced KPI or calculated totals
+  const programSummary = inviteData?.program_summary || {};
   const summary = {
-    totalEmails: enhancedKPIData?.total_emails_sent || campaignTotals.emails || 35000,
-    totalOpens: enhancedKPIData?.total_unique_opens || campaignTotals.opens || 10500,
-    totalROs: enhancedKPIData?.total_ro_count || campaignTotals.ros || 1200,
-    totalRevenue: enhancedKPIData?.total_revenue || campaignTotals.revenue || 300000,
+    totalEmails: enhancedKPIData?.total_emails_sent || programSummary.total_emails || campaignTotals.emails || 0,
+    totalOpens: enhancedKPIData?.total_unique_opens || programSummary.total_opens || campaignTotals.opens || 0,
+    totalROs: enhancedKPIData?.total_ro_count || programSummary.total_ros || campaignTotals.ros || 0,
+    totalRevenue: enhancedKPIData?.total_revenue || programSummary.total_revenue || campaignTotals.revenue || 0,
   };
 
   // Protect against NaN in open rate calculation
   const avgOpenRate = enhancedKPIData?.avg_open_rate || 
-    (summary.totalEmails > 0 ? (summary.totalOpens / summary.totalEmails) * 100 : 30);
+    programSummary.avg_open_rate ||
+    (summary.totalEmails > 0 ? (summary.totalOpens / summary.totalEmails) * 100 : 0);
 
   // Filter data based on category
   const filteredData =
@@ -182,6 +154,35 @@ export default function InviteDashboard() {
     setTimeout(() => setIsRefreshing(false), 1000);
   };
 
+  const handleChartUpdate = (chartId: string, updates: { type?: string; data?: any }) => {
+    if (updates.type) {
+      if (chartId === 'top-programs') {
+        setTopProgramsChartType(updates.type as 'bar' | 'pie' | 'line' | 'area');
+      } else if (chartId === 'category-breakdown') {
+        setCategoryChartType(updates.type as 'bar' | 'pie' | 'line' | 'area');
+      }
+    }
+  };
+
+  // Chart context for the bot
+  const chartContext = {
+    page: 'Invite Dashboard',
+    charts: [
+      {
+        id: 'top-programs',
+        title: 'Top Programs by Revenue',
+        type: topProgramsChartType,
+        data: filteredData.slice(0, 10),
+      },
+      {
+        id: 'category-breakdown',
+        title: 'Revenue by Category',
+        type: categoryChartType,
+        data: categoryBreakdown,
+      },
+    ],
+  };
+
   // Show loading state while main data is loading
   if (isLoading || campaignLoading) {
     return <LoadingSkeleton variant="card" rows={8} />;
@@ -201,11 +202,19 @@ export default function InviteDashboard() {
   return (
     <div className="space-y-6">
       {/* Dashboard Header */}
-      <div className="bg-gradient-to-r from-cox-blue-600 to-cox-blue-800 rounded-lg p-6 text-white">
+      <div className="bg-gradient-to-r from-cox-blue-600 to-cox-blue-800 rounded-lg p-6 text-white shadow-lg">
         <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold">Xtime Invite Dashboard</h1>
-            <p className="text-cox-blue-100 mt-1">Service Marketing Campaign Performance</p>
+          <div className="flex items-center space-x-4">
+            <div className="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center backdrop-blur-sm">
+              <EnvelopeIcon className="w-7 h-7 text-white" />
+            </div>
+            <div>
+              <div className="flex items-center space-x-2">
+                <h1 className="text-2xl font-bold">Invite Dashboard</h1>
+                <span className="text-xs bg-white/20 px-2 py-1 rounded-full">Cox Automotive</span>
+              </div>
+              <p className="text-cox-blue-100 mt-1">Service Marketing Campaign Performance • Powered by Xtime</p>
+            </div>
           </div>
           <div className="flex items-center space-x-3">
             <div className="text-right">
@@ -272,14 +281,14 @@ export default function InviteDashboard() {
         <KPICard
           title="Emails Sent"
           value={summary.totalEmails}
-          change={enhancedKPIData?.emails_sent_change || 11.2}
+          change={enhancedKPIData?.emails_sent_change ?? 0}
           changeLabel="vs last month"
           icon={<EnvelopeIcon className="w-6 h-6 text-blue-500" />}
         />
         <KPICard
           title="Unique Opens"
           value={summary.totalOpens}
-          change={enhancedKPIData?.opens_change || 8.5}
+          change={enhancedKPIData?.opens_change ?? 0}
           changeLabel="vs last month"
           icon={<EyeIcon className="w-6 h-6 text-green-500" />}
         />
@@ -287,14 +296,14 @@ export default function InviteDashboard() {
           title="Open Rate"
           value={avgOpenRate}
           format="percent"
-          change={enhancedKPIData?.open_rate_change || 2.3}
+          change={enhancedKPIData?.open_rate_change ?? 0}
           changeLabel="vs last month"
           icon={<DocumentTextIcon className="w-6 h-6 text-purple-500" />}
         />
         <KPICard
           title="Repair Orders"
           value={summary.totalROs}
-          change={enhancedKPIData?.ro_count_change || 5.8}
+          change={enhancedKPIData?.ro_count_change ?? 0}
           changeLabel="vs last month"
           icon={<WrenchScrewdriverIcon className="w-6 h-6 text-orange-500" />}
         />
@@ -302,7 +311,7 @@ export default function InviteDashboard() {
           title="Revenue"
           value={summary.totalRevenue}
           format="currency"
-          change={enhancedKPIData?.revenue_change || 9.3}
+          change={enhancedKPIData?.revenue_change ?? 0}
           changeLabel="vs last month"
           icon={<CurrencyDollarIcon className="w-6 h-6 text-emerald-500" />}
         />
@@ -325,31 +334,101 @@ export default function InviteDashboard() {
             </div>
           </div>
           <div className="h-72">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={filteredData.slice(0, 10)} layout="vertical">
-                <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} />
-                <XAxis
-                  type="number"
-                  tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`}
-                />
-                <YAxis
-                  dataKey="campaign_name"
-                  type="category"
-                  width={140}
-                  tick={{ fontSize: 11 }}
-                />
-                <Tooltip
-                  formatter={(value: number) =>
-                    new Intl.NumberFormat('en-US', {
-                      style: 'currency',
-                      currency: 'USD',
-                    }).format(value)
-                  }
-                  labelStyle={{ fontWeight: 'bold' }}
-                />
-                <Bar dataKey="revenue" fill="#3b82f6" radius={[0, 4, 4, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
+            {filteredData && filteredData.length > 0 ? (
+              <ResponsiveContainer width="100%" height="100%">
+                {topProgramsChartType === 'bar' ? (
+                  <BarChart data={filteredData.slice(0, 10)} layout="vertical">
+                    <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} />
+                    <XAxis
+                      type="number"
+                      tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`}
+                    />
+                    <YAxis
+                      dataKey="campaign_name"
+                      type="category"
+                      width={140}
+                      tick={{ fontSize: 11 }}
+                    />
+                    <Tooltip
+                      formatter={(value: number) =>
+                        new Intl.NumberFormat('en-US', {
+                          style: 'currency',
+                          currency: 'USD',
+                        }).format(value)
+                      }
+                      labelStyle={{ fontWeight: 'bold' }}
+                    />
+                    <Bar dataKey="revenue" fill="#3b82f6" radius={[0, 4, 4, 0]} />
+                  </BarChart>
+                ) : topProgramsChartType === 'pie' ? (
+                  <PieChart>
+                    <Pie
+                      data={filteredData.slice(0, 10)}
+                      cx="50%"
+                      cy="50%"
+                      labelLine={false}
+                      label={({ campaign_name, percent }) => `${campaign_name.substring(0, 15)} (${(percent * 100).toFixed(0)}%)`}
+                      outerRadius={100}
+                      fill="#8884d8"
+                      dataKey="revenue"
+                    >
+                      {filteredData.slice(0, 10).map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={CATEGORY_COLORS[index % CATEGORY_COLORS.length]} />
+                      ))}
+                    </Pie>
+                    <Tooltip
+                      formatter={(value: number) =>
+                        new Intl.NumberFormat('en-US', {
+                          style: 'currency',
+                          currency: 'USD',
+                        }).format(value)
+                      }
+                    />
+                  </PieChart>
+                ) : topProgramsChartType === 'line' ? (
+                  <LineChart data={filteredData.slice(0, 10)}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="campaign_name" angle={-45} textAnchor="end" height={100} />
+                    <YAxis
+                      tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`}
+                    />
+                    <Tooltip
+                      formatter={(value: number) =>
+                        new Intl.NumberFormat('en-US', {
+                          style: 'currency',
+                          currency: 'USD',
+                        }).format(value)
+                      }
+                    />
+                    <Line type="monotone" dataKey="revenue" stroke="#3b82f6" strokeWidth={2} />
+                  </LineChart>
+                ) : (
+                  <BarChart data={filteredData.slice(0, 10)}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="campaign_name" angle={-45} textAnchor="end" height={100} />
+                    <YAxis
+                      tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`}
+                    />
+                    <Tooltip
+                      formatter={(value: number) =>
+                        new Intl.NumberFormat('en-US', {
+                          style: 'currency',
+                          currency: 'USD',
+                        }).format(value)
+                      }
+                    />
+                    <Bar dataKey="revenue" fill="#3b82f6" />
+                  </BarChart>
+                )}
+              </ResponsiveContainer>
+            ) : (
+              <div className="flex items-center justify-center h-full text-gray-400">
+                <div className="text-center">
+                  <ChartBarIcon className="w-12 h-12 mx-auto mb-2 opacity-50" />
+                  <p>No data available</p>
+                </div>
+              </div>
+            )}
           </div>
         </div>
 
@@ -357,33 +436,104 @@ export default function InviteDashboard() {
         <div className="col-span-5 bg-white rounded-lg border border-gray-200 p-6">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">Revenue by Category</h3>
           <div className="h-72">
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie
-                  data={categoryBreakdown}
-                  cx="50%"
-                  cy="45%"
-                  innerRadius={50}
-                  outerRadius={80}
-                  paddingAngle={2}
-                  dataKey="value"
-                  label={({ name, percent }) => `${name} (${(percent * 100).toFixed(0)}%)`}
-                  labelLine={false}
-                >
-                  {categoryBreakdown.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.color} />
-                  ))}
-                </Pie>
-                <Tooltip
-                  formatter={(value: number) =>
-                    new Intl.NumberFormat('en-US', {
-                      style: 'currency',
-                      currency: 'USD',
-                    }).format(value)
-                  }
-                />
-              </PieChart>
-            </ResponsiveContainer>
+            {categoryBreakdown && categoryBreakdown.length > 0 ? (
+              <ResponsiveContainer width="100%" height="100%">
+                {categoryChartType === 'pie' ? (
+                  <PieChart>
+                    <Pie
+                      data={categoryBreakdown}
+                      cx="50%"
+                      cy="45%"
+                      innerRadius={50}
+                      outerRadius={80}
+                      paddingAngle={2}
+                      dataKey="value"
+                      label={({ name, percent }) => `${name} (${(percent * 100).toFixed(0)}%)`}
+                      labelLine={false}
+                    >
+                      {categoryBreakdown.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.color} />
+                      ))}
+                    </Pie>
+                    <Tooltip
+                      formatter={(value: number) =>
+                        new Intl.NumberFormat('en-US', {
+                          style: 'currency',
+                          currency: 'USD',
+                        }).format(value)
+                      }
+                    />
+                  </PieChart>
+                ) : categoryChartType === 'bar' ? (
+                  <BarChart data={categoryBreakdown}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="name" />
+                    <YAxis
+                      tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`}
+                    />
+                    <Tooltip
+                      formatter={(value: number) =>
+                        new Intl.NumberFormat('en-US', {
+                          style: 'currency',
+                          currency: 'USD',
+                        }).format(value)
+                      }
+                    />
+                    <Bar dataKey="value" fill="#3b82f6" />
+                  </BarChart>
+                ) : categoryChartType === 'line' ? (
+                  <LineChart data={categoryBreakdown}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="name" />
+                    <YAxis
+                      tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`}
+                    />
+                    <Tooltip
+                      formatter={(value: number) =>
+                        new Intl.NumberFormat('en-US', {
+                          style: 'currency',
+                          currency: 'USD',
+                        }).format(value)
+                      }
+                    />
+                    <Line type="monotone" dataKey="value" stroke="#3b82f6" strokeWidth={2} />
+                  </LineChart>
+                ) : (
+                  <PieChart>
+                    <Pie
+                      data={categoryBreakdown}
+                      cx="50%"
+                      cy="45%"
+                      innerRadius={50}
+                      outerRadius={80}
+                      paddingAngle={2}
+                      dataKey="value"
+                      label={({ name, percent }) => `${name} (${(percent * 100).toFixed(0)}%)`}
+                      labelLine={false}
+                    >
+                      {categoryBreakdown.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.color} />
+                      ))}
+                    </Pie>
+                    <Tooltip
+                      formatter={(value: number) =>
+                        new Intl.NumberFormat('en-US', {
+                          style: 'currency',
+                          currency: 'USD',
+                        }).format(value)
+                      }
+                    />
+                  </PieChart>
+                )}
+              </ResponsiveContainer>
+            ) : (
+              <div className="flex items-center justify-center h-full text-gray-400">
+                <div className="text-center">
+                  <ChartBarIcon className="w-12 h-12 mx-auto mb-2 opacity-50" />
+                  <p>No data available</p>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -393,22 +543,50 @@ export default function InviteDashboard() {
         <div className="col-span-4 bg-white rounded-lg border border-gray-200 p-6">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">Channel Performance</h3>
           <div className="flex justify-around items-center">
-            <GaugeChart value={isNaN(avgOpenRate) ? 30 : Math.round(avgOpenRate)} label="Email" color="#3b82f6" />
-            <GaugeChart value={65} label="SMS" color="#f97316" />
-            <GaugeChart value={42} label="Direct Mail" color="#10b981" />
+            <GaugeChart 
+              value={isNaN(avgOpenRate) ? 30 : Math.round(avgOpenRate)} 
+              label="Email" 
+              color="#3b82f6" 
+            />
+            <GaugeChart 
+              value={inviteData?.channel_performance?.sms?.open_rate 
+                ? Math.round(inviteData.channel_performance.sms.open_rate) 
+                : 0} 
+              label="SMS" 
+              color="#f97316" 
+            />
+            <GaugeChart 
+              value={inviteData?.channel_performance?.direct_mail?.open_rate 
+                ? Math.round(inviteData.channel_performance.direct_mail.open_rate) 
+                : 0} 
+              label="Direct Mail" 
+              color="#10b981" 
+            />
           </div>
           <div className="mt-4 grid grid-cols-3 gap-2 text-center text-xs text-gray-500">
             <div>
-              <p className="font-medium text-gray-900">{summary.totalEmails.toLocaleString()}</p>
-              <p>Sent</p>
+              <p className="font-medium text-gray-900">
+                {inviteData?.channel_performance?.email?.total_sent 
+                  ? inviteData.channel_performance.email.total_sent.toLocaleString() 
+                  : summary.totalEmails.toLocaleString()}
+              </p>
+              <p>Email Sent</p>
             </div>
             <div>
-              <p className="font-medium text-gray-900">8,542</p>
-              <p>Sent</p>
+              <p className="font-medium text-gray-900">
+                {inviteData?.channel_performance?.sms?.total_sent 
+                  ? inviteData.channel_performance.sms.total_sent.toLocaleString() 
+                  : 'N/A'}
+              </p>
+              <p>SMS Sent</p>
             </div>
             <div>
-              <p className="font-medium text-gray-900">4,218</p>
-              <p>Sent</p>
+              <p className="font-medium text-gray-900">
+                {inviteData?.channel_performance?.direct_mail?.total_sent 
+                  ? inviteData.channel_performance.direct_mail.total_sent.toLocaleString() 
+                  : 'N/A'}
+              </p>
+              <p>Direct Mail Sent</p>
             </div>
           </div>
         </div>
@@ -417,26 +595,54 @@ export default function InviteDashboard() {
         <div className="col-span-8 bg-white rounded-lg border border-gray-200 p-6">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">Performance Highlights</h3>
           <div className="grid grid-cols-4 gap-4">
-            <div className="bg-blue-50 rounded-lg p-4">
-              <p className="text-sm text-blue-600 font-medium">Best Performing</p>
-              <p className="text-lg font-bold text-gray-900 mt-1">1st Service Due</p>
-              <p className="text-sm text-gray-500">32% open rate</p>
-            </div>
-            <div className="bg-green-50 rounded-lg p-4">
-              <p className="text-sm text-green-600 font-medium">Highest Revenue</p>
-              <p className="text-lg font-bold text-gray-900 mt-1">Oil Change</p>
-              <p className="text-sm text-gray-500">$26,700 generated</p>
-            </div>
-            <div className="bg-purple-50 rounded-lg p-4">
-              <p className="text-sm text-purple-600 font-medium">Most ROs</p>
-              <p className="text-lg font-bold text-gray-900 mt-1">Oil Change</p>
-              <p className="text-sm text-gray-500">125 repair orders</p>
-            </div>
-            <div className="bg-orange-50 rounded-lg p-4">
-              <p className="text-sm text-orange-600 font-medium">Avg RO Value</p>
-              <p className="text-lg font-bold text-gray-900 mt-1">$183.42</p>
-              <p className="text-sm text-gray-500">+5.2% vs last month</p>
-            </div>
+            {campaignPerformanceData.length > 0 ? (
+              <>
+                {(() => {
+                  const bestOpenRate = [...campaignPerformanceData].sort((a, b) => (b.open_rate || 0) - (a.open_rate || 0))[0];
+                  const highestRevenue = [...campaignPerformanceData].sort((a, b) => (b.revenue || 0) - (a.revenue || 0))[0];
+                  const mostROs = [...campaignPerformanceData].sort((a, b) => (b.ro_count || 0) - (a.ro_count || 0))[0];
+                  const avgROValue = summary.totalROs > 0 ? summary.totalRevenue / summary.totalROs : 0;
+                  // Use real data from enhanced KPI, fallback to calculated change if available
+                  const roValueChange = enhancedKPIData?.ro_count_change ?? 
+                    (enhancedKPIData?.revenue_change ?? 0);
+                  
+                  return (
+                    <>
+                      <div className="bg-blue-50 rounded-lg p-4">
+                        <p className="text-sm text-blue-600 font-medium">Best Performing</p>
+                        <p className="text-lg font-bold text-gray-900 mt-1">{bestOpenRate?.campaign_name || 'N/A'}</p>
+                        <p className="text-sm text-gray-500">{bestOpenRate?.open_rate?.toFixed(1) || 0}% open rate</p>
+                      </div>
+                      <div className="bg-green-50 rounded-lg p-4">
+                        <p className="text-sm text-green-600 font-medium">Highest Revenue</p>
+                        <p className="text-lg font-bold text-gray-900 mt-1">{highestRevenue?.campaign_name || 'N/A'}</p>
+                        <p className="text-sm text-gray-500">${(highestRevenue?.revenue || 0).toLocaleString()} generated</p>
+                      </div>
+                      <div className="bg-purple-50 rounded-lg p-4">
+                        <p className="text-sm text-purple-600 font-medium">Most ROs</p>
+                        <p className="text-lg font-bold text-gray-900 mt-1">{mostROs?.campaign_name || 'N/A'}</p>
+                        <p className="text-sm text-gray-500">{mostROs?.ro_count || 0} repair orders</p>
+                      </div>
+                      <div className="bg-orange-50 rounded-lg p-4">
+                        <p className="text-sm text-orange-600 font-medium">Avg RO Value</p>
+                        <p className="text-lg font-bold text-gray-900 mt-1">${avgROValue.toFixed(2)}</p>
+                        <p className="text-sm text-gray-500">
+                          {roValueChange !== 0 
+                            ? `${roValueChange > 0 ? '+' : ''}${roValueChange.toFixed(1)}% vs last month`
+                            : enhancedKPIData?.revenue_change !== undefined
+                              ? `${enhancedKPIData.revenue_change > 0 ? '+' : ''}${enhancedKPIData.revenue_change.toFixed(1)}% vs last month`
+                              : 'No change'}
+                        </p>
+                      </div>
+                    </>
+                  );
+                })()}
+              </>
+            ) : (
+              <div className="col-span-4 text-center text-gray-400 py-4">
+                No performance data available
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -498,6 +704,12 @@ export default function InviteDashboard() {
           highlightRow={(row) => Number(row.open_rate) > 30}
         />
       </div>
+
+      {/* Floating Chat Bot */}
+      <FloatingChatBot 
+        pageContext={chartContext}
+        onChartUpdate={handleChartUpdate}
+      />
     </div>
   );
 }

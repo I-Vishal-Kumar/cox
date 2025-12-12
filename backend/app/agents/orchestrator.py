@@ -8,7 +8,7 @@ backward compatibility with the existing API.
 
 from typing import Dict, Any, Optional, List
 from langchain_core.prompts import ChatPromptTemplate
-from langchain_openai import ChatOpenAI
+from langchain_anthropic import ChatAnthropic
 from app.agents.base_agent import BaseAgent
 from app.agents.sql_agent import SQLAgent, DEMO_QUERIES
 from app.agents.kpi_agent import KPIAgent, RootCauseAnalyzer
@@ -80,13 +80,12 @@ class AnalyticsOrchestrator:
         self.rca_analyzer = RootCauseAnalyzer(self.kpi_agent)
 
         # LLM for final response synthesis
-        self.llm = ChatOpenAI(
-            model=settings.openrouter_model,
-            temperature=0.3,
-            api_key=settings.openrouter_api_key,
-            base_url=settings.openrouter_base_url
+        self.llm = ChatAnthropic(
+            model=settings.anthropic_model,
+            temperature=0.2,
+            api_key=settings.anthropic_api_key
         )
-
+    
     async def process_query(
         self,
         query: str,

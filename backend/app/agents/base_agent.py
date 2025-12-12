@@ -2,7 +2,7 @@
 
 from abc import ABC, abstractmethod
 from typing import Dict, Any, Optional
-from langchain_openai import ChatOpenAI
+from langchain_anthropic import ChatAnthropic
 from langchain_core.prompts import ChatPromptTemplate
 from app.core.config import settings
 
@@ -11,11 +11,10 @@ class BaseAgent(ABC):
     """Base class for all AI agents."""
 
     def __init__(self, model_name: Optional[str] = None):
-        self.llm = ChatOpenAI(
-            model=model_name or settings.openrouter_model,
-            temperature=0,
-            api_key=settings.openrouter_api_key,
-            base_url=settings.openrouter_base_url
+        self.llm = ChatAnthropic(
+            model=settings.anthropic_model,
+            temperature=0.2,
+            api_key=settings.anthropic_api_key
         )
 
     @abstractmethod

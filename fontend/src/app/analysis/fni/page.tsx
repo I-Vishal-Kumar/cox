@@ -107,7 +107,7 @@ export default function FNIAnalysisPage() {
     <div className="flex flex-col h-screen">
       <Header
         title="F&I Analysis"
-        subtitle="Finance & Insurance revenue and penetration analysis"
+        subtitle="Cox Automotive • Finance & Insurance revenue and penetration analysis"
       />
       <div className="flex-1 p-6 overflow-auto space-y-6">
         {isLoading ? (

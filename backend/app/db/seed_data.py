@@ -7,11 +7,12 @@ Creates realistic data with clear cause-and-effect scenarios for the three demo 
 """
 
 import random
+import json
 from datetime import datetime, timedelta, date
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.db.models import (
     Dealer, FNITransaction, Shipment, Plant, PlantDowntime,
-    MarketingCampaign, ServiceAppointment, KPIMetric
+    MarketingCampaign, ServiceAppointment, KPIMetric, RepairOrder, Customer
 )
 
 random.seed(42)  # For reproducibility
@@ -351,11 +352,30 @@ async def seed_marketing_campaigns(session: AsyncSession, dealers: list):
                 avg_ro_value = random.uniform(150, 450)
                 revenue = ro_count * avg_ro_value
 
+                # Vary category (Email, SMS, Direct Mail) for channel performance
+                # 70% Email, 20% SMS, 10% Direct Mail
+                category_roll = random.random()
+                if category_roll < 0.7:
+                    channel_category = "Email"
+                elif category_roll < 0.9:
+                    channel_category = "SMS"
+                else:
+                    channel_category = "Direct Mail"
+                
+                # Adjust open rates by channel (SMS typically higher, Direct Mail lower)
+                if channel_category == "SMS":
+                    open_rate = random.uniform(0.25, 0.45)  # Higher for SMS
+                    unique_opens = int(base_emails * open_rate)
+                elif channel_category == "Direct Mail":
+                    open_rate = random.uniform(0.10, 0.20)  # Lower for Direct Mail
+                    unique_opens = int(base_emails * open_rate)
+                # Email uses the original open_rate
+
                 campaign = MarketingCampaign(
                     dealer_id=dealer.id,
                     campaign_name=campaign_name,
                     campaign_type=category,
-                    category="Email",
+                    category=channel_category,
                     send_date=date(2024 if month_idx > current_month_idx else 2025, month_idx + 1, 15),
                     emails_sent=base_emails,
                     unique_opens=unique_opens,
@@ -429,6 +449,345 @@ async def seed_kpi_metrics(session: AsyncSession, dealers: list):
     await session.commit()
 
 
+async def seed_repair_orders(session: AsyncSession, dealers: list):
+    """Seed repair order data for inspection dashboard."""
+    customers = [
+        'Miramar', 'Johansen', 'Gorinstein', 'Thompson', 'Antoine', 'Miller',
+        'Walker', 'Pashkin', 'Hertz', 'Shen', 'Smith', 'Johnson', 'Williams',
+        'Brown', 'Jones', 'Garcia', 'Davis', 'Rodriguez', 'Martinez', 'Wilson'
+    ]
+    advisors = ['101', '102', '103', '104', '105']
+    technicians = ['201', '202', '203', '204', '205', '343']
+    tags = ['A', 'B', 'C', 'D', 'E']
+    priorities = ['1', '2', '3', '4', '5']
+    ro_types = ['Standard', 'Express', 'Warranty']
+    shop_types = ['Service', 'Body Shop', 'Quick Service']
+    
+    today = date.today()
+    base_ro = 6149700
+    
+    # Status distribution matching the UI
+    status_counts = {
+        'awaiting_dispatch': 28,
+        'in_inspection': 3,
+        'pending_approval': 20,
+        'in_repair': 7,
+        'pending_review': 3
+    }
+    
+    ro_counter = 0
+    
+    for status, count in status_counts.items():
+        for i in range(count):
+            ro_number = str(base_ro + ro_counter)
+            ro_counter += 1
+            
+            # Calculate promised date (some in past, some today, some future)
+            if i < count // 3:
+                promised_date = today - timedelta(days=random.randint(1, 7))
+            elif i < 2 * count // 3:
+                promised_date = today
+            else:
+                promised_date = today + timedelta(days=random.randint(1, 3))
+            
+            # Generate promised time
+            if i < 5:
+                promised_time = '8:00 pm'
+            elif i < 10:
+                promised_time = 'W 12:00 am'
+            else:
+                promised_time = f'W {random.choice(["6:00 pm", "8:00 pm", "12:00 am"])}'
+            
+            # Generate metric time
+            if status == 'in_inspection':
+                metric_time = f'00:{random.randint(0, 30):02d}'
+            else:
+                metric_time = f'{random.randint(0, 3)}:{random.randint(0, 59):02d}'
+            
+            # Process time
+            if status == 'pending_approval' and i > 10:
+                process_days = random.randint(20, 30)  # Overdue
+            elif status == 'pending_approval' and i < 5:
+                process_days = random.randint(1, 5)  # Urgent
+            else:
+                process_days = random.randint(1, 15)
+            
+            # Determine if overdue/urgent
+            is_overdue = status == 'pending_approval' and i > 10
+            is_urgent = status == 'pending_approval' and i < 5 and not is_overdue
+            
+            ro = RepairOrder(
+                ro_number=ro_number,
+                dealer_id=random.choice(dealers).id if dealers else None,
+                priority=random.choice(priorities),
+                tag=random.choice(tags),
+                promised_date=promised_date,
+                promised_time=promised_time,
+                indicator='',
+                customer_name=random.choice(customers),
+                advisor_id=random.choice(advisors),
+                technician_id=random.choice(technicians) if status != 'in_inspection' else '343',
+                metric_time=metric_time,
+                process_time_days=process_days,
+                status=status,
+                ro_type=random.choice(ro_types),
+                shop_type=random.choice(shop_types),
+                waiter=random.choice(['Yes', 'No']),
+                is_overdue=is_overdue,
+                is_urgent=is_urgent
+            )
+            session.add(ro)
+    
+    await session.commit()
+
+
+async def seed_customers(session: AsyncSession):
+    """Seed customer data for Engage/Customer Experience Management."""
+    import json
+    
+    customers_data = [
+        {
+            "customer_name": "SHARON PITCHFORTH",
+            "phone": "(555) 123-4567",
+            "email": "sharon.p@email.com",
+            "loyalty_tier": "Gold",
+            "preferred_services": json.dumps(["Oil Change", "Tire Rotation"]),
+            "service_history_count": 12,
+            "last_visit_date": date(2024, 5, 15),
+        },
+        {
+            "customer_name": "ROBERT THACKER",
+            "phone": "(555) 234-5678",
+            "email": "r.thacker@email.com",
+            "loyalty_tier": "Platinum",
+            "preferred_services": json.dumps(["Full Service", "Brake Inspection"]),
+            "service_history_count": 28,
+            "last_visit_date": date(2024, 6, 1),
+        },
+        {
+            "customer_name": "Richard Webb",
+            "phone": "(555) 345-6789",
+            "email": "r.webb@email.com",
+            "loyalty_tier": "Silver",
+            "preferred_services": json.dumps(["Quick Service"]),
+            "service_history_count": 5,
+            "last_visit_date": date(2024, 4, 20),
+        },
+        {
+            "customer_name": "John Smith",
+            "phone": "(555) 456-7890",
+            "email": "j.smith@email.com",
+            "loyalty_tier": "Gold",
+            "preferred_services": json.dumps(["Oil Change", "Tire Service"]),
+            "service_history_count": 8,
+            "last_visit_date": date(2024, 5, 10),
+        },
+        {
+            "customer_name": "Sarah Johnson",
+            "phone": "(555) 567-8901",
+            "email": "s.johnson@email.com",
+            "loyalty_tier": "Silver",
+            "preferred_services": json.dumps(["Quick Service"]),
+            "service_history_count": 3,
+            "last_visit_date": date(2024, 3, 15),
+        },
+        {
+            "customer_name": "Michael Brown",
+            "phone": "(555) 678-9012",
+            "email": "m.brown@email.com",
+            "loyalty_tier": "Gold",
+            "preferred_services": json.dumps(["Full Service", "Diagnostics"]),
+            "service_history_count": 15,
+            "last_visit_date": date(2024, 5, 25),
+        },
+        {
+            "customer_name": "Jordan Najar",
+            "phone": "(555) 789-0123",
+            "email": "j.najar@email.com",
+            "loyalty_tier": "Silver",
+            "preferred_services": json.dumps(["Regular Maintenance"]),
+            "service_history_count": 6,
+            "last_visit_date": date(2024, 4, 30),
+        },
+        {
+            "customer_name": "Jonathon Brown",
+            "phone": "(555) 890-1234",
+            "email": "j.brown@email.com",
+            "loyalty_tier": "Gold",
+            "preferred_services": json.dumps(["Full Service", "Oil Change"]),
+            "service_history_count": 10,
+            "last_visit_date": date(2024, 5, 20),
+        },
+    ]
+    
+    customers = []
+    for cust_data in customers_data:
+        customer = Customer(**cust_data)
+        session.add(customer)
+        customers.append(customer)
+    
+    await session.commit()
+    return customers
+
+
+async def seed_service_appointments(session: AsyncSession, dealers: list, customers: list):
+    """Seed service appointment data for Engage page."""
+    today = date.today()
+    
+    # Map customer names to customer objects
+    customer_map = {c.customer_name: c for c in customers} if customers else {}
+    
+    appointments_data = [
+        {
+            "dealer_id": dealers[0].id if dealers else None,
+            "customer_id": customer_map.get("SHARON PITCHFORTH").id if customer_map.get("SHARON PITCHFORTH") else None,
+            "appointment_date": today,
+            "appointment_time": "7:00 AM",
+            "service_type": "Regular Maintenance",
+            "estimated_duration": "45 min",
+            "vehicle_vin": "pbfrik",
+            "vehicle_year": 2017,
+            "vehicle_make": "SPARK",
+            "vehicle_model": "",
+            "vehicle_mileage": "",
+            "vehicle_icon_color": "blue",
+            "customer_name": "SHARON PITCHFORTH",
+            "advisor": "Jonathon Brown",
+            "status": "not_arrived",
+        },
+        {
+            "dealer_id": dealers[0].id if dealers else None,
+            "customer_id": customer_map.get("ROBERT THACKER").id if customer_map.get("ROBERT THACKER") else None,
+            "appointment_date": today,
+            "appointment_time": "7:30 AM",
+            "service_type": "Full Service",
+            "estimated_duration": "2 hours",
+            "vehicle_vin": "1C4RJEBG3FC167293",
+            "vehicle_year": 2015,
+            "vehicle_make": "GRAND CHEROKEE",
+            "vehicle_model": "",
+            "vehicle_mileage": "35,000 mi",
+            "vehicle_icon_color": "red",
+            "customer_name": "ROBERT THACKER",
+            "advisor": "Thackadvisor",
+            "status": "checked_in",
+            "ro_number": "RO 16083019",
+        },
+        {
+            "dealer_id": dealers[0].id if dealers else None,
+            "customer_id": customer_map.get("ROBERT THACKER").id if customer_map.get("ROBERT THACKER") else None,
+            "appointment_date": today,
+            "appointment_time": "7:30 AM",
+            "service_type": "Warranty Service",
+            "estimated_duration": "1.5 hours",
+            "vehicle_vin": "JM3KKDHA7R1106564",
+            "vehicle_year": 2024,
+            "vehicle_make": "CX-90",
+            "vehicle_model": "",
+            "vehicle_mileage": "5,000 mi",
+            "vehicle_icon_color": "red",
+            "customer_name": "ROBERT THACKER",
+            "advisor": "Thackadvisor",
+            "status": "checked_in",
+            "ro_number": "RO 16083020",
+        },
+        {
+            "dealer_id": dealers[0].id if dealers else None,
+            "customer_id": customer_map.get("Richard Webb").id if customer_map.get("Richard Webb") else None,
+            "appointment_date": today,
+            "appointment_time": "9:30 AM",
+            "service_type": "Quick Service",
+            "estimated_duration": "30 min",
+            "vehicle_vin": "1GK51BKDXN251097",
+            "vehicle_year": 2022,
+            "vehicle_make": "YUKON",
+            "vehicle_model": "",
+            "vehicle_mileage": "",
+            "vehicle_icon_color": "gray",
+            "customer_name": "Richard Webb",
+            "advisor": "Jordan Najar",
+            "status": "not_arrived",
+        },
+        {
+            "dealer_id": dealers[0].id if dealers else None,
+            "customer_id": customer_map.get("ROBERT THACKER").id if customer_map.get("ROBERT THACKER") else None,
+            "appointment_date": today,
+            "appointment_time": "11:30 AM",
+            "service_type": "Performance Service",
+            "estimated_duration": "3 hours",
+            "vehicle_vin": "JF1VA2V63K9808259",
+            "vehicle_year": 2019,
+            "vehicle_make": "WRX STI",
+            "vehicle_model": "",
+            "vehicle_mileage": "7 mi",
+            "vehicle_icon_color": "blue",
+            "customer_name": "ROBERT THACKER",
+            "advisor": "Thackadvisor",
+            "code": "T500",
+            "status": "in_progress",
+            "ro_number": "RO 16083019",
+        },
+        {
+            "dealer_id": dealers[0].id if dealers else None,
+            "customer_id": customer_map.get("John Smith").id if customer_map.get("John Smith") else None,
+            "appointment_date": today,
+            "appointment_time": "1:15 PM",
+            "service_type": "Regular Maintenance",
+            "estimated_duration": "1 hour",
+            "vehicle_vin": "1FTFW1E50MFC12345",
+            "vehicle_year": 2023,
+            "vehicle_make": "F-150",
+            "vehicle_model": "",
+            "vehicle_mileage": "12,000 mi",
+            "vehicle_icon_color": "blue",
+            "customer_name": "John Smith",
+            "advisor": "Thackadvisor",
+            "status": "not_arrived",
+        },
+        {
+            "dealer_id": dealers[0].id if dealers else None,
+            "customer_id": customer_map.get("Sarah Johnson").id if customer_map.get("Sarah Johnson") else None,
+            "appointment_date": today,
+            "appointment_time": "2:00 PM",
+            "service_type": "Quick Service",
+            "estimated_duration": "45 min",
+            "vehicle_vin": "4T1B11HK5MU123456",
+            "vehicle_year": 2021,
+            "vehicle_make": "CAMRY",
+            "vehicle_model": "",
+            "vehicle_mileage": "28,000 mi",
+            "vehicle_icon_color": "gray",
+            "customer_name": "Sarah Johnson",
+            "advisor": "Jordan Najar",
+            "status": "not_arrived",
+        },
+        {
+            "dealer_id": dealers[0].id if dealers else None,
+            "customer_id": customer_map.get("Michael Brown").id if customer_map.get("Michael Brown") else None,
+            "appointment_date": today,
+            "appointment_time": "3:30 PM",
+            "service_type": "Full Service",
+            "estimated_duration": "2.5 hours",
+            "vehicle_vin": "1GCVKREC0LZ123456",
+            "vehicle_year": 2020,
+            "vehicle_make": "SILVERADO",
+            "vehicle_model": "",
+            "vehicle_mileage": "45,000 mi",
+            "vehicle_icon_color": "red",
+            "customer_name": "Michael Brown",
+            "advisor": "Thackadvisor",
+            "status": "checked_in",
+            "ro_number": "RO 16083021",
+        },
+    ]
+    
+    for apt_data in appointments_data:
+        appointment = ServiceAppointment(**apt_data)
+        session.add(appointment)
+    
+    await session.commit()
+
+
 async def seed_all(session: AsyncSession):
     """Run all seed functions."""
     print("Seeding dealers...")
@@ -448,5 +807,14 @@ async def seed_all(session: AsyncSession):
 
     print("Seeding KPI metrics...")
     await seed_kpi_metrics(session, dealers)
+
+    print("Seeding repair orders...")
+    await seed_repair_orders(session, dealers)
+
+    print("Seeding customers...")
+    customers = await seed_customers(session)
+
+    print("Seeding service appointments...")
+    await seed_service_appointments(session, dealers, customers)
 
     print("✓ All seed data created successfully!")

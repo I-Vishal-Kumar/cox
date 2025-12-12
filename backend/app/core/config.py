@@ -1,7 +1,9 @@
 from pydantic_settings import BaseSettings
 from typing import List
 import json
-
+import dotenv
+import os
+dotenv.load_dotenv()
 
 class Settings(BaseSettings):
     """Application settings."""
@@ -12,6 +14,8 @@ class Settings(BaseSettings):
     openrouter_api_key: str = ""
     openrouter_model: str = "openai/gpt-4"
     openrouter_base_url: str = "https://openrouter.ai/api/v1"
+    anthropic_api_key: str = os.getenv("ANTHROPIC_API_KEY")
+    anthropic_model: str = "claude-sonnet-4-5-20250929"
     
     # Demo mode (bypasses LLM for testing)
     demo_mode: bool = False

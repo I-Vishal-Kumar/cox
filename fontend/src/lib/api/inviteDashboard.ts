@@ -19,9 +19,22 @@ export interface InviteMonthlyData {
   revenue: number;
 }
 
+export interface ChannelPerformance {
+  open_rate: number;
+  total_sent: number;
+  total_opens: number;
+  ro_count: number;
+  revenue: number;
+}
+
 export interface InviteDashboardResponse {
   campaign_performance: InviteCampaignData[];
   monthly_trends: InviteMonthlyData[];
+  channel_performance?: {
+    email?: ChannelPerformance;
+    sms?: ChannelPerformance;
+    direct_mail?: ChannelPerformance;
+  };
   analysis_date: string;
 }
 
@@ -79,13 +92,30 @@ export const transformMonthlyData = (monthly: InviteMonthlyData) => ({
 });
 
 // Transform nested KPI response to flat structure
-export const transformKPIData = (kpiResponse: InviteKPIResponse): InviteKPIData => {
-  const current = kpiResponse.current_period;
-  const changes = kpiResponse.changes;
+export const transformKPIData = (kpiResponse: InviteKPIResponse | InviteKPIData): InviteKPIData => {
+  // If already flat structure, return as is
+  if ('total_emails_sent' in kpiResponse && 'emails_sent_change' in kpiResponse) {
+    return kpiResponse as InviteKPIData;
+  }
   
-  // Calculate derived metrics
-  const totalEmails = 35000; // Fallback estimate
+  // Transform nested structure
+  const nested = kpiResponse as InviteKPIResponse;
+  const current = nested.current_period;
+  const previous = nested.previous_period;
+  const changes = nested.changes;
+  
+  // Calculate derived metrics from actual data
+  // Note: These should ideally come from the backend, but we calculate from available data
+  const totalEmails = current.total_transactions * 10 || 0; // Estimate based on transactions
   const totalOpens = Math.round(totalEmails * (current.avg_penetration || 0.3));
+  
+  // Calculate actual changes from previous period
+  const emailsChange = previous.total_transactions > 0 
+    ? ((current.total_transactions - previous.total_transactions) / previous.total_transactions) * 100 
+    : 0;
+  const opensChange = previous.avg_penetration > 0
+    ? ((current.avg_penetration - previous.avg_penetration) / previous.avg_penetration) * 100
+    : 0;
   
   return {
     total_emails_sent: totalEmails,
@@ -93,8 +123,8 @@ export const transformKPIData = (kpiResponse: InviteKPIResponse): InviteKPIData 
     avg_open_rate: (current.avg_penetration || 0) * 100,
     total_ro_count: current.total_transactions || 0,
     total_revenue: current.total_revenue || 0,
-    emails_sent_change: 11.2, // Fallback
-    opens_change: 8.5, // Fallback
+    emails_sent_change: emailsChange,
+    opens_change: opensChange,
     open_rate_change: changes.penetration_change_pct || 0,
     ro_count_change: changes.transactions_change_pct || 0,
     revenue_change: changes.revenue_change_pct || 0,
@@ -119,9 +149,36 @@ const parseJSONResponse = (response: ChatResponse): any => {
 };
 
 export const inviteDashboardService = {
-  getInviteDashboard: (dateRange?: string): Promise<InviteDashboardResponse> => {
-    const params = dateRange ? `?date_range=${encodeURIComponent(dateRange)}` : '';
-    return apiClient.get(`/dashboard/invite${params}`);
+  getInviteDashboard: async (dateRange?: string): Promise<InviteDashboardResponse> => {
+    try {
+      const params = dateRange ? `?date_range=${encodeURIComponent(dateRange)}` : '';
+      const response = await apiClient.get(`/dashboard/invite${params}`);
+      
+      // Transform backend response to match frontend expectations
+      return {
+        campaign_performance: (response.program_performance || []).map((item: any) => ({
+          campaign_name: item.campaign_name,
+          category: item.category || item.campaign_type,
+          emails_sent: item.emails_sent || 0,
+          unique_opens: item.unique_opens || 0,
+          open_rate: item.open_rate || 0,
+          ro_count: item.ro_count || 0,
+          revenue: item.revenue || 0,
+        })),
+        monthly_trends: (response.monthly_metrics || []).map((item: any) => ({
+          month: item.month || '',
+          emails: item.emails_sent || 0,
+          opens: item.unique_opens || 0,
+          ro: item.ro_count || 0,
+          revenue: item.revenue || 0,
+        })),
+        channel_performance: response.channel_performance || {},
+        analysis_date: response.last_updated || new Date().toISOString(),
+      };
+    } catch (error) {
+      console.error('Error fetching invite dashboard:', error);
+      throw error;
+    }
   },
 
   getCampaignPerformance: async (filters?: {
@@ -159,7 +216,8 @@ export const inviteDashboardService = {
         console.log('Trying fallback: extracting from tool result...');
         campaignData = getToolResult(response, 'get_invite_campaign_data') || 
                        getToolResult(response, 'get_marketing_campaign_data') ||
-                       getToolResult(response, 'get_invite_dashboard_data');
+                       getToolResult(response, 'get_invite_dashboard_data') ||
+                       getToolResult(response, 'get_invite_campaign_performance');
       }
       
       console.log('Final campaign data:', campaignData);
@@ -195,7 +253,8 @@ export const inviteDashboardService = {
         console.log('Trying fallback: extracting from tool result...');
         trendsData = getToolResult(response, 'get_invite_monthly_trends') ||
                      getToolResult(response, 'get_marketing_monthly_trends') ||
-                     getToolResult(response, 'get_invite_dashboard_trends');
+                     getToolResult(response, 'get_invite_dashboard_trends') ||
+                     getToolResult(response, 'get_invite_campaign_monthly_trends');
       }
       
       console.log('Final trends data:', trendsData);
@@ -239,13 +298,18 @@ export const inviteDashboardService = {
         console.log('Trying fallback: extracting from tool result...');
         kpiData = getToolResult(response, 'get_invite_enhanced_kpi_data') ||
                   getToolResult(response, 'get_marketing_kpi_data') ||
-                  getToolResult(response, 'get_invite_dashboard_kpi');
+                  getToolResult(response, 'get_invite_dashboard_kpi') ||
+                  getToolResult(response, 'get_invite_kpi_data');
       }
       
       console.log('Final invite KPI data:', kpiData);
       
       if (kpiData && typeof kpiData === 'object') {
-        // Transform the nested response to flat structure
+        // Check if it's already in the flat format (from new tool)
+        if ('total_emails_sent' in kpiData && 'emails_sent_change' in kpiData) {
+          return kpiData as InviteKPIData;
+        }
+        // Transform the nested response to flat structure (old format)
         const transformedData = transformKPIData(kpiData as InviteKPIResponse);
         console.log('Transformed KPI data:', transformedData);
         return transformedData;

@@ -39,10 +39,13 @@ export default function Sidebar() {
       {/* Logo */}
       <div className="flex items-center h-16 px-4 border-b border-gray-200">
         <div className="flex items-center">
-          <div className="w-8 h-8 bg-cox-blue-600 rounded-lg flex items-center justify-center">
-            <span className="text-white font-bold text-sm">X</span>
+          <div className="w-10 h-10 bg-gradient-to-br from-cox-blue-600 to-cox-blue-800 rounded-lg flex items-center justify-center shadow-md">
+            <span className="text-white font-bold text-lg">CA</span>
           </div>
-          <span className="ml-2 text-lg font-semibold text-gray-900">xtime</span>
+          <div className="ml-3">
+            <div className="text-sm font-bold text-gray-900 leading-tight">Cox Automotive</div>
+            <div className="text-xs text-gray-500 leading-tight">AI Analytics</div>
+          </div>
         </div>
       </div>
 
@@ -104,14 +107,15 @@ export default function Sidebar() {
       </nav>
 
       {/* Footer */}
-      <div className="p-4 border-t border-gray-200">
+      <div className="p-4 border-t border-gray-200 bg-gray-50">
         <div className="flex items-center">
-          <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
-            <span className="text-gray-600 text-sm font-medium">AI</span>
+          <div className="w-8 h-8 bg-gradient-to-br from-cox-blue-600 to-cox-blue-800 rounded-lg flex items-center justify-center">
+            <span className="text-white text-xs font-bold">CA</span>
           </div>
-          <div className="ml-3">
-            <p className="text-sm font-medium text-gray-900">AI Analytics</p>
-            <p className="text-xs text-gray-500">Powered by GPT-4</p>
+          <div className="ml-3 flex-1">
+            <p className="text-xs font-semibold text-gray-900">Cox Automotive</p>
+            <p className="text-xs text-gray-500">AI Analytics Platform</p>
+            <p className="text-xs text-gray-400 mt-1">Powered by Xtime</p>
           </div>
         </div>
       </div>
