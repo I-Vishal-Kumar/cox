@@ -1,0 +1,19 @@
+{
+  "query_name": "variance_reports",
+  "category": "kpi_monitoring",
+  "description": "KPI variance summary by category",
+  "keywords": [
+    "variance",
+    "reports",
+    "deviation",
+    "alerts"
+  ],
+  "sql_query": "\n            SELECT \n                k.category,\n                COUNT(*) as total_metrics,\n                SUM(CASE WHEN ABS((k.metric_value - k.target_value) / k.target_value) > 0.15 THEN 1 ELSE 0 END) as critical_count,\n                SUM(CASE WHEN ABS((k.metric_value - k.target_value) / k.target_value) BETWEEN 0.05 AND 0.15 THEN 1 ELSE 0 END) as warning_count,\n                AVG(ABS((k.metric_value - k.target_value) / k.target_value)) * 100 as avg_variance_percent\n            FROM kpi_metrics k\n            WHERE k.metric_date >= date('now', '-1 day')\n            GROUP BY k.category\n            ORDER BY critical_count DESC, avg_variance_percent DESC\n            ",
+  "data": [],
+  "metadata": {
+    "generated_at": "2025-12-12T13:03:18.804328",
+    "row_count": 0,
+    "data_size_kb": 0.001953125
+  },
+  "chart_config": null
+}

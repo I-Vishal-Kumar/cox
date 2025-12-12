@@ -1,0 +1,135 @@
+{
+  "query_name": "repeat_repairs",
+  "category": "warranty_analysis",
+  "description": "Components with most repeat repairs",
+  "keywords": [
+    "repeat",
+    "repairs",
+    "components",
+    "quarter",
+    "most"
+  ],
+  "sql_query": "\n            SELECT \n                'Component_' || (ABS(RANDOM()) % 15 + 1) as component_name,\n                COUNT(*) as repair_count,\n                COUNT(DISTINCT 'Model_' || (ABS(RANDOM()) % 10 + 1)) as affected_models,\n                ROUND(AVG(RANDOM() * 10 + 1), 1) as avg_days_between_repairs,\n                CASE \n                    WHEN COUNT(*) > 50 THEN 'High Frequency'\n                    WHEN COUNT(*) > 20 THEN 'Medium Frequency'\n                    ELSE 'Low Frequency'\n                END as repair_frequency\n            FROM (\n                SELECT 1 as dummy_row\n                FROM sqlite_master \n                LIMIT 200  -- Generate sample repair data\n            )\n            GROUP BY component_name\n            ORDER BY repair_count DESC\n            LIMIT 20\n            ",
+  "data": [
+    {
+      "component_name": "Component_13",
+      "repair_count": 6,
+      "affected_models": 4,
+      "avg_days_between_repairs": 1.5823489038078335e+19,
+      "repair_frequency": "Low Frequency"
+    },
+    {
+      "component_name": "Component_13",
+      "repair_count": 5,
+      "affected_models": 3,
+      "avg_days_between_repairs": -5.1022101830351315e+19,
+      "repair_frequency": "Low Frequency"
+    },
+    {
+      "component_name": "Component_13",
+      "repair_count": 4,
+      "affected_models": 3,
+      "avg_days_between_repairs": 2.8233626587333673e+19,
+      "repair_frequency": "Low Frequency"
+    },
+    {
+      "component_name": "Component_6",
+      "repair_count": 4,
+      "affected_models": 4,
+      "avg_days_between_repairs": -4.100414278399017e+19,
+      "repair_frequency": "Low Frequency"
+    },
+    {
+      "component_name": "Component_3",
+      "repair_count": 4,
+      "affected_models": 3,
+      "avg_days_between_repairs": 4.356087564452595e+19,
+      "repair_frequency": "Low Frequency"
+    },
+    {
+      "component_name": "Component_12",
+      "repair_count": 3,
+      "affected_models": 3,
+      "avg_days_between_repairs": -3.2295369193857724e+19,
+      "repair_frequency": "Low Frequency"
+    },
+    {
+      "component_name": "Component_9",
+      "repair_count": 2,
+      "affected_models": 1,
+      "avg_days_between_repairs": -2.0396943790770258e+18,
+      "repair_frequency": "Low Frequency"
+    },
+    {
+      "component_name": "Component_14",
+      "repair_count": 2,
+      "affected_models": 2,
+      "avg_days_between_repairs": -5.730521687164764e+18,
+      "repair_frequency": "Low Frequency"
+    },
+    {
+      "component_name": "Component_2",
+      "repair_count": 2,
+      "affected_models": 2,
+      "avg_days_between_repairs": -1.1437163756028994e+19,
+      "repair_frequency": "Low Frequency"
+    },
+    {
+      "component_name": "Component_14",
+      "repair_count": 2,
+      "affected_models": 1,
+      "avg_days_between_repairs": 5.636638583791973e+19,
+      "repair_frequency": "Low Frequency"
+    },
+    {
+      "component_name": "Component_9",
+      "repair_count": 2,
+      "affected_models": 2,
+      "avg_days_between_repairs": -5.916663351653841e+19,
+      "repair_frequency": "Low Frequency"
+    },
+    {
+      "component_name": "Component_13",
+      "repair_count": 2,
+      "affected_models": 2,
+      "avg_days_between_repairs": -4.121966121575359e+19,
+      "repair_frequency": "Low Frequency"
+    },
+    {
+      "component_name": "Component_7",
+      "repair_count": 2,
+      "affected_models": 2,
+      "avg_days_between_repairs": -1.5299748045224399e+19,
+      "repair_frequency": "Low Frequency"
+    },
+    {
+      "component_name": "Component_1",
+      "repair_count": 1,
+      "affected_models": 1,
+      "avg_days_between_repairs": 9.764214097260048e+18,
+      "repair_frequency": "Low Frequency"
+    }
+  ],
+  "metadata": {
+    "generated_at": "2025-12-12T13:03:18.822542",
+    "row_count": 14,
+    "data_size_kb": 2.2646484375
+  },
+  "chart_config": {
+    "type": "bar",
+    "title": "Repeat Repairs",
+    "responsive": true,
+    "data": {
+      "labels": [],
+      "datasets": []
+    },
+    "options": {
+      "plugins": {
+        "title": {
+          "display": true,
+          "text": "Repeat Repairs"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "query_name": "health_scores",
+  "category": "kpi_monitoring",
+  "description": "Current KPI health scores and variances",
+  "keywords": [
+    "kpi",
+    "health",
+    "score",
+    "metrics",
+    "performance"
+  ],
+  "sql_query": "\n            SELECT \n                k.metric_name,\n                k.category,\n                k.metric_value as current_value,\n                k.target_value,\n                k.variance,\n                ROUND(((k.metric_value - k.target_value) / k.target_value) * 100, 2) as variance_percent,\n                CASE \n                    WHEN ABS((k.metric_value - k.target_value) / k.target_value) <= 0.05 THEN 'Good'\n                    WHEN ABS((k.metric_value - k.target_value) / k.target_value) <= 0.15 THEN 'Warning'\n                    ELSE 'Critical'\n                END as health_status,\n                k.metric_date as last_update_date\n            FROM kpi_metrics k\n            WHERE k.metric_date >= date('now', '-1 day')\n            ORDER BY ABS(variance_percent) DESC\n            ",
+  "data": [],
+  "metadata": {
+    "generated_at": "2025-12-12T13:03:18.800907",
+    "row_count": 0,
+    "data_size_kb": 0.001953125
+  },
+  "chart_config": null
+}

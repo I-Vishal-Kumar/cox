@@ -1,0 +1,73 @@
+{
+  "query_name": "margin_analysis",
+  "category": "executive_reports",
+  "description": "Financial margin analysis by region",
+  "keywords": [
+    "margin",
+    "analysis",
+    "cfo",
+    "financial",
+    "revenue"
+  ],
+  "sql_query": "\n            SELECT \n                d.region,\n                COUNT(f.id) as transaction_count,\n                SUM(f.sale_price) as gross_revenue,\n                SUM(f.service_contract_revenue) as service_revenue,\n                SUM(f.gap_insurance_revenue) as insurance_revenue,\n                ROUND(AVG(f.sale_price), 2) as avg_deal_size,\n                ROUND((SUM(f.service_contract_revenue + f.gap_insurance_revenue) / SUM(f.sale_price)) * 100, 2) as fni_margin_percent\n            FROM fni_transactions f\n            JOIN dealers d ON f.dealer_id = d.id\n            WHERE f.transaction_date >= date('now', '-30 days')\n            GROUP BY d.region\n            ORDER BY fni_margin_percent DESC\n            ",
+  "data": [
+    {
+      "region": "Northeast",
+      "transaction_count": 972,
+      "gross_revenue": 38677642.72,
+      "service_revenue": 892535.46,
+      "insurance_revenue": 202284.8,
+      "avg_deal_size": 39791.81,
+      "fni_margin_percent": 2.83
+    },
+    {
+      "region": "Southeast",
+      "transaction_count": 623,
+      "gross_revenue": 25082353.34,
+      "service_revenue": 540471.79,
+      "insurance_revenue": 131180.09,
+      "avg_deal_size": 40260.6,
+      "fni_margin_percent": 2.68
+    },
+    {
+      "region": "West",
+      "transaction_count": 649,
+      "gross_revenue": 26297812.4,
+      "service_revenue": 550396.56,
+      "insurance_revenue": 125077.72,
+      "avg_deal_size": 40520.51,
+      "fni_margin_percent": 2.57
+    },
+    {
+      "region": "Midwest",
+      "transaction_count": 1594,
+      "gross_revenue": 63743722.61,
+      "service_revenue": 1312465.52,
+      "insurance_revenue": 285939.01,
+      "avg_deal_size": 39989.79,
+      "fni_margin_percent": 2.51
+    }
+  ],
+  "metadata": {
+    "generated_at": "2025-12-12T13:03:18.840397",
+    "row_count": 4,
+    "data_size_kb": 0.765625
+  },
+  "chart_config": {
+    "type": "bar",
+    "title": "Margin Analysis",
+    "responsive": true,
+    "data": {
+      "labels": [],
+      "datasets": []
+    },
+    "options": {
+      "plugins": {
+        "title": {
+          "display": true,
+          "text": "Margin Analysis"
+        }
+      }
+    }
+  }
+}

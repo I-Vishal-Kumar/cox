@@ -1,0 +1,61 @@
+{
+  "query_name": "stock_levels",
+  "category": "inventory_management",
+  "description": "Current inventory levels by factory/plant",
+  "keywords": [
+    "inventory",
+    "stock",
+    "levels",
+    "factory",
+    "plant"
+  ],
+  "sql_query": "\n            SELECT \n                p.name as plant_name,\n                p.location,\n                'Model_A' as model_name,\n                p.capacity_per_day * 7 as current_stock,\n                p.capacity_per_day * 2 as reorder_point,\n                CASE \n                    WHEN p.capacity_per_day < 500 THEN 'HIGH'\n                    WHEN p.capacity_per_day < 1000 THEN 'MEDIUM'\n                    ELSE 'LOW'\n                END as risk_level\n            FROM plants p\n            ORDER BY risk_level DESC, current_stock ASC\n            ",
+  "data": [
+    {
+      "plant_name": "Indiana Works",
+      "location": "Fort Wayne, IN",
+      "model_name": "Model_A",
+      "current_stock": 4200,
+      "reorder_point": 1200,
+      "risk_level": "MEDIUM"
+    },
+    {
+      "plant_name": "Ohio Manufacturing",
+      "location": "Columbus, OH",
+      "model_name": "Model_A",
+      "current_stock": 5600,
+      "reorder_point": 1600,
+      "risk_level": "MEDIUM"
+    },
+    {
+      "plant_name": "Michigan Assembly Plant",
+      "location": "Detroit, MI",
+      "model_name": "Model_A",
+      "current_stock": 8400,
+      "reorder_point": 2400,
+      "risk_level": "LOW"
+    }
+  ],
+  "metadata": {
+    "generated_at": "2025-12-12T13:03:18.810944",
+    "row_count": 3,
+    "data_size_kb": 0.4697265625
+  },
+  "chart_config": {
+    "type": "bar",
+    "title": "Stock Levels",
+    "responsive": true,
+    "data": {
+      "labels": [],
+      "datasets": []
+    },
+    "options": {
+      "plugins": {
+        "title": {
+          "display": true,
+          "text": "Stock Levels"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,173 @@
+{
+  "query_name": "dealer_performance",
+  "category": "sales_analytics",
+  "description": "Dealer performance metrics (last 7 days)",
+  "keywords": [
+    "dealer",
+    "performance",
+    "conversion",
+    "rates",
+    "sales"
+  ],
+  "sql_query": "\n            SELECT \n                d.name as dealer_name,\n                d.region,\n                COUNT(f.id) as total_transactions,\n                SUM(f.sale_price) as total_revenue,\n                AVG(f.sale_price) as avg_deal_size,\n                SUM(f.service_contract_revenue) as service_contract_revenue,\n                ROUND(AVG(CASE WHEN f.service_contract_sold = 1 THEN 1.0 ELSE 0.0 END) * 100, 2) as service_contract_penetration\n            FROM dealers d\n            LEFT JOIN fni_transactions f ON d.id = f.dealer_id \n                AND f.transaction_date >= date('now', '-7 days')\n            GROUP BY d.id, d.name, d.region\n            ORDER BY total_revenue DESC\n            LIMIT 25\n            ",
+  "data": [
+    {
+      "dealer_name": "Philly Cars",
+      "region": "Northeast",
+      "total_transactions": 68,
+      "total_revenue": 2742147.13,
+      "avg_deal_size": 40325.69308823529,
+      "service_contract_revenue": 58222.51,
+      "service_contract_penetration": 36.76
+    },
+    {
+      "dealer_name": "Seattle Auto",
+      "region": "West",
+      "total_transactions": 62,
+      "total_revenue": 2655405.87,
+      "avg_deal_size": 42829.12693548387,
+      "service_contract_revenue": 47889.24,
+      "service_contract_penetration": 33.87
+    },
+    {
+      "dealer_name": "Sunshine Motors",
+      "region": "Southeast",
+      "total_transactions": 63,
+      "total_revenue": 2611833.98,
+      "avg_deal_size": 41457.682222222225,
+      "service_contract_revenue": 49434.47,
+      "service_contract_penetration": 34.92
+    },
+    {
+      "dealer_name": "ABC Ford",
+      "region": "Midwest",
+      "total_transactions": 61,
+      "total_revenue": 2498661.14,
+      "avg_deal_size": 40961.65803278689,
+      "service_contract_revenue": 22868.25,
+      "service_contract_penetration": 16.39
+    },
+    {
+      "dealer_name": "Central Honda",
+      "region": "Midwest",
+      "total_transactions": 60,
+      "total_revenue": 2469731.09,
+      "avg_deal_size": 41162.18483333333,
+      "service_contract_revenue": 67751.54,
+      "service_contract_penetration": 50.0
+    },
+    {
+      "dealer_name": "Pacific Honda",
+      "region": "West",
+      "total_transactions": 58,
+      "total_revenue": 2418714.63,
+      "avg_deal_size": 41701.97637931034,
+      "service_contract_revenue": 43402.46,
+      "service_contract_penetration": 34.48
+    },
+    {
+      "dealer_name": "Northeast Toyota",
+      "region": "Northeast",
+      "total_transactions": 57,
+      "total_revenue": 2279347.45,
+      "avg_deal_size": 39988.55175438597,
+      "service_contract_revenue": 53603.19,
+      "service_contract_penetration": 40.35
+    },
+    {
+      "dealer_name": "Lakeside Motors",
+      "region": "Midwest",
+      "total_transactions": 57,
+      "total_revenue": 2275055.31,
+      "avg_deal_size": 39913.25105263158,
+      "service_contract_revenue": 42060.47,
+      "service_contract_penetration": 33.33
+    },
+    {
+      "dealer_name": "Atlanta Auto",
+      "region": "Southeast",
+      "total_transactions": 55,
+      "total_revenue": 2176022.34,
+      "avg_deal_size": 39564.04254545454,
+      "service_contract_revenue": 58976.23,
+      "service_contract_penetration": 45.45
+    },
+    {
+      "dealer_name": "XYZ Nissan",
+      "region": "Midwest",
+      "total_transactions": 51,
+      "total_revenue": 2164997.97,
+      "avg_deal_size": 42450.940588235295,
+      "service_contract_revenue": 25075.78,
+      "service_contract_penetration": 21.57
+    },
+    {
+      "dealer_name": "Boston Auto Group",
+      "region": "Northeast",
+      "total_transactions": 53,
+      "total_revenue": 2138384.56,
+      "avg_deal_size": 40346.878490566036,
+      "service_contract_revenue": 43668.46,
+      "service_contract_penetration": 33.96
+    },
+    {
+      "dealer_name": "Midtown Auto",
+      "region": "Midwest",
+      "total_transactions": 46,
+      "total_revenue": 1872484.85,
+      "avg_deal_size": 40706.19239130435,
+      "service_contract_revenue": 25373.8,
+      "service_contract_penetration": 26.09
+    }
+  ],
+  "metadata": {
+    "generated_at": "2025-12-12T13:03:18.789349",
+    "row_count": 12,
+    "data_size_kb": 2.6162109375
+  },
+  "chart_config": {
+    "type": "bar",
+    "title": "Dealer Performance",
+    "responsive": true,
+    "data": {
+      "labels": [
+        "Northeast",
+        "West",
+        "Southeast",
+        "Midwest",
+        "Midwest",
+        "West",
+        "Northeast",
+        "Midwest",
+        "Southeast",
+        "Midwest"
+      ],
+      "datasets": [
+        {
+          "label": "Revenue",
+          "data": [
+            2742147.13,
+            2655405.87,
+            2611833.98,
+            2498661.14,
+            2469731.09,
+            2418714.63,
+            2279347.45,
+            2275055.31,
+            2176022.34,
+            2164997.97
+          ],
+          "backgroundColor": "rgba(54, 162, 235, 0.6)"
+        }
+      ]
+    },
+    "options": {
+      "plugins": {
+        "title": {
+          "display": true,
+          "text": "Dealer Performance"
+        }
+      }
+    }
+  }
+}

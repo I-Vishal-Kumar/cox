@@ -1,0 +1,140 @@
+{
+  "query_name": "claims_by_model",
+  "category": "warranty_analysis",
+  "description": "Warranty claims analysis by model",
+  "keywords": [
+    "warranty",
+    "claims",
+    "model",
+    "year",
+    "over",
+    "year"
+  ],
+  "sql_query": "\n            SELECT \n                'Model_' || (ABS(RANDOM()) % 10 + 1) as model_name,\n                COUNT(*) as claim_count,\n                COUNT(DISTINCT 'component_' || (ABS(RANDOM()) % 20 + 1)) as affected_components,\n                AVG(RANDOM() * 5000 + 500) as avg_claim_cost,\n                SUM(RANDOM() * 5000 + 500) as total_claim_cost\n            FROM (\n                SELECT 1 as dummy_row\n                FROM sqlite_master \n                LIMIT 100  -- Generate sample warranty data\n            )\n            GROUP BY model_name\n            ORDER BY claim_count DESC\n            LIMIT 15\n            ",
+  "data": [
+    {
+      "model_name": "Model_8",
+      "claim_count": 6,
+      "affected_components": 5,
+      "avg_claim_cost": 8.929578859006306e+21,
+      "total_claim_cost": -5.092992194122219e+22
+    },
+    {
+      "model_name": "Model_5",
+      "claim_count": 6,
+      "affected_components": 5,
+      "avg_claim_cost": 2.0704444594745e+22,
+      "total_claim_cost": -6.197271038896772e+22
+    },
+    {
+      "model_name": "Model_7",
+      "claim_count": 6,
+      "affected_components": 6,
+      "avg_claim_cost": 5.527196236940432e+21,
+      "total_claim_cost": -2.4303595982649687e+22
+    },
+    {
+      "model_name": "Model_8",
+      "claim_count": 6,
+      "affected_components": 6,
+      "avg_claim_cost": 3.723188159480844e+21,
+      "total_claim_cost": -1.9834707069911777e+22
+    },
+    {
+      "model_name": "Model_6",
+      "claim_count": 5,
+      "affected_components": 4,
+      "avg_claim_cost": -1.396261828788869e+22,
+      "total_claim_cost": -7.70604403680642e+22
+    },
+    {
+      "model_name": "Model_1",
+      "claim_count": 4,
+      "affected_components": 4,
+      "avg_claim_cost": -2.542874539088256e+21,
+      "total_claim_cost": -4.638757445420809e+22
+    },
+    {
+      "model_name": "Model_4",
+      "claim_count": 3,
+      "affected_components": 3,
+      "avg_claim_cost": 1.4067303515622788e+22,
+      "total_claim_cost": -8.425036781186356e+21
+    },
+    {
+      "model_name": "Model_8",
+      "claim_count": 2,
+      "affected_components": 2,
+      "avg_claim_cost": 3.0025902366360137e+22,
+      "total_claim_cost": -3.095852525997243e+22
+    },
+    {
+      "model_name": "Model_10",
+      "claim_count": 2,
+      "affected_components": 2,
+      "avg_claim_cost": 3.1160388677059308e+22,
+      "total_claim_cost": -5.598501447114276e+22
+    },
+    {
+      "model_name": "Model_9",
+      "claim_count": 1,
+      "affected_components": 1,
+      "avg_claim_cost": -4.339115135449766e+22,
+      "total_claim_cost": 1.4392796974775358e+21
+    }
+  ],
+  "metadata": {
+    "generated_at": "2025-12-12T13:03:18.818526",
+    "row_count": 10,
+    "data_size_kb": 1.529296875
+  },
+  "chart_config": {
+    "type": "pie",
+    "title": "Claims By Model",
+    "responsive": true,
+    "data": {
+      "labels": [
+        "Model_8",
+        "Model_5",
+        "Model_7",
+        "Model_8",
+        "Model_6",
+        "Model_1",
+        "Model_4",
+        "Model_8"
+      ],
+      "datasets": [
+        {
+          "data": [
+            6,
+            6,
+            6,
+            6,
+            5,
+            4,
+            3,
+            2
+          ],
+          "backgroundColor": [
+            "hsl(0, 70%, 60%)",
+            "hsl(45, 70%, 60%)",
+            "hsl(90, 70%, 60%)",
+            "hsl(135, 70%, 60%)",
+            "hsl(180, 70%, 60%)",
+            "hsl(225, 70%, 60%)",
+            "hsl(270, 70%, 60%)",
+            "hsl(315, 70%, 60%)"
+          ]
+        }
+      ]
+    },
+    "options": {
+      "plugins": {
+        "title": {
+          "display": true,
+          "text": "Claims By Model"
+        }
+      }
+    }
+  }
+}

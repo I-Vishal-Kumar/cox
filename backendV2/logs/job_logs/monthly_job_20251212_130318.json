@@ -1,0 +1,19 @@
+{
+  "success": true,
+  "generated_files": [
+    "sql_dumps/sales_analytics/top_models_by_region.json",
+    "sql_dumps/sales_analytics/dealer_performance.json",
+    "sql_dumps/sales_analytics/conversion_rates.json",
+    "sql_dumps/kpi_monitoring/health_scores.json",
+    "sql_dumps/kpi_monitoring/variance_reports.json",
+    "sql_dumps/inventory_management/stock_levels.json",
+    "sql_dumps/inventory_management/stockout_risks.json",
+    "sql_dumps/warranty_analysis/claims_by_model.json",
+    "sql_dumps/warranty_analysis/repeat_repairs.json",
+    "sql_dumps/executive_reports/ceo_digest.json",
+    "sql_dumps/executive_reports/margin_analysis.json"
+  ],
+  "errors": [],
+  "timestamp": "2025-12-12T13:03:18.778503",
+  "job_type": "monthly"
+}
