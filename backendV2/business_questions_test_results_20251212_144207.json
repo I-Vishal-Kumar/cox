@@ -1,0 +1,370 @@
+{
+  "test_metadata": {
+    "timestamp": "2025-12-12T14:42:07.510270",
+    "total_questions": 45,
+    "successful_responses": 0,
+    "base_url": "http://localhost:8001"
+  },
+  "detailed_results": [
+    {
+      "query": "What were the top-selling vehicle models in the Northeast last week?",
+      "category": "conversational_business_intelligence",
+      "success": false,
+      "response_time_ms": 4.056215286254883,
+      "status_code": 500,
+      "error": "HTTP 500: {\"detail\":\"api_server.QueryResponse() argument after ** must be a mapping, not coroutine\"}"
+    },
+    {
+      "query": "Break this down by dealer.",
+      "category": "conversational_business_intelligence",
+      "success": false,
+      "response_time_ms": 2.3195743560791016,
+      "status_code": 500,
+      "error": "HTTP 500: {\"detail\":\"api_server.QueryResponse() argument after ** must be a mapping, not coroutine\"}"
+    },
+    {
+      "query": "Show the year-over-year change in warranty claims.",
+      "category": "conversational_business_intelligence",
+      "success": false,
+      "response_time_ms": 7.089138031005859,
+      "status_code": 500,
+      "error": "HTTP 500: {\"detail\":\"api_server.QueryResponse() argument after ** must be a mapping, not coroutine\"}"
+    },
+    {
+      "query": "Why did EV sales drop yesterday?",
+      "category": "conversational_business_intelligence",
+      "success": false,
+      "response_time_ms": 2.0742416381835938,
+      "status_code": 500,
+      "error": "HTTP 500: {\"detail\":\"api_server.QueryResponse() argument after ** must be a mapping, not coroutine\"}"
+    },
+    {
+      "query": "Create a pivot table of service revenue by region.",
+      "category": "conversational_business_intelligence",
+      "success": false,
+      "response_time_ms": 2.0754337310791016,
+      "status_code": 500,
+      "error": "HTTP 500: {\"detail\":\"api_server.QueryResponse() argument after ** must be a mapping, not coroutine\"}"
+    },
+    {
+      "query": "Show me inventory levels by model and factory.",
+      "category": "conversational_business_intelligence",
+      "success": false,
+      "response_time_ms": 2.2363662719726562,
+      "status_code": 500,
+      "error": "HTTP 500: {\"detail\":\"api_server.QueryResponse() argument after ** must be a mapping, not coroutine\"}"
+    },
+    {
+      "query": "What\u2019s the current stock-out risk for EV batteries?",
+      "category": "conversational_business_intelligence",
+      "success": false,
+      "response_time_ms": 2.0210742950439453,
+      "status_code": 500,
+      "error": "HTTP 500: {\"detail\":\"api_server.QueryResponse() argument after ** must be a mapping, not coroutine\"}"
+    },
+    {
+      "query": "Which components caused the most repeat repairs last quarter?",
+      "category": "conversational_business_intelligence",
+      "success": false,
+      "response_time_ms": 2.372264862060547,
+      "status_code": 500,
+      "error": "HTTP 500: {\"detail\":\"api_server.QueryResponse() argument after ** must be a mapping, not coroutine\"}"
+    },
+    {
+      "query": "Drill down into underperforming models vs forecast.",
+      "category": "conversational_business_intelligence",
+      "success": false,
+      "response_time_ms": 2.370119094848633,
+      "status_code": 500,
+      "error": "HTTP 500: {\"detail\":\"api_server.QueryResponse() argument after ** must be a mapping, not coroutine\"}"
+    },
+    {
+      "query": "Which dealers have the highest sales conversion rates?",
+      "category": "conversational_business_intelligence",
+      "success": false,
+      "response_time_ms": 2.1071434020996094,
+      "status_code": 500,
+      "error": "HTTP 500: {\"detail\":\"api_server.QueryResponse() argument after ** must be a mapping, not coroutine\"}"
+    },
+    {
+      "query": "Show me trends for customer service complaints over the last 6 months.",
+      "category": "conversational_business_intelligence",
+      "success": false,
+      "response_time_ms": 3.1452178955078125,
+      "status_code": 500,
+      "error": "HTTP 500: {\"detail\":\"api_server.QueryResponse() argument after ** must be a mapping, not coroutine\"}"
+    },
+    {
+      "query": "Which plants have the slowest repair turnaround times?",
+      "category": "conversational_business_intelligence",
+      "success": false,
+      "response_time_ms": 2.1708011627197266,
+      "status_code": 500,
+      "error": "HTTP 500: {\"detail\":\"api_server.QueryResponse() argument after ** must be a mapping, not coroutine\"}"
+    },
+    {
+      "query": "Give me a dashboard of sales, inventory, and warranty KPIs.",
+      "category": "conversational_business_intelligence",
+      "success": false,
+      "response_time_ms": 2.132892608642578,
+      "status_code": 500,
+      "error": "HTTP 500: {\"detail\":\"api_server.QueryResponse() argument after ** must be a mapping, not coroutine\"}"
+    },
+    {
+      "query": "Flag any data-quality issues in this dataset.",
+      "category": "conversational_business_intelligence",
+      "success": false,
+      "response_time_ms": 1.9147396087646484,
+      "status_code": 500,
+      "error": "HTTP 500: {\"detail\":\"api_server.QueryResponse() argument after ** must be a mapping, not coroutine\"}"
+    },
+    {
+      "query": "What\u2019s the mix of ICE vs EV vehicles sold last week?",
+      "category": "conversational_business_intelligence",
+      "success": false,
+      "response_time_ms": 1.943349838256836,
+      "status_code": 500,
+      "error": "HTTP 500: {\"detail\":\"api_server.QueryResponse() argument after ** must be a mapping, not coroutine\"}"
+    },
+    {
+      "query": "Why did F&I revenue drop across Midwest dealers this week?",
+      "category": "kpi_observability_and_root_cause_analysis",
+      "success": false,
+      "response_time_ms": 2.107381820678711,
+      "status_code": 500,
+      "error": "HTTP 500: {\"detail\":\"api_server.QueryResponse() argument after ** must be a mapping, not coroutine\"}"
+    },
+    {
+      "query": "Explain the change in warranty claim rates from last month.",
+      "category": "kpi_observability_and_root_cause_analysis",
+      "success": false,
+      "response_time_ms": 2.026796340942383,
+      "status_code": 500,
+      "error": "HTTP 500: {\"detail\":\"api_server.QueryResponse() argument after ** must be a mapping, not coroutine\"}"
+    },
+    {
+      "query": "Which drivers influenced the margin movement yesterday?",
+      "category": "kpi_observability_and_root_cause_analysis",
+      "success": false,
+      "response_time_ms": 2.64739990234375,
+      "status_code": 500,
+      "error": "HTTP 500: {\"detail\":\"api_server.QueryResponse() argument after ** must be a mapping, not coroutine\"}"
+    },
+    {
+      "query": "Why did dealer footfall decline after the pricing update?",
+      "category": "kpi_observability_and_root_cause_analysis",
+      "success": false,
+      "response_time_ms": 2.613067626953125,
+      "status_code": 500,
+      "error": "HTTP 500: {\"detail\":\"api_server.QueryResponse() argument after ** must be a mapping, not coroutine\"}"
+    },
+    {
+      "query": "Which supplier caused production downtime this week?",
+      "category": "kpi_observability_and_root_cause_analysis",
+      "success": false,
+      "response_time_ms": 2.184152603149414,
+      "status_code": 500,
+      "error": "HTTP 500: {\"detail\":\"api_server.QueryResponse() argument after ** must be a mapping, not coroutine\"}"
+    },
+    {
+      "query": "What is the predicted variance for next week\u2019s sales?",
+      "category": "kpi_observability_and_root_cause_analysis",
+      "success": false,
+      "response_time_ms": 4.565238952636719,
+      "status_code": 500,
+      "error": "HTTP 500: {\"detail\":\"api_server.QueryResponse() argument after ** must be a mapping, not coroutine\"}"
+    },
+    {
+      "query": "Why did plant uptime decrease yesterday?",
+      "category": "kpi_observability_and_root_cause_analysis",
+      "success": false,
+      "response_time_ms": 2.547740936279297,
+      "status_code": 500,
+      "error": "HTTP 500: {\"detail\":\"api_server.QueryResponse() argument after ** must be a mapping, not coroutine\"}"
+    },
+    {
+      "query": "What contributed most to the drop in service revenue?",
+      "category": "kpi_observability_and_root_cause_analysis",
+      "success": false,
+      "response_time_ms": 2.7132034301757812,
+      "status_code": 500,
+      "error": "HTTP 500: {\"detail\":\"api_server.QueryResponse() argument after ** must be a mapping, not coroutine\"}"
+    },
+    {
+      "query": "Which model categories are driving the increase in customer complaints?",
+      "category": "kpi_observability_and_root_cause_analysis",
+      "success": false,
+      "response_time_ms": 2.7959346771240234,
+      "status_code": 500,
+      "error": "HTTP 500: {\"detail\":\"api_server.QueryResponse() argument after ** must be a mapping, not coroutine\"}"
+    },
+    {
+      "query": "Explain the spike in EV battery failure claims.",
+      "category": "kpi_observability_and_root_cause_analysis",
+      "success": false,
+      "response_time_ms": 2.354860305786133,
+      "status_code": 500,
+      "error": "HTTP 500: {\"detail\":\"api_server.QueryResponse() argument after ** must be a mapping, not coroutine\"}"
+    },
+    {
+      "query": "What is the KPI Health Score for today?",
+      "category": "kpi_observability_and_root_cause_analysis",
+      "success": false,
+      "response_time_ms": 2.7942657470703125,
+      "status_code": 500,
+      "error": "HTTP 500: {\"detail\":\"api_server.QueryResponse() argument after ** must be a mapping, not coroutine\"}"
+    },
+    {
+      "query": "What actions do you recommend for the variance detected?",
+      "category": "kpi_observability_and_root_cause_analysis",
+      "success": false,
+      "response_time_ms": 2.387523651123047,
+      "status_code": 500,
+      "error": "HTTP 500: {\"detail\":\"api_server.QueryResponse() argument after ** must be a mapping, not coroutine\"}"
+    },
+    {
+      "query": "Break down the revenue decline by price, mix, and region.",
+      "category": "kpi_observability_and_root_cause_analysis",
+      "success": false,
+      "response_time_ms": 2.264261245727539,
+      "status_code": 500,
+      "error": "HTTP 500: {\"detail\":\"api_server.QueryResponse() argument after ** must be a mapping, not coroutine\"}"
+    },
+    {
+      "query": "Did weather or logistics cause delivery delays this week?",
+      "category": "kpi_observability_and_root_cause_analysis",
+      "success": false,
+      "response_time_ms": 3.389596939086914,
+      "status_code": 500,
+      "error": "HTTP 500: {\"detail\":\"api_server.QueryResponse() argument after ** must be a mapping, not coroutine\"}"
+    },
+    {
+      "query": "Show anomaly drivers for yesterday\u2019s warranty spikes.",
+      "category": "kpi_observability_and_root_cause_analysis",
+      "success": false,
+      "response_time_ms": 2.210378646850586,
+      "status_code": 500,
+      "error": "HTTP 500: {\"detail\":\"api_server.QueryResponse() argument after ** must be a mapping, not coroutine\"}"
+    },
+    {
+      "query": "Give me the CEO weekly summary.",
+      "category": "executive_summaries_and_personalized_reports",
+      "success": false,
+      "response_time_ms": 2.2735595703125,
+      "status_code": 500,
+      "error": "HTTP 500: {\"detail\":\"api_server.QueryResponse() argument after ** must be a mapping, not coroutine\"}"
+    },
+    {
+      "query": "Summarize the top wins and risks for this week.",
+      "category": "executive_summaries_and_personalized_reports",
+      "success": false,
+      "response_time_ms": 2.1581649780273438,
+      "status_code": 500,
+      "error": "HTTP 500: {\"detail\":\"api_server.QueryResponse() argument after ** must be a mapping, not coroutine\"}"
+    },
+    {
+      "query": "What were the biggest contributors to margin movement?",
+      "category": "executive_summaries_and_personalized_reports",
+      "success": false,
+      "response_time_ms": 1.9156932830810547,
+      "status_code": 500,
+      "error": "HTTP 500: {\"detail\":\"api_server.QueryResponse() argument after ** must be a mapping, not coroutine\"}"
+    },
+    {
+      "query": "Show the top 10 risks and opportunities right now.",
+      "category": "executive_summaries_and_personalized_reports",
+      "success": false,
+      "response_time_ms": 2.0105838775634766,
+      "status_code": 500,
+      "error": "HTTP 500: {\"detail\":\"api_server.QueryResponse() argument after ** must be a mapping, not coroutine\"}"
+    },
+    {
+      "query": "Provide a supply-chain performance summary for the COO.",
+      "category": "executive_summaries_and_personalized_reports",
+      "success": false,
+      "response_time_ms": 2.5146007537841797,
+      "status_code": 500,
+      "error": "HTTP 500: {\"detail\":\"api_server.QueryResponse() argument after ** must be a mapping, not coroutine\"}"
+    },
+    {
+      "query": "Give me a sales forecast summary for next week.",
+      "category": "executive_summaries_and_personalized_reports",
+      "success": false,
+      "response_time_ms": 2.602815628051758,
+      "status_code": 500,
+      "error": "HTTP 500: {\"detail\":\"api_server.QueryResponse() argument after ** must be a mapping, not coroutine\"}"
+    },
+    {
+      "query": "What were the major anomalies in plant performance?",
+      "category": "executive_summaries_and_personalized_reports",
+      "success": false,
+      "response_time_ms": 2.104520797729492,
+      "status_code": 500,
+      "error": "HTTP 500: {\"detail\":\"api_server.QueryResponse() argument after ** must be a mapping, not coroutine\"}"
+    },
+    {
+      "query": "Generate a downloadable narrative report with charts.",
+      "category": "executive_summaries_and_personalized_reports",
+      "success": false,
+      "response_time_ms": 3.688812255859375,
+      "status_code": 500,
+      "error": "HTTP 500: {\"detail\":\"api_server.QueryResponse() argument after ** must be a mapping, not coroutine\"}"
+    },
+    {
+      "query": "Show me a summary of customer sentiment trends.",
+      "category": "executive_summaries_and_personalized_reports",
+      "success": false,
+      "response_time_ms": 2.2077560424804688,
+      "status_code": 500,
+      "error": "HTTP 500: {\"detail\":\"api_server.QueryResponse() argument after ** must be a mapping, not coroutine\"}"
+    },
+    {
+      "query": "Provide a VP of Sales dashboard summary.",
+      "category": "executive_summaries_and_personalized_reports",
+      "success": false,
+      "response_time_ms": 1.939535140991211,
+      "status_code": 500,
+      "error": "HTTP 500: {\"detail\":\"api_server.QueryResponse() argument after ** must be a mapping, not coroutine\"}"
+    },
+    {
+      "query": "Highlight any emerging issues in warranty claims.",
+      "category": "executive_summaries_and_personalized_reports",
+      "success": false,
+      "response_time_ms": 3.1304359436035156,
+      "status_code": 500,
+      "error": "HTTP 500: {\"detail\":\"api_server.QueryResponse() argument after ** must be a mapping, not coroutine\"}"
+    },
+    {
+      "query": "Give me the week-over-week performance changes.",
+      "category": "executive_summaries_and_personalized_reports",
+      "success": false,
+      "response_time_ms": 3.0014514923095703,
+      "status_code": 500,
+      "error": "HTTP 500: {\"detail\":\"api_server.QueryResponse() argument after ** must be a mapping, not coroutine\"}"
+    },
+    {
+      "query": "Which areas need immediate executive attention?",
+      "category": "executive_summaries_and_personalized_reports",
+      "success": false,
+      "response_time_ms": 2.4976730346679688,
+      "status_code": 500,
+      "error": "HTTP 500: {\"detail\":\"api_server.QueryResponse() argument after ** must be a mapping, not coroutine\"}"
+    },
+    {
+      "query": "Provide a summary of throughput and defect trends by plant.",
+      "category": "executive_summaries_and_personalized_reports",
+      "success": false,
+      "response_time_ms": 2.220630645751953,
+      "status_code": 500,
+      "error": "HTTP 500: {\"detail\":\"api_server.QueryResponse() argument after ** must be a mapping, not coroutine\"}"
+    },
+    {
+      "query": "What\u2019s the consolidated multi-department weekly report?",
+      "category": "executive_summaries_and_personalized_reports",
+      "success": false,
+      "response_time_ms": 2.4726390838623047,
+      "status_code": 500,
+      "error": "HTTP 500: {\"detail\":\"api_server.QueryResponse() argument after ** must be a mapping, not coroutine\"}"
+    }
+  ]
+}

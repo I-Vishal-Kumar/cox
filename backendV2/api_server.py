@@ -111,7 +111,7 @@ async def process_query(request: QueryRequest):
         logger.info(f"Processing API query: '{request.query}'")
         
         # Process query through frontend integration
-        response = frontend_integration.process_frontend_query(
+        response = await frontend_integration.process_frontend_query(
             query=request.query,
             options=request.options
         )
@@ -134,7 +134,7 @@ async def process_batch_queries(request: BatchQueryRequest):
         
         results = []
         for query in request.queries:
-            response = frontend_integration.process_frontend_query(
+            response = await frontend_integration.process_frontend_query(
                 query=query,
                 options=request.options
             )
