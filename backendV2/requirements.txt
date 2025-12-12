@@ -9,3 +9,4 @@ schedule==1.2.0
 asyncio==3.4.3
 pathlib==1.0.1
 json5==0.9.14
+requests==2.31.0

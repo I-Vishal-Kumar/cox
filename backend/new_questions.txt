@@ -1,0 +1,66 @@
+{
+  "conversational_business_intelligence": {
+    "description": "New set of questions for testing the enhanced Groq AI system.",
+    "questions": [
+      "What are the best performing dealerships this month?",
+      "Show me sales trends for hybrid vehicles in the West Coast region.",
+      "Which vehicle models have the highest customer satisfaction ratings?",
+      "What's the average repair cost per warranty claim by component type?",
+      "Display inventory turnover rates by vehicle category.",
+      "Which regions are experiencing the highest demand for SUVs?",
+      "Show me the breakdown of financing options chosen by customers.",
+      "What's the correlation between marketing spend and sales volume?",
+      "Which service centers have the longest wait times?",
+      "Compare sales performance between Q3 and Q4 this year.",
+      "What percentage of vehicles sold are under warranty?",
+      "Show me the top 5 most profitable vehicle models.",
+      "Which dealers have the lowest inventory levels?",
+      "What's the trend in customer complaints over the past quarter?",
+      "Display the distribution of vehicle sales by price range."
+    ]
+  },
+
+  "kpi_observability_and_root_cause_analysis": {
+    "description": "New KPI and root cause analysis questions.",
+    "questions": [
+      "Why did customer retention rates drop in the Southeast region?",
+      "What factors contributed to the increase in service appointment cancellations?",
+      "Which marketing campaigns drove the most sales leads last month?",
+      "Explain the sudden spike in parts inventory costs.",
+      "Why did online sales decrease while in-person sales increased?",
+      "What caused the delay in vehicle delivery times this week?",
+      "Which customer segments are showing declining satisfaction scores?",
+      "What's driving the increase in extended warranty purchases?",
+      "Why did the average transaction value decrease in November?",
+      "Which operational metrics are below target this quarter?",
+      "What contributed to the improvement in service center efficiency?",
+      "Explain the variance in dealer performance across regions.",
+      "Which external factors impacted sales volume last month?",
+      "What's causing the increase in vehicle return rates?",
+      "Show me the key drivers behind the revenue growth this quarter."
+    ]
+  },
+
+  "executive_summaries_and_personalized_reports": {
+    "description": "New executive summary and reporting questions.",
+    "questions": [
+      "Generate a comprehensive monthly performance report for the board.",
+      "What are the top strategic priorities based on current data?",
+      "Provide a risk assessment summary for the next quarter.",
+      "Show me the executive dashboard with key business metrics.",
+      "What are the biggest opportunities for growth identified this month?",
+      "Generate a competitive analysis summary for our vehicle lineup.",
+      "Provide a customer satisfaction overview across all touchpoints.",
+      "What are the key takeaways from this month's sales performance?",
+      "Show me a financial summary with revenue, costs, and margins.",
+      "What operational improvements are recommended based on current data?",
+      "Generate a market trends analysis for the automotive industry.",
+      "Provide a summary of supply chain performance and bottlenecks.",
+      "What are the critical success factors for next quarter?",
+      "Show me a consolidated view of all department KPIs.",
+      "What insights can we derive from customer behavior patterns?"
+    ]
+  }
+
+}
+

@@ -58,8 +58,32 @@ class QueryRouter:
             # Update response with timing info
             if response.get("success"):
                 self.query_stats["cache_hits"] += 1
+                
+                # Enhance cached response with Grok to make it human-readable
+                if self.fallback_ai.use_ai_for_cached and self.fallback_ai.api_key:
+                    try:
+                        logger.info(f"Enhancing cached response with Groq for query: '{query}'")
+                        enhanced = self.fallback_ai.enhance_cached_response(
+                            query=query,
+                            cached_data=response.get("data", []),
+                            category=response.get("match_info", {}).get("category", ""),
+                            query_name=response.get("match_info", {}).get("query_name", "")
+                        )
+                        
+                        # Update response with enhanced message
+                        if enhanced.get("message"):
+                            response["match_info"]["description"] = enhanced["message"]
+                        if enhanced.get("tokens_used", 0) > 0:
+                            response["metadata"]["tokens_used"] = enhanced["tokens_used"]
+                            self.token_budget.use_tokens(enhanced["tokens_used"], query)
+                        
+                        logger.info(f"Cached response enhanced: {enhanced.get('tokens_used', 0)} tokens used")
+                    except Exception as e:
+                        logger.warning(f"Failed to enhance cached response: {e}, using original data")
+                
                 response["metadata"]["response_time_ms"] = response_time_ms
-                response["metadata"]["tokens_used"] = 0  # Zero tokens for cached responses
+                if "tokens_used" not in response["metadata"]:
+                    response["metadata"]["tokens_used"] = 0  # Zero tokens if not enhanced
                 response["metadata"]["cache_hit"] = True
                 
                 logger.info(f"Cache hit for query '{query}' - {response_time_ms:.1f}ms")
@@ -82,31 +106,43 @@ class QueryRouter:
                 if fallback_response.get("success"):
                     # Use fallback AI response
                     self.query_stats["fallback_ai_uses"] += 1
-                    tokens_used = fallback_response["metadata"]["tokens_used"]
+                    tokens_used = fallback_response.get("metadata", {}).get("tokens_used", 0)
                     
                     # Record token usage
                     self.token_budget.use_tokens(tokens_used, query)
                     
+                    # Extract data from fallback response (should be a list)
+                    fallback_data = fallback_response.get("data", [])
+                    if not isinstance(fallback_data, list):
+                        fallback_data = []
+                    
                     response = {
                         "success": True,
                         "query": query,
-                        "data": {"raw": [], "processed": [], "summary": {}},
-                        "chart_config": None,
+                        "data": fallback_data,  # Use actual data from fallback AI
+                        "chart_config": fallback_response.get("chart_config"),
                         "metadata": {
                             "response_time_ms": response_time_ms,
                             "tokens_used": tokens_used,
                             "cache_hit": False,
                             "fallback_used": True,
-                            "fallback_type": fallback_response["response_type"]
+                            "fallback_type": fallback_response.get("response_type", "ai_fallback"),
+                            "confidence": fallback_response.get("metadata", {}).get("confidence", 0.5)
+                        },
+                        "match_info": {
+                            "category": "ai_generated",
+                            "query_name": "fallback_response",
+                            "description": fallback_response.get("message", "")[:100],
+                            "confidence_score": fallback_response.get("metadata", {}).get("confidence", 0.5)
                         },
                         "fallback_info": {
-                            "message": fallback_response["message"],
-                            "suggestions": fallback_response["suggestions"],
-                            "confidence": fallback_response["metadata"]["confidence"]
+                            "message": fallback_response.get("message", ""),
+                            "suggestions": fallback_response.get("suggestions", []),
+                            "confidence": fallback_response.get("metadata", {}).get("confidence", 0.5)
                         }
                     }
                     
-                    logger.info(f"Fallback AI response for query '{query}' - {tokens_used} tokens")
+                    logger.info(f"Fallback AI response for query '{query}' - {tokens_used} tokens, {len(fallback_data)} data points")
                 else:
                     # Fallback failed, return cache miss
                     self.query_stats["cache_misses"] += 1

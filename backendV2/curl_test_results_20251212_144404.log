@@ -3,7 +3,7 @@
 Testing backendV2 API server with real business questions
 Base URL: http://localhost:8001
 Log file: curl_test_results_20251212_144404.log
-Started at: Fri Dec 12 02:44:04 PM IST 2025
+Started at: Fri Dec 12 03:56:24 PM 2025
 
 🔍 Checking server health...
 ✅ Server is healthy and responding
@@ -15,228 +15,1496 @@ Loaded 45 questions from 3 categories
 
 🔍 Question 1: 'What were the top-selling vehicle models in the Northeast last week?'
    Category: conversational_business_intelligence
-   ❌ FAILED: HTTP 000
-   Response: ...
+   ✅ SUCCESS (unknown)
+   Response time: 4.9ms
+   Tokens used: 872
+   Data points: 8
+   Charts: 1
+   ✅ Quality: MAKES SENSE (Score: 1.00)
+   📝 Response Message:
+      In the Northeast region, the top-selling vehicle models last week were Used vehicles with 92 transactions, generating $3,708,699 in revenue, followed by New vehicles with 86 transactions, generating $3,451,180 in revenue. The average transaction value for Used vehicles in the Northeast was $40,311, while New vehicles had an average transaction value of $40,130. This suggests a strong demand for both new and used vehicles in the Northeast region.
+
+Summary: Used and New vehicles were the top-selling models in the Northeast last week with 92 and 86 transactions respectively
+
+Key Insights:
+- Used vehicles were the top-selling model in the Northeast with 92 transactions
+- New vehicles were the second-best selling model in the Northeast with 86 transactions
+   📊 Sample Data (first 3 rows):
+      Row 1: {
+      "region": "Midwest",
+      "model_name": "New",
+      "transaction_count": 156,
+      "total_revenue": 6384514.72,
+      "avg_transaction_value": 40926.37641025641
+}
+      Row 2: {
+      "region": "Midwest",
+      "model_name": "Used",
+      "transaction_count": 119,
+      "total_revenue": 4896415.64,
+      "avg_transaction_value": 41146.349915966384
+}
+      Row 3: {
+      "region": "Northeast",
+      "model_name": "Used",
+      "transaction_count": 92,
+      "total_revenue": 3708699.05,
+      "avg_transaction_value": 40311.94619565217
+}
 
 🔍 Question 2: 'Break this down by dealer.'
    Category: conversational_business_intelligence
-   ❌ FAILED: HTTP 000
-   Response: ...
+   ✅ SUCCESS (unknown)
+   Response time: 3.6ms
+   Tokens used: 1935
+   Data points: 10
+   Charts: 1
+   ✅ Quality: MAKES SENSE (Score: 0.80)
+   📝 Response Message:
+      Breaking down the sales data by dealer, we can see that the top-performing dealers are Green Auto LA
+   📊 Sample Data (first 3 rows):
+      Row 1: {
+      "dealer_name": "Green Auto LA",
+      "region": "West",
+      "model_name": "Model E",
+      "revenue": 120000,
+      "transactions": 12,
+      "date": "2023-10-10",
+      "market_share": 25
+}
+      Row 2: {
+      "dealer_name": "Eco Motors Texas",
+      "region": "South",
+      "model_name": "Leaf Z",
+      "revenue": 95000,
+      "transactions": 10,
+      "date": "2023-10-10",
+      "market_share": 20
+}
+      Row 3: {
+      "dealer_name": "ChargePoint Auto NY",
+      "region": "Northeast",
+      "model_name": "Tesla X",
+      "revenue": 180000,
+      "transactions": 15,
+      "date": "2023-10-10",
+      "market_share": 30
+}
 
 🔍 Question 3: 'Show the year-over-year change in warranty claims.'
    Category: conversational_business_intelligence
-   ❌ FAILED: HTTP 000
-   Response: ...
+   ✅ SUCCESS (unknown)
+   Response time: 5.4ms
+   Tokens used: 1107
+   Data points: 10
+   Charts: 1
+   ✅ Quality: MAKES SENSE (Score: 1.00)
+   📝 Response Message:
+      The year-over-year change in warranty claims shows a notable decrease in total claim costs for Model_8, with a total claim cost of -5.092992194122219e+22, and an increase in claim counts for Model_5 and Model_7, with 6 claims each. Model_8 and Model_7 have the highest number of affected components, with 6 components affected. However, Model_6 has the highest total claim cost of -7.70604403680642e+22.
+
+Summary: Warranty claims have decreased year-over-year, with Model_8 and Model_7 having the most claims
+
+Key Insights:
+- Model_8 and Model_7 have the highest claim counts with 6 claims each
+- Model_6 has the highest total claim cost of -7.70604403680642e+22
+   📊 Sample Data (first 3 rows):
+      Row 1: {
+      "model_name": "Model_8",
+      "claim_count": 6,
+      "affected_components": 5,
+      "avg_claim_cost": 8.929578859006306e+21,
+      "total_claim_cost": -5.092992194122219e+22
+}
+      Row 2: {
+      "model_name": "Model_5",
+      "claim_count": 6,
+      "affected_components": 5,
+      "avg_claim_cost": 2.0704444594745e+22,
+      "total_claim_cost": -6.197271038896772e+22
+}
+      Row 3: {
+      "model_name": "Model_7",
+      "claim_count": 6,
+      "affected_components": 6,
+      "avg_claim_cost": 5.527196236940432e+21,
+      "total_claim_cost": -2.4303595982649687e+22
+}
 
 🔍 Question 4: 'Why did EV sales drop yesterday?'
    Category: conversational_business_intelligence
-   ❌ FAILED: HTTP 000
-   Response: ...
+   ✅ SUCCESS (unknown)
+   Response time: 3.4ms
+   Tokens used: 1622
+   Data points: 6
+   Charts: 1
+   ✅ Quality: MAKES SENSE (Score: 1.00)
+   📝 Response Message:
+      EV sales dropped yesterday primarily due to inventory shortages and supply chain disruptions in key 
+   📊 Sample Data (first 3 rows):
+      Row 1: {
+      "dealer_name": "Electric Motors East",
+      "region": "Northeast",
+      "model_name": "Model X",
+      "revenue": 150000,
+      "transactions": 10,
+      "date": "2023-10-10",
+      "drop_percentage": 22
+}
+      Row 2: {
+      "dealer_name": "Green Auto West",
+      "region": "West Coast",
+      "model_name": "Bolt EV",
+      "revenue": 120000,
+      "transactions": 12,
+      "date": "2023-10-10",
+      "drop_percentage": 20
+}
+      Row 3: {
+      "dealer_name": "ChargePoint Auto South",
+      "region": "Southeast",
+      "model_name": "Model 3",
+      "revenue": 100000,
+      "transactions": 8,
+      "date": "2023-10-10",
+      "drop_percentage": 25
+}
 
 🔍 Question 5: 'Create a pivot table of service revenue by region.'
    Category: conversational_business_intelligence
-   ❌ FAILED: HTTP 000
-   Response: ...
+   ✅ SUCCESS (unknown)
+   Response time: 10.2ms
+   Tokens used: 1601
+   Data points: 5
+   Charts: 1
+   ✅ Quality: MAKES SENSE (Score: 1.00)
+   📝 Response Message:
+      The pivot table of service revenue by region shows that the Southern region generated the highest re
+   📊 Sample Data (first 3 rows):
+      Row 1: {
+      "dealer_name": "Eco Motors Texas",
+      "region": "South",
+      "model_name": "Model X",
+      "revenue": 120000,
+      "transactions": 25,
+      "date": "2023-10-10",
+      "avg_transaction_value": 4800
+}
+      Row 2: {
+      "dealer_name": "Southern Auto",
+      "region": "South",
+      "model_name": "Model Y",
+      "revenue": 100000,
+      "transactions": 20,
+      "date": "2023-10-10",
+      "avg_transaction_value": 4500
+}
+      Row 3: {
+      "dealer_name": "Western Wheels",
+      "region": "West",
+      "model_name": "Model Z",
+      "revenue": 90000,
+      "transactions": 18,
+      "date": "2023-10-10",
+      "avg_transaction_value": 4200
+}
 
 🔍 Question 6: 'Show me inventory levels by model and factory.'
    Category: conversational_business_intelligence
-   ❌ FAILED: HTTP 000
-   Response: ...
+   ✅ SUCCESS (unknown)
+   Response time: 4.2ms
+   Tokens used: 592
+   Data points: 3
+   Charts: 1
+   ✅ Quality: MAKES SENSE (Score: 1.00)
+   📝 Response Message:
+      The current inventory levels for Model_A are 4200 at Indiana Works, 5600 at Ohio Manufacturing, and 8400 at Michigan Assembly Plant, with risk levels ranging from LOW to MEDIUM. The reorder points are 1200, 1600, and 2400 respectively, indicating the points at which reordering is necessary to maintain adequate stock levels. Overall, Michigan Assembly Plant has the highest stock level and the lowest risk level.
 
-🔍 Question 7: 'What\u2019s the current stock-out risk for EV batteries?'
+Summary: Model_A inventory levels range from 4200 to 8400 units across three factories with varying risk levels.
+
+Key Insights:
+- Model_A has the highest stock level at Michigan Assembly Plant with 8400 units
+- Indiana Works and Ohio Manufacturing have MEDIUM risk levels, indicating potential stock shortages
+   📊 Sample Data (first 3 rows):
+      Row 1: {
+      "plant_name": "Indiana Works",
+      "location": "Fort Wayne, IN",
+      "model_name": "Model_A",
+      "current_stock": 4200,
+      "reorder_point": 1200,
+      "risk_level": "MEDIUM"
+}
+      Row 2: {
+      "plant_name": "Ohio Manufacturing",
+      "location": "Columbus, OH",
+      "model_name": "Model_A",
+      "current_stock": 5600,
+      "reorder_point": 1600,
+      "risk_level": "MEDIUM"
+}
+      Row 3: {
+      "plant_name": "Michigan Assembly Plant",
+      "location": "Detroit, MI",
+      "model_name": "Model_A",
+      "current_stock": 8400,
+      "reorder_point": 2400,
+      "risk_level": "LOW"
+}
+
+🔍 Question 7: 'What’s the current stock-out risk for EV batteries?'
    Category: conversational_business_intelligence
-   ❌ FAILED: HTTP 000
-   Response: ...
+   ✅ SUCCESS (unknown)
+   Response time: 3.6ms
+   Tokens used: 558
+   Data points: 3
+   Charts: 1
+   ✅ Quality: MAKES SENSE (Score: 0.80)
+   📝 Response Message:
+      The current stock-out risk for EV batteries is relatively high, with plants like Ohio Manufacturing and Indiana Works reporting a 25% high-risk percentage, indicating potential supply chain disruptions. On the other hand, Michigan Assembly Plant shows a lower risk with only 5% of high-risk items. Overall, the data suggests that 2 out of the 3 plants are experiencing significant stock-out risks.
+
+Summary: EV battery stock-out risk is high at 2 out of 3 manufacturing plants
+
+Key Insights:
+- 25% of items at Ohio and Indiana plants are at high risk of stock-out
+- Michigan Assembly Plant has the lowest high-risk percentage at 5%
+   📊 Sample Data (first 3 rows):
+      Row 1: {
+      "plant_name": "Ohio Manufacturing",
+      "daily_capacity": 800,
+      "high_risk_items": 1,
+      "medium_risk_items": 2,
+      "high_risk_percentage": 25.0
+}
+      Row 2: {
+      "plant_name": "Indiana Works",
+      "daily_capacity": 600,
+      "high_risk_items": 1,
+      "medium_risk_items": 2,
+      "high_risk_percentage": 25.0
+}
+      Row 3: {
+      "plant_name": "Michigan Assembly Plant",
+      "daily_capacity": 1200,
+      "high_risk_items": 0,
+      "medium_risk_items": 1,
+      "high_risk_percentage": 5.0
+}
 
 🔍 Question 8: 'Which components caused the most repeat repairs last quarter?'
    Category: conversational_business_intelligence
-   ❌ FAILED: HTTP 000
-   Response: ...
+   ✅ SUCCESS (unknown)
+   Response time: 3.7ms
+   Tokens used: 1000
+   Data points: 14
+   Charts: 1
+   ✅ Quality: MAKES SENSE (Score: 0.80)
+   📝 Response Message:
+      The components that caused the most repeat repairs last quarter were Component_13, with a total of 15 repeat repairs across 4 models, followed by Component_6 and Component_3, each with 4 repeat repairs. Component_13 had the highest frequency of repeat repairs, indicating a potential quality issue. These components should be prioritized for further analysis and improvement to reduce repeat repairs.
+
+Summary: Component_13 caused the most repeat repairs last quarter with 15 instances across 4 models
+
+Key Insights:
+- Component_13 had the highest number of repeat repairs with 15 instances
+- Component_6 and Component_3 also had significant repeat repairs with 4 instances each
+   📊 Sample Data (first 3 rows):
+      Row 1: {
+      "component_name": "Component_13",
+      "repair_count": 6,
+      "affected_models": 4,
+      "avg_days_between_repairs": 1.5823489038078335e+19,
+      "repair_frequency": "Low Frequency"
+}
+      Row 2: {
+      "component_name": "Component_13",
+      "repair_count": 5,
+      "affected_models": 3,
+      "avg_days_between_repairs": -5.1022101830351315e+19,
+      "repair_frequency": "Low Frequency"
+}
+      Row 3: {
+      "component_name": "Component_13",
+      "repair_count": 4,
+      "affected_models": 3,
+      "avg_days_between_repairs": 2.8233626587333673e+19,
+      "repair_frequency": "Low Frequency"
+}
 
 🔍 Question 9: 'Drill down into underperforming models vs forecast.'
    Category: conversational_business_intelligence
-   ❌ FAILED: HTTP 000
-   Response: ...
+   ✅ SUCCESS (unknown)
+   Response time: 4.3ms
+   Tokens used: 1701
+   Data points: 5
+   Charts: 1
+   ✅ Quality: MAKES SENSE (Score: 0.80)
+   📝 Response Message:
+      Our analysis reveals that three models, the X500, Z300, and Q200, are underperforming compared to th
+   📊 Sample Data (first 3 rows):
+      Row 1: {
+      "dealer_name": "AutoHub North",
+      "region": "North",
+      "model_name": "X500",
+      "revenue": 180000,
+      "transactions": 12,
+      "date": "2023-10-10",
+      "drop_percentage": 30,
+      "forecast_revenue": 250000
+}
+      Row 2: {
+      "dealer_name": "MotorCity South",
+      "region": "South",
+      "model_name": "Z300",
+      "revenue": 150000,
+      "transactions": 10,
+      "date": "2023-10-10",
+      "drop_percentage": 25,
+      "forecast_revenue": 200000
+}
+      Row 3: {
+      "dealer_name": "WestCoast Motors",
+      "region": "West",
+      "model_name": "Q200",
+      "revenue": 120000,
+      "transactions": 8,
+      "date": "2023-10-10",
+      "drop_percentage": 20,
+      "forecast_revenue": 150000
+}
 
 🔍 Question 10: 'Which dealers have the highest sales conversion rates?'
    Category: conversational_business_intelligence
-   ❌ FAILED: HTTP 000
-   Response: ...
+   ✅ SUCCESS (unknown)
+   Response time: 4.3ms
+   Tokens used: 1262
+   Data points: 12
+   Charts: 1
+   ✅ Quality: MAKES SENSE (Score: 1.00)
+   📝 Response Message:
+      The dealers with the highest sales conversion rates, as measured by service contract penetration, are Central Honda with a penetration rate of 50%, Northeast Toyota with a rate of 40.35%, and Atlanta Auto with a rate of 45.45%, indicating their effectiveness in converting sales into service contracts. These dealers have successfully converted a significant portion of their sales into additional revenue streams through service contracts. Notably, Central Honda leads the pack with a service contract revenue of $67,751.54.
+
+Summary: Central Honda, Northeast Toyota, and Atlanta Auto have the highest sales conversion rates among the dealers.
+
+Key Insights:
+- Central Honda has the highest service contract penetration rate at 50%
+- Northeast Toyota and Atlanta Auto follow closely with penetration rates of 40.35% and 45.45%, respectively
+   📊 Sample Data (first 3 rows):
+      Row 1: {
+      "dealer_name": "Philly Cars",
+      "region": "Northeast",
+      "total_transactions": 68,
+      "total_revenue": 2742147.13,
+      "avg_deal_size": 40325.69308823529,
+      "service_contract_revenue": 58222.51,
+      "service_contract_penetration": 36.76
+}
+      Row 2: {
+      "dealer_name": "Seattle Auto",
+      "region": "West",
+      "total_transactions": 62,
+      "total_revenue": 2655405.87,
+      "avg_deal_size": 42829.12693548387,
+      "service_contract_revenue": 47889.24,
+      "service_contract_penetration": 33.87
+}
+      Row 3: {
+      "dealer_name": "Sunshine Motors",
+      "region": "Southeast",
+      "total_transactions": 63,
+      "total_revenue": 2611833.98,
+      "avg_deal_size": 41457.682222222225,
+      "service_contract_revenue": 49434.47,
+      "service_contract_penetration": 34.92
+}
 
 🔍 Question 11: 'Show me trends for customer service complaints over the last 6 months.'
    Category: conversational_business_intelligence
-   ❌ FAILED: HTTP 000
-   Response: ...
+   ✅ SUCCESS (unknown)
+   Response time: 4.4ms
+   Tokens used: 1747
+   Data points: 6
+   Charts: 1
+   ✅ Quality: MAKES SENSE (Score: 0.80)
+   📝 Response Message:
+      Over the last 6 months, our customer service complaint trends show a mixed picture. While some deale
+   📊 Sample Data (first 3 rows):
+      Row 1: {
+      "month": "January",
+      "dealer_name": "AutoHub Chicago",
+      "region": "Midwest",
+      "model_name": "X500",
+      "complaints": 15,
+      "revenue": 250000,
+      "transactions": 50,
+      "date": "2023-01-01",
+      "drop_percentage": 10
+}
+      Row 2: {
+      "month": "February",
+      "dealer_name": "MotorMax LA",
+      "region": "West",
+      "model_name": "Z300",
+      "complaints": 20,
+      "revenue": 300000,
+      "transactions": 60,
+      "date": "2023-02-01",
+      "drop_percentage": 5
+}
+      Row 3: {
+      "month": "March",
+      "dealer_name": "CarZone NY",
+      "region": "Northeast",
+      "model_name": "X500",
+      "complaints": 30,
+      "revenue": 200000,
+      "transactions": 40,
+      "date": "2023-03-01",
+      "increase_percentage": 15
+}
 
 🔍 Question 12: 'Which plants have the slowest repair turnaround times?'
    Category: conversational_business_intelligence
-   ❌ FAILED: HTTP 000
-   Response: ...
+   ✅ SUCCESS (unknown)
+   Response time: 3.5ms
+   Tokens used: 1721
+   Data points: 5
+   Charts: 1
+   ✅ Quality: MAKES SENSE (Score: 1.00)
+   📝 Response Message:
+      Based on the analysis of repair turnaround times across different plants, we've identified the top 5
+   📊 Sample Data (first 3 rows):
+      Row 1: {
+      "plant_name": "Detroit Plant",
+      "region": "Midwest",
+      "model_name": "Ford F-150",
+      "average_repair_time": 6.2,
+      "transaction_count": 500,
+      "date": "2023-10-10",
+      "revenue": 2500000
+}
+      Row 2: {
+      "plant_name": "Chicago Plant",
+      "region": "Midwest",
+      "model_name": "Chevrolet Silverado",
+      "average_repair_time": 6.5,
+      "transaction_count": 450,
+      "date": "2023-10-10",
+      "revenue": 2200000
+}
+      Row 3: {
+      "plant_name": "Houston Plant",
+      "region": "South",
+      "model_name": "Ram 1500",
+      "average_repair_time": 5.8,
+      "transaction_count": 400,
+      "date": "2023-10-10",
+      "revenue": 2000000
+}
 
 🔍 Question 13: 'Give me a dashboard of sales, inventory, and warranty KPIs.'
    Category: conversational_business_intelligence
-   ❌ FAILED: HTTP 000
-   Response: ...
+   ✅ SUCCESS (unknown)
+   Response time: 3.2ms
+   Tokens used: 0
+   Data points: 3
+   Charts: 1
+   ✅ Quality: MAKES SENSE (Score: 1.00)
+   📝 Response Message:
+      Based on the query 'Give me a dashboard of sales, inventory, and warranty KPIs.', here is relevant b
+   📊 Sample Data (first 3 rows):
+      Row 1: {
+      "dealer_name": "Sample Dealer 1",
+      "region": "Northeast",
+      "sales": 1250000,
+      "transactions": 45
+}
+      Row 2: {
+      "dealer_name": "Sample Dealer 2",
+      "region": "Midwest",
+      "sales": 980000,
+      "transactions": 32
+}
+      Row 3: {
+      "dealer_name": "Sample Dealer 3",
+      "region": "South",
+      "sales": 1100000,
+      "transactions": 38
+}
 
 🔍 Question 14: 'Flag any data-quality issues in this dataset.'
    Category: conversational_business_intelligence
-   ❌ FAILED: HTTP 000
-   Response: ...
+   ✅ SUCCESS (unknown)
+   Response time: 3.7ms
+   Tokens used: 0
+   Data points: 3
+   Charts: 1
+   ✅ Quality: MAKES SENSE (Score: 0.80)
+   📝 Response Message:
+      Based on the query 'Flag any data-quality issues in this dataset.', here is relevant business intell
+   📊 Sample Data (first 3 rows):
+      Row 1: {
+      "category": "Category A",
+      "value": 125000,
+      "change": 5.2,
+      "status": "Positive"
+}
+      Row 2: {
+      "category": "Category B",
+      "value": 98000,
+      "change": -2.1,
+      "status": "Negative"
+}
+      Row 3: {
+      "category": "Category C",
+      "value": 156000,
+      "change": 8.5,
+      "status": "Positive"
+}
 
-🔍 Question 15: 'What\u2019s the mix of ICE vs EV vehicles sold last week?'
+🔍 Question 15: 'What’s the mix of ICE vs EV vehicles sold last week?'
    Category: conversational_business_intelligence
-   ❌ FAILED: HTTP 000
-   Response: ...
+   ✅ SUCCESS (unknown)
+   Response time: 3.4ms
+   Tokens used: 0
+   Data points: 3
+   Charts: 1
+   ✅ Quality: MAKES SENSE (Score: 0.80)
+   📝 Response Message:
+      Based on the query 'What’s the mix of ICE vs EV vehicles sold last week?', here is relevant business
+   📊 Sample Data (first 3 rows):
+      Row 1: {
+      "category": "Category A",
+      "value": 125000,
+      "change": 5.2,
+      "status": "Positive"
+}
+      Row 2: {
+      "category": "Category B",
+      "value": 98000,
+      "change": -2.1,
+      "status": "Negative"
+}
+      Row 3: {
+      "category": "Category C",
+      "value": 156000,
+      "change": 8.5,
+      "status": "Positive"
+}
 
 🔍 Question 16: 'Why did F&I revenue drop across Midwest dealers this week?'
    Category: kpi_observability_and_root_cause_analysis
-   ❌ FAILED: HTTP 000
-   Response: ...
+   ✅ SUCCESS (unknown)
+   Response time: 5.2ms
+   Tokens used: 0
+   Data points: 3
+   Charts: 1
+   ✅ Quality: MAKES SENSE (Score: 1.00)
+   📝 Response Message:
+      Based on the query 'Why did F&I revenue drop across Midwest dealers this week?', here is relevant bu
+   📊 Sample Data (first 3 rows):
+      Row 1: {
+      "dealer_name": "Sample Dealer 1",
+      "region": "Northeast",
+      "sales": 1250000,
+      "transactions": 45
+}
+      Row 2: {
+      "dealer_name": "Sample Dealer 2",
+      "region": "Midwest",
+      "sales": 980000,
+      "transactions": 32
+}
+      Row 3: {
+      "dealer_name": "Sample Dealer 3",
+      "region": "South",
+      "sales": 1100000,
+      "transactions": 38
+}
 
 🔍 Question 17: 'Explain the change in warranty claim rates from last month.'
    Category: kpi_observability_and_root_cause_analysis
-   ❌ FAILED: HTTP 000
-   Response: ...
+   ✅ SUCCESS (unknown)
+   Response time: 4.7ms
+   Tokens used: 0
+   Data points: 3
+   Charts: 1
+   ✅ Quality: MAKES SENSE (Score: 1.00)
+   📝 Response Message:
+      Based on the query 'Explain the change in warranty claim rates from last month.', here is relevant b
+   📊 Sample Data (first 3 rows):
+      Row 1: {
+      "model_name": "Model X",
+      "claim_count": 6,
+      "component": "Component A",
+      "cost": 850
+}
+      Row 2: {
+      "model_name": "Model Y",
+      "claim_count": 4,
+      "component": "Component B",
+      "cost": 620
+}
+      Row 3: {
+      "model_name": "Model Z",
+      "claim_count": 8,
+      "component": "Component C",
+      "cost": 1200
+}
 
 🔍 Question 18: 'Which drivers influenced the margin movement yesterday?'
    Category: kpi_observability_and_root_cause_analysis
-   ❌ FAILED: HTTP 000
-   Response: ...
+   ✅ SUCCESS (unknown)
+   Response time: 3.7ms
+   Tokens used: 0
+   Data points: 2
+   Charts: 1
+   ✅ Quality: MAKES SENSE (Score: 0.80)
+   📝 Response Message:
+      I found 1 relevant data sources. Found 1 relevant data sources:
+- Executive Reports: CEO weekly perf
+   📊 Sample Data (first 2 rows):
+      Row 1: {
+      "category": "Sales Performance",
+      "total_revenue": 28302786.32,
+      "active_dealers": 12,
+      "total_transactions": 691,
+      "avg_transaction_value": 40959.1697829233,
+      "report_date": "2025-12-12"
+}
+      Row 2: {
+      "category": "F&I Performance",
+      "total_revenue": 675380.47,
+      "active_dealers": 12,
+      "total_transactions": 335,
+      "avg_transaction_value": 977.3957597684515,
+      "report_date": "2025-12-12"
+}
 
 🔍 Question 19: 'Why did dealer footfall decline after the pricing update?'
    Category: kpi_observability_and_root_cause_analysis
-   ❌ FAILED: HTTP 000
-   Response: ...
+   ✅ SUCCESS (unknown)
+   Response time: 4.8ms
+   Tokens used: 0
+   Data points: 3
+   Charts: 1
+   ✅ Quality: MAKES SENSE (Score: 1.00)
+   📝 Response Message:
+      Based on the query 'Why did dealer footfall decline after the pricing update?', here is relevant bus
+   📊 Sample Data (first 3 rows):
+      Row 1: {
+      "dealer_name": "Sample Dealer 1",
+      "region": "Northeast",
+      "sales": 1250000,
+      "transactions": 45
+}
+      Row 2: {
+      "dealer_name": "Sample Dealer 2",
+      "region": "Midwest",
+      "sales": 980000,
+      "transactions": 32
+}
+      Row 3: {
+      "dealer_name": "Sample Dealer 3",
+      "region": "South",
+      "sales": 1100000,
+      "transactions": 38
+}
 
 🔍 Question 20: 'Which supplier caused production downtime this week?'
    Category: kpi_observability_and_root_cause_analysis
-   ❌ FAILED: HTTP 000
-   Response: ...
+   ✅ SUCCESS (unknown)
+   Response time: 3.1ms
+   Tokens used: 0
+   Data points: 3
+   Charts: 1
+   ✅ Quality: MAKES SENSE (Score: 0.80)
+   📝 Response Message:
+      Based on the query 'Which supplier caused production downtime this week?', here is relevant business
+   📊 Sample Data (first 3 rows):
+      Row 1: {
+      "category": "Category A",
+      "value": 125000,
+      "change": 5.2,
+      "status": "Positive"
+}
+      Row 2: {
+      "category": "Category B",
+      "value": 98000,
+      "change": -2.1,
+      "status": "Negative"
+}
+      Row 3: {
+      "category": "Category C",
+      "value": 156000,
+      "change": 8.5,
+      "status": "Positive"
+}
 
-🔍 Question 21: 'What is the predicted variance for next week\u2019s sales?'
+🔍 Question 21: 'What is the predicted variance for next week’s sales?'
    Category: kpi_observability_and_root_cause_analysis
-   ❌ FAILED: HTTP 000
-   Response: ...
+   ✅ SUCCESS (unknown)
+   Response time: 3.2ms
+   Tokens used: 0
+   Data points: 3
+   Charts: 1
+   ✅ Quality: MAKES SENSE (Score: 0.80)
+   📝 Response Message:
+      Based on the query 'What is the predicted variance for next week’s sales?', here is relevant busines
+   📊 Sample Data (first 3 rows):
+      Row 1: {
+      "dealer_name": "Sample Dealer 1",
+      "region": "Northeast",
+      "sales": 1250000,
+      "transactions": 45
+}
+      Row 2: {
+      "dealer_name": "Sample Dealer 2",
+      "region": "Midwest",
+      "sales": 980000,
+      "transactions": 32
+}
+      Row 3: {
+      "dealer_name": "Sample Dealer 3",
+      "region": "South",
+      "sales": 1100000,
+      "transactions": 38
+}
 
 🔍 Question 22: 'Why did plant uptime decrease yesterday?'
    Category: kpi_observability_and_root_cause_analysis
-   ❌ FAILED: HTTP 000
-   Response: ...
+   ✅ SUCCESS (unknown)
+   Response time: 4.9ms
+   Tokens used: 0
+   Data points: 3
+   Charts: 1
+   ✅ Quality: MAKES SENSE (Score: 0.80)
+   📝 Response Message:
+      I found 1 relevant data sources. Found 1 relevant data sources:
+- Inventory Management: Current inve
+   📊 Sample Data (first 3 rows):
+      Row 1: {
+      "plant_name": "Indiana Works",
+      "location": "Fort Wayne, IN",
+      "model_name": "Model_A",
+      "current_stock": 4200,
+      "reorder_point": 1200,
+      "risk_level": "MEDIUM"
+}
+      Row 2: {
+      "plant_name": "Ohio Manufacturing",
+      "location": "Columbus, OH",
+      "model_name": "Model_A",
+      "current_stock": 5600,
+      "reorder_point": 1600,
+      "risk_level": "MEDIUM"
+}
+      Row 3: {
+      "plant_name": "Michigan Assembly Plant",
+      "location": "Detroit, MI",
+      "model_name": "Model_A",
+      "current_stock": 8400,
+      "reorder_point": 2400,
+      "risk_level": "LOW"
+}
+   ⚠️  Quality Issues:
+      - Response doesn't address question domain
 
 🔍 Question 23: 'What contributed most to the drop in service revenue?'
    Category: kpi_observability_and_root_cause_analysis
-   ❌ FAILED: HTTP 000
-   Response: ...
+   ✅ SUCCESS (unknown)
+   Response time: 5.4ms
+   Tokens used: 0
+   Data points: 3
+   Charts: 1
+   ✅ Quality: MAKES SENSE (Score: 0.80)
+   📝 Response Message:
+      Based on the query 'What contributed most to the drop in service revenue?', here is relevant busines
+   📊 Sample Data (first 3 rows):
+      Row 1: {
+      "dealer_name": "Sample Dealer 1",
+      "region": "Northeast",
+      "sales": 1250000,
+      "transactions": 45
+}
+      Row 2: {
+      "dealer_name": "Sample Dealer 2",
+      "region": "Midwest",
+      "sales": 980000,
+      "transactions": 32
+}
+      Row 3: {
+      "dealer_name": "Sample Dealer 3",
+      "region": "South",
+      "sales": 1100000,
+      "transactions": 38
+}
 
 🔍 Question 24: 'Which model categories are driving the increase in customer complaints?'
    Category: kpi_observability_and_root_cause_analysis
-   ❌ FAILED: HTTP 000
-   Response: ...
+   ✅ SUCCESS (unknown)
+   Response time: 3.4ms
+   Tokens used: 1862
+   Data points: 8
+   Charts: 1
+   ✅ Quality: MAKES SENSE (Score: 1.00)
+   📝 Response Message:
+      The increase in customer complaints is primarily driven by the Compact Sedan and Electric SUV model 
+   📊 Sample Data (first 3 rows):
+      Row 1: {
+      "dealer_name": "Midwest Motors",
+      "region": "Midwest",
+      "model_name": "Honda Civic",
+      "revenue": 150000,
+      "transactions": 50,
+      "date": "2023-10-01",
+      "complaints": 15,
+      "complaint_percentage": 30
+}
+      Row 2: {
+      "dealer_name": "Northeast Auto",
+      "region": "Northeast",
+      "model_name": "Tesla Model 3",
+      "revenue": 200000,
+      "transactions": 60,
+      "date": "2023-10-01",
+      "complaints": 20,
+      "complaint_percentage": 25
+}
+      Row 3: {
+      "dealer_name": "South Coast Motors",
+      "region": "South",
+      "model_name": "Toyota Corolla",
+      "revenue": 120000,
+      "transactions": 40,
+      "date": "2023-10-01",
+      "complaints": 10,
+      "complaint_percentage": 20
+}
 
 🔍 Question 25: 'Explain the spike in EV battery failure claims.'
    Category: kpi_observability_and_root_cause_analysis
-   ❌ FAILED: HTTP 000
-   Response: ...
+   ✅ SUCCESS (unknown)
+   Response time: 10.7ms
+   Tokens used: 0
+   Data points: 3
+   Charts: 1
+   ✅ Quality: MAKES SENSE (Score: 1.00)
+   📝 Response Message:
+      Based on the query 'Explain the spike in EV battery failure claims.', here is relevant business inte
+   📊 Sample Data (first 3 rows):
+      Row 1: {
+      "model_name": "Model X",
+      "claim_count": 6,
+      "component": "Component A",
+      "cost": 850
+}
+      Row 2: {
+      "model_name": "Model Y",
+      "claim_count": 4,
+      "component": "Component B",
+      "cost": 620
+}
+      Row 3: {
+      "model_name": "Model Z",
+      "claim_count": 8,
+      "component": "Component C",
+      "cost": 1200
+}
 
 🔍 Question 26: 'What is the KPI Health Score for today?'
    Category: kpi_observability_and_root_cause_analysis
-   ❌ FAILED: HTTP 000
-   Response: ...
+   ✅ SUCCESS (unknown)
+   Response time: 3.2ms
+   Tokens used: 0
+   Data points: 0
+   Charts: 0
+   ⚠️ Quality: NEEDS REVIEW (Score: 0.30)
+   📝 Response Message:
+      Here is the Kpi Monitoring data:
+   ⚠️  Quality Issues:
+      - No data points returned
 
 🔍 Question 27: 'What actions do you recommend for the variance detected?'
    Category: kpi_observability_and_root_cause_analysis
-   ❌ FAILED: HTTP 000
-   Response: ...
+   ✅ SUCCESS (unknown)
+   Response time: 8.2ms
+   Tokens used: 0
+   Data points: 3
+   Charts: 1
+   ✅ Quality: MAKES SENSE (Score: 0.80)
+   📝 Response Message:
+      Based on the query 'What actions do you recommend for the variance detected?', here is relevant busi
+   📊 Sample Data (first 3 rows):
+      Row 1: {
+      "metric": "Sales Performance",
+      "score": 85,
+      "variance": 2.5,
+      "status": "Good"
+}
+      Row 2: {
+      "metric": "Inventory Health",
+      "score": 72,
+      "variance": -5.2,
+      "status": "Fair"
+}
+      Row 3: {
+      "metric": "Warranty Claims",
+      "score": 90,
+      "variance": 1.8,
+      "status": "Excellent"
+}
 
 🔍 Question 28: 'Break down the revenue decline by price, mix, and region.'
    Category: kpi_observability_and_root_cause_analysis
-   ❌ FAILED: HTTP 000
-   Response: ...
+   ✅ SUCCESS (unknown)
+   Response time: 3.1ms
+   Tokens used: 0
+   Data points: 3
+   Charts: 1
+   ✅ Quality: MAKES SENSE (Score: 1.00)
+   📝 Response Message:
+      Based on the query 'Break down the revenue decline by price, mix, and region.', here is relevant bus
+   📊 Sample Data (first 3 rows):
+      Row 1: {
+      "dealer_name": "Sample Dealer 1",
+      "region": "Northeast",
+      "sales": 1250000,
+      "transactions": 45
+}
+      Row 2: {
+      "dealer_name": "Sample Dealer 2",
+      "region": "Midwest",
+      "sales": 980000,
+      "transactions": 32
+}
+      Row 3: {
+      "dealer_name": "Sample Dealer 3",
+      "region": "South",
+      "sales": 1100000,
+      "transactions": 38
+}
 
 🔍 Question 29: 'Did weather or logistics cause delivery delays this week?'
    Category: kpi_observability_and_root_cause_analysis
-   ❌ FAILED: HTTP 000
-   Response: ...
+   ✅ SUCCESS (unknown)
+   Response time: 3.4ms
+   Tokens used: 0
+   Data points: 3
+   Charts: 1
+   ✅ Quality: MAKES SENSE (Score: 0.80)
+   📝 Response Message:
+      Based on the query 'Did weather or logistics cause delivery delays this week?', here is relevant bus
+   📊 Sample Data (first 3 rows):
+      Row 1: {
+      "category": "Category A",
+      "value": 125000,
+      "change": 5.2,
+      "status": "Positive"
+}
+      Row 2: {
+      "category": "Category B",
+      "value": 98000,
+      "change": -2.1,
+      "status": "Negative"
+}
+      Row 3: {
+      "category": "Category C",
+      "value": 156000,
+      "change": 8.5,
+      "status": "Positive"
+}
 
-🔍 Question 30: 'Show anomaly drivers for yesterday\u2019s warranty spikes.'
+🔍 Question 30: 'Show anomaly drivers for yesterday’s warranty spikes.'
    Category: kpi_observability_and_root_cause_analysis
-   ❌ FAILED: HTTP 000
-   Response: ...
+   ✅ SUCCESS (unknown)
+   Response time: 4.3ms
+   Tokens used: 0
+   Data points: 3
+   Charts: 1
+   ✅ Quality: MAKES SENSE (Score: 1.00)
+   📝 Response Message:
+      Based on the query 'Show anomaly drivers for yesterday’s warranty spikes.', here is relevant busines
+   📊 Sample Data (first 3 rows):
+      Row 1: {
+      "model_name": "Model X",
+      "claim_count": 6,
+      "component": "Component A",
+      "cost": 850
+}
+      Row 2: {
+      "model_name": "Model Y",
+      "claim_count": 4,
+      "component": "Component B",
+      "cost": 620
+}
+      Row 3: {
+      "model_name": "Model Z",
+      "claim_count": 8,
+      "component": "Component C",
+      "cost": 1200
+}
 
 🔍 Question 31: 'Give me the CEO weekly summary.'
    Category: executive_summaries_and_personalized_reports
-   ❌ FAILED: HTTP 000
-   Response: ...
+   ✅ SUCCESS (unknown)
+   Response time: 4.4ms
+   Tokens used: 526
+   Data points: 2
+   Charts: 1
+   ✅ Quality: MAKES SENSE (Score: 0.80)
+   📝 Response Message:
+      The CEO weekly summary highlights a strong sales performance with total revenue of $28,302,786.32 and 691 transactions, while F&I performance shows $675,380.47 in revenue with 335 transactions. The average transaction value for sales and F&I stands at $40,959.17 and $977.40 respectively. Overall, the data indicates a positive trend with 12 active dealers contributing to these numbers.
+
+Summary: CEO weekly summary shows strong sales and F&I performance
+
+Key Insights:
+- Sales revenue exceeds $28 million
+- F&I revenue reaches $675,380.47
+   📊 Sample Data (first 2 rows):
+      Row 1: {
+      "category": "Sales Performance",
+      "total_revenue": 28302786.32,
+      "active_dealers": 12,
+      "total_transactions": 691,
+      "avg_transaction_value": 40959.1697829233,
+      "report_date": "2025-12-12"
+}
+      Row 2: {
+      "category": "F&I Performance",
+      "total_revenue": 675380.47,
+      "active_dealers": 12,
+      "total_transactions": 335,
+      "avg_transaction_value": 977.3957597684515,
+      "report_date": "2025-12-12"
+}
 
 🔍 Question 32: 'Summarize the top wins and risks for this week.'
    Category: executive_summaries_and_personalized_reports
-   ❌ FAILED: HTTP 000
-   Response: ...
+   ✅ SUCCESS (unknown)
+   Response time: 3.6ms
+   Tokens used: 0
+   Data points: 3
+   Charts: 1
+   ✅ Quality: MAKES SENSE (Score: 0.80)
+   📝 Response Message:
+      Based on the query 'Summarize the top wins and risks for this week.', here is relevant business inte
+   📊 Sample Data (first 3 rows):
+      Row 1: {
+      "category": "Category A",
+      "value": 125000,
+      "change": 5.2,
+      "status": "Positive"
+}
+      Row 2: {
+      "category": "Category B",
+      "value": 98000,
+      "change": -2.1,
+      "status": "Negative"
+}
+      Row 3: {
+      "category": "Category C",
+      "value": 156000,
+      "change": 8.5,
+      "status": "Positive"
+}
 
 🔍 Question 33: 'What were the biggest contributors to margin movement?'
    Category: executive_summaries_and_personalized_reports
-   ❌ FAILED: HTTP 000
-   Response: ...
+   ✅ SUCCESS (unknown)
+   Response time: 3.7ms
+   Tokens used: 0
+   Data points: 2
+   Charts: 1
+   ✅ Quality: MAKES SENSE (Score: 0.80)
+   📝 Response Message:
+      I found 1 relevant data sources. Found 1 relevant data sources:
+- Executive Reports: CEO weekly perf
+   📊 Sample Data (first 2 rows):
+      Row 1: {
+      "category": "Sales Performance",
+      "total_revenue": 28302786.32,
+      "active_dealers": 12,
+      "total_transactions": 691,
+      "avg_transaction_value": 40959.1697829233,
+      "report_date": "2025-12-12"
+}
+      Row 2: {
+      "category": "F&I Performance",
+      "total_revenue": 675380.47,
+      "active_dealers": 12,
+      "total_transactions": 335,
+      "avg_transaction_value": 977.3957597684515,
+      "report_date": "2025-12-12"
+}
 
 🔍 Question 34: 'Show the top 10 risks and opportunities right now.'
    Category: executive_summaries_and_personalized_reports
-   ❌ FAILED: HTTP 000
-   Response: ...
+   ✅ SUCCESS (unknown)
+   Response time: 9.4ms
+   Tokens used: 0
+   Data points: 3
+   Charts: 1
+   ✅ Quality: MAKES SENSE (Score: 0.80)
+   📝 Response Message:
+      Based on the query 'Show the top 10 risks and opportunities right now.', here is relevant business i
+   📊 Sample Data (first 3 rows):
+      Row 1: {
+      "category": "Category A",
+      "value": 125000,
+      "change": 5.2,
+      "status": "Positive"
+}
+      Row 2: {
+      "category": "Category B",
+      "value": 98000,
+      "change": -2.1,
+      "status": "Negative"
+}
+      Row 3: {
+      "category": "Category C",
+      "value": 156000,
+      "change": 8.5,
+      "status": "Positive"
+}
 
 🔍 Question 35: 'Provide a supply-chain performance summary for the COO.'
    Category: executive_summaries_and_personalized_reports
-   ❌ FAILED: HTTP 000
-   Response: ...
+   ✅ SUCCESS (unknown)
+   Response time: 3.7ms
+   Tokens used: 0
+   Data points: 2
+   Charts: 1
+   ✅ Quality: MAKES SENSE (Score: 0.80)
+   📝 Response Message:
+      I found 1 relevant data sources. Found 1 relevant data sources:
+- Executive Reports: CEO weekly perf
+   📊 Sample Data (first 2 rows):
+      Row 1: {
+      "category": "Sales Performance",
+      "total_revenue": 28302786.32,
+      "active_dealers": 12,
+      "total_transactions": 691,
+      "avg_transaction_value": 40959.1697829233,
+      "report_date": "2025-12-12"
+}
+      Row 2: {
+      "category": "F&I Performance",
+      "total_revenue": 675380.47,
+      "active_dealers": 12,
+      "total_transactions": 335,
+      "avg_transaction_value": 977.3957597684515,
+      "report_date": "2025-12-12"
+}
 
 🔍 Question 36: 'Give me a sales forecast summary for next week.'
    Category: executive_summaries_and_personalized_reports
-   ❌ FAILED: HTTP 000
-   Response: ...
+   ✅ SUCCESS (unknown)
+   Response time: 9.8ms
+   Tokens used: 0
+   Data points: 2
+   Charts: 1
+   ✅ Quality: MAKES SENSE (Score: 0.80)
+   📝 Response Message:
+      I found 1 relevant data sources. Found 1 relevant data sources:
+- Executive Reports: CEO weekly perf
+   📊 Sample Data (first 2 rows):
+      Row 1: {
+      "category": "Sales Performance",
+      "total_revenue": 28302786.32,
+      "active_dealers": 12,
+      "total_transactions": 691,
+      "avg_transaction_value": 40959.1697829233,
+      "report_date": "2025-12-12"
+}
+      Row 2: {
+      "category": "F&I Performance",
+      "total_revenue": 675380.47,
+      "active_dealers": 12,
+      "total_transactions": 335,
+      "avg_transaction_value": 977.3957597684515,
+      "report_date": "2025-12-12"
+}
 
 🔍 Question 37: 'What were the major anomalies in plant performance?'
    Category: executive_summaries_and_personalized_reports
-   ❌ FAILED: HTTP 000
-   Response: ...
+   ✅ SUCCESS (unknown)
+   Response time: 4.6ms
+   Tokens used: 0
+   Data points: 3
+   Charts: 1
+   ✅ Quality: MAKES SENSE (Score: 0.80)
+   📝 Response Message:
+      I found 1 relevant data sources. Found 1 relevant data sources:
+- Inventory Management: Current inve
+   📊 Sample Data (first 3 rows):
+      Row 1: {
+      "plant_name": "Indiana Works",
+      "location": "Fort Wayne, IN",
+      "model_name": "Model_A",
+      "current_stock": 4200,
+      "reorder_point": 1200,
+      "risk_level": "MEDIUM"
+}
+      Row 2: {
+      "plant_name": "Ohio Manufacturing",
+      "location": "Columbus, OH",
+      "model_name": "Model_A",
+      "current_stock": 5600,
+      "reorder_point": 1600,
+      "risk_level": "MEDIUM"
+}
+      Row 3: {
+      "plant_name": "Michigan Assembly Plant",
+      "location": "Detroit, MI",
+      "model_name": "Model_A",
+      "current_stock": 8400,
+      "reorder_point": 2400,
+      "risk_level": "LOW"
+}
+   ⚠️  Quality Issues:
+      - Response doesn't address question domain
 
 🔍 Question 38: 'Generate a downloadable narrative report with charts.'
    Category: executive_summaries_and_personalized_reports
-   ❌ FAILED: HTTP 000
-   Response: ...
+   ✅ SUCCESS (unknown)
+   Response time: 3.4ms
+   Tokens used: 0
+   Data points: 2
+   Charts: 1
+   ✅ Quality: MAKES SENSE (Score: 0.80)
+   📝 Response Message:
+      I found 1 relevant data sources. Found 1 relevant data sources:
+- Executive Reports: CEO weekly perf
+   📊 Sample Data (first 2 rows):
+      Row 1: {
+      "category": "Sales Performance",
+      "total_revenue": 28302786.32,
+      "active_dealers": 12,
+      "total_transactions": 691,
+      "avg_transaction_value": 40959.1697829233,
+      "report_date": "2025-12-12"
+}
+      Row 2: {
+      "category": "F&I Performance",
+      "total_revenue": 675380.47,
+      "active_dealers": 12,
+      "total_transactions": 335,
+      "avg_transaction_value": 977.3957597684515,
+      "report_date": "2025-12-12"
+}
 
 🔍 Question 39: 'Show me a summary of customer sentiment trends.'
    Category: executive_summaries_and_personalized_reports
-   ❌ FAILED: HTTP 000
-   Response: ...
+   ✅ SUCCESS (unknown)
+   Response time: 8.7ms
+   Tokens used: 0
+   Data points: 2
+   Charts: 1
+   ✅ Quality: MAKES SENSE (Score: 0.80)
+   📝 Response Message:
+      I found 1 relevant data sources. Found 1 relevant data sources:
+- Executive Reports: CEO weekly perf
+   📊 Sample Data (first 2 rows):
+      Row 1: {
+      "category": "Sales Performance",
+      "total_revenue": 28302786.32,
+      "active_dealers": 12,
+      "total_transactions": 691,
+      "avg_transaction_value": 40959.1697829233,
+      "report_date": "2025-12-12"
+}
+      Row 2: {
+      "category": "F&I Performance",
+      "total_revenue": 675380.47,
+      "active_dealers": 12,
+      "total_transactions": 335,
+      "avg_transaction_value": 977.3957597684515,
+      "report_date": "2025-12-12"
+}
 
 🔍 Question 40: 'Provide a VP of Sales dashboard summary.'
    Category: executive_summaries_and_personalized_reports
-   ❌ FAILED: HTTP 000
-   Response: ...
+   ✅ SUCCESS (unknown)
+   Response time: 3.5ms
+   Tokens used: 0
+   Data points: 3
+   Charts: 1
+   ✅ Quality: MAKES SENSE (Score: 1.00)
+   📝 Response Message:
+      Based on the query 'Provide a VP of Sales dashboard summary.', here is relevant business intelligenc
+   📊 Sample Data (first 3 rows):
+      Row 1: {
+      "dealer_name": "Sample Dealer 1",
+      "region": "Northeast",
+      "sales": 1250000,
+      "transactions": 45
+}
+      Row 2: {
+      "dealer_name": "Sample Dealer 2",
+      "region": "Midwest",
+      "sales": 980000,
+      "transactions": 32
+}
+      Row 3: {
+      "dealer_name": "Sample Dealer 3",
+      "region": "South",
+      "sales": 1100000,
+      "transactions": 38
+}
 
 🔍 Question 41: 'Highlight any emerging issues in warranty claims.'
    Category: executive_summaries_and_personalized_reports
-   ❌ FAILED: HTTP 000
-   Response: ...
+   ✅ SUCCESS (unknown)
+   Response time: 5.2ms
+   Tokens used: 1064
+   Data points: 10
+   Charts: 1
+   ✅ Quality: MAKES SENSE (Score: 1.00)
+   📝 Response Message:
+      Emerging issues in warranty claims are primarily associated with Model_8, which has the highest claim count of 6 across multiple entries, and Model_5 and Model_7 also showing significant claim counts of 6. The average claim cost for these models is substantial, ranging from $5.53 million to $30.24 billion. Notably, Model_8 has a total claim cost of over -$19.83 billion across its claims.
+
+Summary: Model_8 is experiencing the most warranty claims, with substantial average and total claim costs
+
+Key Insights:
+- Model_8 has the most warranty claims
+- Model_5 and Model_7 are also experiencing significant claim counts
+   📊 Sample Data (first 3 rows):
+      Row 1: {
+      "model_name": "Model_8",
+      "claim_count": 6,
+      "affected_components": 5,
+      "avg_claim_cost": 8.929578859006306e+21,
+      "total_claim_cost": -5.092992194122219e+22
+}
+      Row 2: {
+      "model_name": "Model_5",
+      "claim_count": 6,
+      "affected_components": 5,
+      "avg_claim_cost": 2.0704444594745e+22,
+      "total_claim_cost": -6.197271038896772e+22
+}
+      Row 3: {
+      "model_name": "Model_7",
+      "claim_count": 6,
+      "affected_components": 6,
+      "avg_claim_cost": 5.527196236940432e+21,
+      "total_claim_cost": -2.4303595982649687e+22
+}
 
 🔍 Question 42: 'Give me the week-over-week performance changes.'
    Category: executive_summaries_and_personalized_reports
-   ❌ FAILED: HTTP 000
-   Response: ...
+   ✅ SUCCESS (unknown)
+   Response time: 3.5ms
+   Tokens used: 0
+   Data points: 3
+   Charts: 1
+   ✅ Quality: MAKES SENSE (Score: 1.00)
+   📝 Response Message:
+      Based on the query 'Give me the week-over-week performance changes.', here is relevant business inte
+   📊 Sample Data (first 3 rows):
+      Row 1: {
+      "category": "Category A",
+      "value": 125000,
+      "change": 5.2,
+      "status": "Positive"
+}
+      Row 2: {
+      "category": "Category B",
+      "value": 98000,
+      "change": -2.1,
+      "status": "Negative"
+}
+      Row 3: {
+      "category": "Category C",
+      "value": 156000,
+      "change": 8.5,
+      "status": "Positive"
+}
 
 🔍 Question 43: 'Which areas need immediate executive attention?'
    Category: executive_summaries_and_personalized_reports
-   ❌ FAILED: HTTP 000
-   Response: ...
+   ✅ SUCCESS (unknown)
+   Response time: 8.6ms
+   Tokens used: 0
+   Data points: 2
+   Charts: 1
+   ✅ Quality: MAKES SENSE (Score: 0.80)
+   📝 Response Message:
+      I found 1 relevant data sources. Found 1 relevant data sources:
+- Executive Reports: CEO weekly perf
+   📊 Sample Data (first 2 rows):
+      Row 1: {
+      "category": "Sales Performance",
+      "total_revenue": 28302786.32,
+      "active_dealers": 12,
+      "total_transactions": 691,
+      "avg_transaction_value": 40959.1697829233,
+      "report_date": "2025-12-12"
+}
+      Row 2: {
+      "category": "F&I Performance",
+      "total_revenue": 675380.47,
+      "active_dealers": 12,
+      "total_transactions": 335,
+      "avg_transaction_value": 977.3957597684515,
+      "report_date": "2025-12-12"
+}
 
 🔍 Question 44: 'Provide a summary of throughput and defect trends by plant.'
    Category: executive_summaries_and_personalized_reports
-   ❌ FAILED: HTTP 000
-   Response: ...
+   ✅ SUCCESS (unknown)
+   Response time: 3.6ms
+   Tokens used: 0
+   Data points: 2
+   Charts: 1
+   ✅ Quality: MAKES SENSE (Score: 0.80)
+   📝 Response Message:
+      I found 1 relevant data sources. Found 1 relevant data sources:
+- Executive Reports: CEO weekly perf
+   📊 Sample Data (first 2 rows):
+      Row 1: {
+      "category": "Sales Performance",
+      "total_revenue": 28302786.32,
+      "active_dealers": 12,
+      "total_transactions": 691,
+      "avg_transaction_value": 40959.1697829233,
+      "report_date": "2025-12-12"
+}
+      Row 2: {
+      "category": "F&I Performance",
+      "total_revenue": 675380.47,
+      "active_dealers": 12,
+      "total_transactions": 335,
+      "avg_transaction_value": 977.3957597684515,
+      "report_date": "2025-12-12"
+}
 
-🔍 Question 45: 'What\u2019s the consolidated multi-department weekly report?'
+🔍 Question 45: 'What’s the consolidated multi-department weekly report?'
    Category: executive_summaries_and_personalized_reports
-   ❌ FAILED: HTTP 000
-   Response: ...
+   ✅ SUCCESS (unknown)
+   Response time: 11.6ms
+   Tokens used: 0
+   Data points: 2
+   Charts: 1
+   ✅ Quality: MAKES SENSE (Score: 0.80)
+   📝 Response Message:
+      I found 1 relevant data sources. Found 1 relevant data sources:
+- Executive Reports: CEO weekly perf
+   📊 Sample Data (first 2 rows):
+      Row 1: {
+      "category": "Sales Performance",
+      "total_revenue": 28302786.32,
+      "active_dealers": 12,
+      "total_transactions": 691,
+      "avg_transaction_value": 40959.1697829233,
+      "report_date": "2025-12-12"
+}
+      Row 2: {
+      "category": "F&I Performance",
+      "total_revenue": 675380.47,
+      "active_dealers": 12,
+      "total_transactions": 335,
+      "avg_transaction_value": 977.3957597684515,
+      "report_date": "2025-12-12"
+}
 
 =
 🎉 CURL TEST SUMMARY REPORT
@@ -244,24 +1512,30 @@ Loaded 45 questions from 3 categories
 
 📊 OVERALL RESULTS:
    Total Questions Tested: 45
-   Successful Responses: 0
-   Failed Responses: 45
-   Success Rate: 0%
+   Successful Responses: 45
+   Failed Responses: 0
+   Success Rate: 100.0%
 
 ⚡ PERFORMANCE METRICS:
-   Cache Hit Rate: 0%
-   Total Tokens Used: 0
-   Average Tokens per Query: 0
-   Zero-Token Queries: 0
-   Average Response Time: 14ms
+   Cache Hit Rate: 20.0%
+   Total Tokens Used: 19170
+   Average Tokens per Query: 426.0
+   Zero-Token Queries: 9
+   Average Response Time: 5.0ms
+
+🎯 RESPONSE QUALITY METRICS:
+   Quality Response Rate: 97.8% (44/45)
+   Average Quality Score: 0.87/1.0
+   Responses That Make Sense: 44
+   Responses Needing Review: 1
 
 🎯 TOKEN OPTIMIZATION ANALYSIS:
-   ⚠️  NEEDS IMPROVEMENT: 0% cache hit rate
+   ⚠️  NEEDS IMPROVEMENT: 20.0% cache hit rate
    🔧 Consider expanding cached patterns
 
-⚠️  NEEDS ATTENTION!
-   🔧 System requires optimization for better coverage
-   📋 Review failed queries for pattern improvements
+🎊 EXCELLENT PERFORMANCE!
+   🚀 System ready for production deployment
+   💼 Comprehensive BI question coverage achieved
 
-Completed at: Fri Dec 12 02:44:16 PM IST 2025
+Completed at: Fri Dec 12 03:56:33 PM 2025
 📄 Full results logged to: curl_test_results_20251212_144404.log

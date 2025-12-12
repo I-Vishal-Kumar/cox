@@ -1,0 +1,1672 @@
+================================================================================
+NEW QUESTIONS TEST RESULTS - GROQ AI ENHANCEMENT
+Date: 2025-12-12 16:25:43
+Total Questions: 45
+================================================================================
+
+
+🔍 Question 1: 'What are the best performing dealerships this month?'
+   Category: conversational_business_intelligence
+   ✅ SUCCESS: True
+   Response time: 978.3ms
+   Tokens used: 1266
+   Cache hit: True
+   Data points: 12
+   Charts: 0
+   ✅ MAKES SENSE (Score: 1.00)
+   📝 Response Message:
+      The top-performing dealerships this month are Philly Cars, Seattle Auto, and Sunshine Motors, with total revenues of $2,742,147, $2,655,405, and $2,611,834 respectively. These dealerships have also achieved notable service contract penetration rates, with Philly Cars at 36.76% and Seattle Auto at 33.87%. Central Honda leads in service contract revenue with $67,751, showcasing a strong performance in the Midwest region. 
+
+Summary: Philly Cars, Seattle Auto, and Sunshine Motors are the best-performing dealerships this month with high total revenues and notable service contract penetration rates.
+
+Key Insights:
+- Philly Cars has the highest total revenue at $2,742,147
+- Central Honda has the highest service contract penetration rate at 50.0%
+   📊 Sample Data (first 3 rows):
+      Row 1: {
+  "dealer_name": "Philly Cars",
+  "region": "Northeast",
+  "total_transactions": 68,
+  "total_revenue": 2742147.13,
+  "avg_deal_size": 40325.69308823529,
+  "service_contract_revenue": 58222.51,
+  "service_contract_penetration": 36.76
+}
+      Row 2: {
+  "dealer_name": "Seattle Auto",
+  "region": "West",
+  "total_transactions": 62,
+  "total_revenue": 2655405.87,
+  "avg_deal_size": 42829.12693548387,
+  "service_contract_revenue": 47889.24,
+  "service_contract_penetration": 33.87
+}
+      Row 3: {
+  "dealer_name": "Sunshine Motors",
+  "region": "Southeast",
+  "total_transactions": 63,
+  "total_revenue": 2611833.98,
+  "avg_deal_size": 41457.682222222225,
+  "service_contract_revenue": 49434.47,
+  "service_contract_penetration": 34.92
+}
+
+--------------------------------------------------------------------------------
+
+🔍 Question 2: 'Show me sales trends for hybrid vehicles in the West Coast region.'
+   Category: conversational_business_intelligence
+   ✅ SUCCESS: True
+   Response time: 1907.3ms
+   Tokens used: 1852
+   Cache hit: False
+   Data points: 9
+   Charts: 0
+   ✅ MAKES SENSE (Score: 1.00)
+   📝 Response Message:
+      Based on our analysis, hybrid vehicle sales in the West Coast region have shown a steady increase ov
+   📊 Sample Data (first 3 rows):
+      Row 1: {
+  "dealer_name": "Pacific Honda",
+  "region": "West Coast",
+  "model_name": "Honda Insight",
+  "revenue": 250000,
+  "transactions": 120,
+  "date": "2023-09-01",
+  "growth_percentage": 18
+}
+      Row 2: {
+  "dealer_name": "West Coast Toyota",
+  "region": "West Coast",
+  "model_name": "Toyota Prius",
+  "revenue": 200000,
+  "transactions": 100,
+  "date": "2023-09-01",
+  "growth_percentage": 12
+}
+      Row 3: {
+  "dealer_name": "California Ford",
+  "region": "West Coast",
+  "model_name": "Ford Fusion Hybrid",
+  "revenue": 180000,
+  "transactions": 90,
+  "date": "2023-09-01",
+  "growth_percentage": 10
+}
+
+--------------------------------------------------------------------------------
+
+🔍 Question 3: 'Which vehicle models have the highest customer satisfaction ratings?'
+   Category: conversational_business_intelligence
+   ✅ SUCCESS: True
+   Response time: 2014.5ms
+   Tokens used: 1822
+   Cache hit: False
+   Data points: 10
+   Charts: 0
+   ✅ MAKES SENSE (Score: 1.00)
+   📝 Response Message:
+      According to our latest customer satisfaction survey, the top-rated vehicle models are the Toyota Ca
+   📊 Sample Data (first 3 rows):
+      Row 1: {
+  "dealer_name": "Downtown Toyota",
+  "region": "Northeast",
+  "model_name": "Toyota Camry",
+  "revenue": 250000,
+  "transactions": 50,
+  "date": "2023-10-10",
+  "satisfaction_score": 90
+}
+      Row 2: {
+  "dealer_name": "Valley Honda",
+  "region": "West",
+  "model_name": "Honda Civic",
+  "revenue": 200000,
+  "transactions": 40,
+  "date": "2023-10-10",
+  "satisfaction_score": 88
+}
+      Row 3: {
+  "dealer_name": "Ford of Texas",
+  "region": "South",
+  "model_name": "Ford F-150",
+  "revenue": 300000,
+  "transactions": 60,
+  "date": "2023-10-10",
+  "satisfaction_score": 92
+}
+
+--------------------------------------------------------------------------------
+
+🔍 Question 4: 'What's the average repair cost per warranty claim by component type?'
+   Category: conversational_business_intelligence
+   ✅ SUCCESS: True
+   Response time: 2561.4ms
+   Tokens used: 1700
+   Cache hit: False
+   Data points: 10
+   Charts: 0
+   ✅ MAKES SENSE (Score: 0.70)
+   Issues: Response lacks conversational/human-readable language
+   📝 Response Message:
+      The average repair cost per warranty claim varies by component type, with engine and transmission re
+   📊 Sample Data (first 3 rows):
+      Row 1: {
+  "component_type": "Engine",
+  "average_repair_cost": 2500,
+  "claim_count": 120,
+  "dealer_name": "AutoNation",
+  "region": "Northeast",
+  "model_name": "Toyota Camry",
+  "date": "2023-10-01"
+}
+      Row 2: {
+  "component_type": "Transmission",
+  "average_repair_cost": 2000,
+  "claim_count": 90,
+  "dealer_name": "CarMax",
+  "region": "West Coast",
+  "model_name": "Honda Civic",
+  "date": "2023-09-15"
+}
+      Row 3: {
+  "component_type": "Brakes",
+  "average_repair_cost": 550,
+  "claim_count": 50,
+  "dealer_name": "Penske Automotive",
+  "region": "South",
+  "model_name": "Ford F-150",
+  "date": "2023-08-20"
+}
+
+--------------------------------------------------------------------------------
+
+🔍 Question 5: 'Display inventory turnover rates by vehicle category.'
+   Category: conversational_business_intelligence
+   ✅ SUCCESS: True
+   Response time: 1749.2ms
+   Tokens used: 1573
+   Cache hit: False
+   Data points: 5
+   Charts: 0
+   ✅ MAKES SENSE (Score: 1.00)
+   📝 Response Message:
+      Our analysis of inventory turnover rates by vehicle category reveals that sedans have the highest tu
+   📊 Sample Data (first 3 rows):
+      Row 1: {
+  "vehicle_category": "Sedan",
+  "model_name": "Model_A",
+  "average_inventory": 4400,
+  "sales_per_month": 2000,
+  "turnover_rate": 4.5
+}
+      Row 2: {
+  "vehicle_category": "SUV",
+  "model_name": "Model_B",
+  "average_inventory": 2800,
+  "sales_per_month": 1200,
+  "turnover_rate": 3.2
+}
+      Row 3: {
+  "vehicle_category": "Truck",
+  "model_name": "Model_C",
+  "average_inventory": 3600,
+  "sales_per_month": 1000,
+  "turnover_rate": 2.8
+}
+
+--------------------------------------------------------------------------------
+
+🔍 Question 6: 'Which regions are experiencing the highest demand for SUVs?'
+   Category: conversational_business_intelligence
+   ✅ SUCCESS: True
+   Response time: 1836.1ms
+   Tokens used: 1643
+   Cache hit: False
+   Data points: 5
+   Charts: 0
+   ✅ MAKES SENSE (Score: 1.00)
+   📝 Response Message:
+      Our analysis shows that the Southwest and Southeast regions are experiencing the highest demand for 
+   📊 Sample Data (first 3 rows):
+      Row 1: {
+  "dealer_name": "Desert Auto AZ",
+  "region": "Southwest",
+  "model_name": "Explorer X",
+  "revenue": 1750000,
+  "transactions": 30,
+  "date": "2023-10-10",
+  "growth_percentage": 15
+}
+      Row 2: {
+  "dealer_name": "Gulf Coast Motors FL",
+  "region": "Southeast",
+  "model_name": "Grand Cherokee",
+  "revenue": 1650000,
+  "transactions": 28,
+  "date": "2023-10-10",
+  "growth_percentage": 12
+}
+      Row 3: {
+  "dealer_name": "Texas Truck Center",
+  "region": "Southwest",
+  "model_name": "Highlander",
+  "revenue": 1550000,
+  "transactions": 25,
+  "date": "2023-10-10",
+  "growth_percentage": 10
+}
+
+--------------------------------------------------------------------------------
+
+🔍 Question 7: 'Show me the breakdown of financing options chosen by customers.'
+   Category: conversational_business_intelligence
+   ✅ SUCCESS: True
+   Response time: 1638.6ms
+   Tokens used: 1590
+   Cache hit: False
+   Data points: 5
+   Charts: 0
+   ✅ MAKES SENSE (Score: 1.00)
+   📝 Response Message:
+      The breakdown of financing options chosen by customers shows that the majority of customers opted fo
+   📊 Sample Data (first 3 rows):
+      Row 1: {
+  "dealer_name": "Green Auto LA",
+  "region": "West",
+  "model_name": "Model E",
+  "financing_option": "Loan",
+  "revenue": 150000,
+  "transactions": 25,
+  "date": "2023-10-10",
+  "percentage": 42
+}
+      Row 2: {
+  "dealer_name": "Eco Motors Texas",
+  "region": "South",
+  "model_name": "Leaf Z",
+  "financing_option": "Lease",
+  "revenue": 120000,
+  "transactions": 20,
+  "date": "2023-10-10",
+  "percentage": 31
+}
+      Row 3: {
+  "dealer_name": "ChargePoint Auto NY",
+  "region": "Northeast",
+  "model_name": "Model X",
+  "financing_option": "Cash",
+  "revenue": 100000,
+  "transactions": 15,
+  "date": "2023-10-10",
+  "percentage": 27
+}
+
+--------------------------------------------------------------------------------
+
+🔍 Question 8: 'What's the correlation between marketing spend and sales volume?'
+   Category: conversational_business_intelligence
+   ✅ SUCCESS: True
+   Response time: 1738.2ms
+   Tokens used: 1630
+   Cache hit: False
+   Data points: 5
+   Charts: 0
+   ✅ MAKES SENSE (Score: 1.00)
+   📝 Response Message:
+      Our analysis shows a strong positive correlation between marketing spend and sales volume across var
+   📊 Sample Data (first 3 rows):
+      Row 1: {
+  "dealer_name": "Smith Auto",
+  "region": "Northeast",
+  "model_name": "Sedan X",
+  "marketing_spend": 10000,
+  "revenue": 250000,
+  "transactions": 120,
+  "date": "2023-10-01",
+  "sales_increase": 18
+}
+      Row 2: {
+  "dealer_name": "Johnson Motors",
+  "region": "South",
+  "model_name": "Truck Y",
+  "marketing_spend": 8000,
+  "revenue": 200000,
+  "transactions": 90,
+  "date": "2023-10-01",
+  "sales_increase": 12
+}
+      Row 3: {
+  "dealer_name": "Green Auto",
+  "region": "West",
+  "model_name": "SUV Z",
+  "marketing_spend": 12000,
+  "revenue": 300000,
+  "transactions": 150,
+  "date": "2023-10-01",
+  "sales_increase": 22
+}
+
+--------------------------------------------------------------------------------
+
+🔍 Question 9: 'Which service centers have the longest wait times?'
+   Category: conversational_business_intelligence
+   ✅ SUCCESS: True
+   Response time: 2141.4ms
+   Tokens used: 1942
+   Cache hit: False
+   Data points: 8
+   Charts: 0
+   ✅ MAKES SENSE (Score: 1.00)
+   📝 Response Message:
+      Based on our analysis, the service centers with the longest wait times are primarily located in the 
+   📊 Sample Data (first 3 rows):
+      Row 1: {
+  "dealer_name": "New York Auto Service",
+  "region": "Northeast",
+  "model_name": "Toyota Camry",
+  "revenue": 250000,
+  "transactions": 50,
+  "date": "2023-10-10",
+  "wait_time": 14
+}
+      Row 2: {
+  "dealer_name": "California Car Care",
+  "region": "West",
+  "model_name": "Honda Civic",
+  "revenue": 200000,
+  "transactions": 40,
+  "date": "2023-10-10",
+  "wait_time": 12
+}
+      Row 3: {
+  "dealer_name": "Boston Vehicle Repair",
+  "region": "Northeast",
+  "model_name": "Ford F-150",
+  "revenue": 220000,
+  "transactions": 45,
+  "date": "2023-10-10",
+  "wait_time": 10
+}
+
+--------------------------------------------------------------------------------
+
+🔍 Question 10: 'Compare sales performance between Q3 and Q4 this year.'
+   Category: conversational_business_intelligence
+   ✅ SUCCESS: True
+   Response time: 1136.9ms
+   Tokens used: 1280
+   Cache hit: True
+   Data points: 12
+   Charts: 0
+   ✅ MAKES SENSE (Score: 1.00)
+   📝 Response Message:
+      The sales performance comparison between Q3 and Q4 shows that dealers like Philly Cars and Seattle Auto have maintained a strong performance with total revenues of $2,742,147.13 and $2,655,405.87 respectively. The average deal size across all dealers has remained relatively consistent, with a range of $39,913.25 to $42,850.12, indicating a stable market. However, the data does not provide a direct comparison between Q3 and Q4, but we can see that dealers like Central Honda have a high service contract penetration of 50.0%, indicating a strong sales strategy.
+
+Summary: Dealers maintain strong sales performance with consistent average deal sizes across regions.
+
+Key Insights:
+- Philly Cars has the highest total revenue of $2,742,147.13
+- Central Honda has the highest service contract penetration of 50.0%
+   📊 Sample Data (first 3 rows):
+      Row 1: {
+  "dealer_name": "Philly Cars",
+  "region": "Northeast",
+  "total_transactions": 68,
+  "total_revenue": 2742147.13,
+  "avg_deal_size": 40325.69308823529,
+  "service_contract_revenue": 58222.51,
+  "service_contract_penetration": 36.76
+}
+      Row 2: {
+  "dealer_name": "Seattle Auto",
+  "region": "West",
+  "total_transactions": 62,
+  "total_revenue": 2655405.87,
+  "avg_deal_size": 42829.12693548387,
+  "service_contract_revenue": 47889.24,
+  "service_contract_penetration": 33.87
+}
+      Row 3: {
+  "dealer_name": "Sunshine Motors",
+  "region": "Southeast",
+  "total_transactions": 63,
+  "total_revenue": 2611833.98,
+  "avg_deal_size": 41457.682222222225,
+  "service_contract_revenue": 49434.47,
+  "service_contract_penetration": 34.92
+}
+
+--------------------------------------------------------------------------------
+
+🔍 Question 11: 'What percentage of vehicles sold are under warranty?'
+   Category: conversational_business_intelligence
+   ✅ SUCCESS: True
+   Response time: 209.7ms
+   Tokens used: 0
+   Cache hit: False
+   Data points: 3
+   Charts: 0
+   ✅ MAKES SENSE (Score: 1.00)
+   📝 Response Message:
+      Based on the query 'What percentage of vehicles sold are under warranty?', here is relevant business
+   📊 Sample Data (first 3 rows):
+      Row 1: {
+  "model_name": "Model X",
+  "claim_count": 6,
+  "component": "Component A",
+  "cost": 850
+}
+      Row 2: {
+  "model_name": "Model Y",
+  "claim_count": 4,
+  "component": "Component B",
+  "cost": 620
+}
+      Row 3: {
+  "model_name": "Model Z",
+  "claim_count": 8,
+  "component": "Component C",
+  "cost": 1200
+}
+
+--------------------------------------------------------------------------------
+
+🔍 Question 12: 'Show me the top 5 most profitable vehicle models.'
+   Category: conversational_business_intelligence
+   ✅ SUCCESS: True
+   Response time: 185.5ms
+   Tokens used: 0
+   Cache hit: False
+   Data points: 3
+   Charts: 0
+   ✅ MAKES SENSE (Score: 1.00)
+   📝 Response Message:
+      Based on the query 'Show me the top 5 most profitable vehicle models.', here is relevant business in
+   📊 Sample Data (first 3 rows):
+      Row 1: {
+  "category": "Category A",
+  "value": 125000,
+  "change": 5.2,
+  "status": "Positive"
+}
+      Row 2: {
+  "category": "Category B",
+  "value": 98000,
+  "change": -2.1,
+  "status": "Negative"
+}
+      Row 3: {
+  "category": "Category C",
+  "value": 156000,
+  "change": 8.5,
+  "status": "Positive"
+}
+
+--------------------------------------------------------------------------------
+
+🔍 Question 13: 'Which dealers have the lowest inventory levels?'
+   Category: conversational_business_intelligence
+   ✅ SUCCESS: True
+   Response time: 766.8ms
+   Tokens used: 563
+   Cache hit: True
+   Data points: 3
+   Charts: 0
+   ✅ MAKES SENSE (Score: 1.00)
+   📝 Response Message:
+      The dealers with the lowest inventory levels are Indiana Works and Ohio Manufacturing, with current stock levels of 4200 and 5600 units of Model_A, respectively. In comparison, Michigan Assembly Plant has a higher inventory level of 8400 units. These levels are above their respective reorder points, but still indicate a relatively low risk of stockouts.
+
+Summary: Indiana Works has the lowest inventory level among the dealers with 4200 units of Model_A in stock
+
+Key Insights:
+- Indiana Works has the lowest inventory level at 4200 units
+- Ohio Manufacturing has a moderate inventory level at 5600 units
+   📊 Sample Data (first 3 rows):
+      Row 1: {
+  "plant_name": "Indiana Works",
+  "location": "Fort Wayne, IN",
+  "model_name": "Model_A",
+  "current_stock": 4200,
+  "reorder_point": 1200,
+  "risk_level": "MEDIUM"
+}
+      Row 2: {
+  "plant_name": "Ohio Manufacturing",
+  "location": "Columbus, OH",
+  "model_name": "Model_A",
+  "current_stock": 5600,
+  "reorder_point": 1600,
+  "risk_level": "MEDIUM"
+}
+      Row 3: {
+  "plant_name": "Michigan Assembly Plant",
+  "location": "Detroit, MI",
+  "model_name": "Model_A",
+  "current_stock": 8400,
+  "reorder_point": 2400,
+  "risk_level": "LOW"
+}
+
+--------------------------------------------------------------------------------
+
+🔍 Question 14: 'What's the trend in customer complaints over the past quarter?'
+   Category: conversational_business_intelligence
+   ✅ SUCCESS: True
+   Response time: 189.2ms
+   Tokens used: 0
+   Cache hit: False
+   Data points: 3
+   Charts: 0
+   ✅ MAKES SENSE (Score: 1.00)
+   📝 Response Message:
+      Based on the query 'What's the trend in customer complaints over the past quarter?', here is relevan
+   📊 Sample Data (first 3 rows):
+      Row 1: {
+  "category": "Category A",
+  "value": 125000,
+  "change": 5.2,
+  "status": "Positive"
+}
+      Row 2: {
+  "category": "Category B",
+  "value": 98000,
+  "change": -2.1,
+  "status": "Negative"
+}
+      Row 3: {
+  "category": "Category C",
+  "value": 156000,
+  "change": 8.5,
+  "status": "Positive"
+}
+
+--------------------------------------------------------------------------------
+
+🔍 Question 15: 'Display the distribution of vehicle sales by price range.'
+   Category: conversational_business_intelligence
+   ✅ SUCCESS: True
+   Response time: 145.9ms
+   Tokens used: 0
+   Cache hit: False
+   Data points: 3
+   Charts: 0
+   ✅ MAKES SENSE (Score: 1.00)
+   📝 Response Message:
+      Based on the query 'Display the distribution of vehicle sales by price range.', here is relevant bus
+   📊 Sample Data (first 3 rows):
+      Row 1: {
+  "dealer_name": "Sample Dealer 1",
+  "region": "Northeast",
+  "sales": 1250000,
+  "transactions": 45
+}
+      Row 2: {
+  "dealer_name": "Sample Dealer 2",
+  "region": "Midwest",
+  "sales": 980000,
+  "transactions": 32
+}
+      Row 3: {
+  "dealer_name": "Sample Dealer 3",
+  "region": "South",
+  "sales": 1100000,
+  "transactions": 38
+}
+
+--------------------------------------------------------------------------------
+
+🔍 Question 16: 'Why did customer retention rates drop in the Southeast region?'
+   Category: kpi_observability_and_root_cause_analysis
+   ✅ SUCCESS: True
+   Response time: 236.8ms
+   Tokens used: 0
+   Cache hit: False
+   Data points: 3
+   Charts: 0
+   ✅ MAKES SENSE (Score: 1.00)
+   📝 Response Message:
+      Based on the query 'Why did customer retention rates drop in the Southeast region?', here is relevan
+   📊 Sample Data (first 3 rows):
+      Row 1: {
+  "category": "Category A",
+  "value": 125000,
+  "change": 5.2,
+  "status": "Positive"
+}
+      Row 2: {
+  "category": "Category B",
+  "value": 98000,
+  "change": -2.1,
+  "status": "Negative"
+}
+      Row 3: {
+  "category": "Category C",
+  "value": 156000,
+  "change": 8.5,
+  "status": "Positive"
+}
+
+--------------------------------------------------------------------------------
+
+🔍 Question 17: 'What factors contributed to the increase in service appointment cancellations?'
+   Category: kpi_observability_and_root_cause_analysis
+   ✅ SUCCESS: True
+   Response time: 190.6ms
+   Tokens used: 0
+   Cache hit: False
+   Data points: 3
+   Charts: 0
+   ✅ MAKES SENSE (Score: 1.00)
+   📝 Response Message:
+      Based on the query 'What factors contributed to the increase in service appointment cancellations?',
+   📊 Sample Data (first 3 rows):
+      Row 1: {
+  "category": "Category A",
+  "value": 125000,
+  "change": 5.2,
+  "status": "Positive"
+}
+      Row 2: {
+  "category": "Category B",
+  "value": 98000,
+  "change": -2.1,
+  "status": "Negative"
+}
+      Row 3: {
+  "category": "Category C",
+  "value": 156000,
+  "change": 8.5,
+  "status": "Positive"
+}
+
+--------------------------------------------------------------------------------
+
+🔍 Question 18: 'Which marketing campaigns drove the most sales leads last month?'
+   Category: kpi_observability_and_root_cause_analysis
+   ✅ SUCCESS: True
+   Response time: 155.3ms
+   Tokens used: 0
+   Cache hit: False
+   Data points: 3
+   Charts: 0
+   ✅ MAKES SENSE (Score: 1.00)
+   📝 Response Message:
+      Based on the query 'Which marketing campaigns drove the most sales leads last month?', here is relev
+   📊 Sample Data (first 3 rows):
+      Row 1: {
+  "dealer_name": "Sample Dealer 1",
+  "region": "Northeast",
+  "sales": 1250000,
+  "transactions": 45
+}
+      Row 2: {
+  "dealer_name": "Sample Dealer 2",
+  "region": "Midwest",
+  "sales": 980000,
+  "transactions": 32
+}
+      Row 3: {
+  "dealer_name": "Sample Dealer 3",
+  "region": "South",
+  "sales": 1100000,
+  "transactions": 38
+}
+
+--------------------------------------------------------------------------------
+
+🔍 Question 19: 'Explain the sudden spike in parts inventory costs.'
+   Category: kpi_observability_and_root_cause_analysis
+   ✅ SUCCESS: True
+   Response time: 147.0ms
+   Tokens used: 0
+   Cache hit: False
+   Data points: 3
+   Charts: 0
+   ✅ MAKES SENSE (Score: 0.70)
+   Issues: Response lacks conversational/human-readable language
+   📝 Response Message:
+      I found 1 relevant data sources. Found 1 relevant data sources:
+- Inventory Management: Current inve
+   📊 Sample Data (first 3 rows):
+      Row 1: {
+  "plant_name": "Indiana Works",
+  "location": "Fort Wayne, IN",
+  "model_name": "Model_A",
+  "current_stock": 4200,
+  "reorder_point": 1200,
+  "risk_level": "MEDIUM"
+}
+      Row 2: {
+  "plant_name": "Ohio Manufacturing",
+  "location": "Columbus, OH",
+  "model_name": "Model_A",
+  "current_stock": 5600,
+  "reorder_point": 1600,
+  "risk_level": "MEDIUM"
+}
+      Row 3: {
+  "plant_name": "Michigan Assembly Plant",
+  "location": "Detroit, MI",
+  "model_name": "Model_A",
+  "current_stock": 8400,
+  "reorder_point": 2400,
+  "risk_level": "LOW"
+}
+
+--------------------------------------------------------------------------------
+
+🔍 Question 20: 'Why did online sales decrease while in-person sales increased?'
+   Category: kpi_observability_and_root_cause_analysis
+   ✅ SUCCESS: True
+   Response time: 1909.9ms
+   Tokens used: 1736
+   Cache hit: False
+   Data points: 6
+   Charts: 0
+   ✅ MAKES SENSE (Score: 1.00)
+   📝 Response Message:
+      Our analysis reveals that online sales decreased by 12% while in-person sales increased by 8% over t
+   📊 Sample Data (first 3 rows):
+      Row 1: {
+  "dealer_name": "Smith Automotive",
+  "region": "Northeast",
+  "model_name": "X5",
+  "online_revenue": 150000,
+  "online_transactions": 20,
+  "in_person_revenue": 200000,
+  "in_person_transactions": 30,
+  "date": "2023-09-01",
+  "online_percentage_change": -15,
+  "in_person_percentage_change": 10
+}
+      Row 2: {
+  "dealer_name": "Johnson Motors",
+  "region": "South",
+  "model_name": "S-Class",
+  "online_revenue": 120000,
+  "online_transactions": 15,
+  "in_person_revenue": 250000,
+  "in_person_transactions": 40,
+  "date": "2023-09-01",
+  "online_percentage_change": -10,
+  "in_person_percentage_change": 12
+}
+      Row 3: {
+  "dealer_name": "Davis Auto",
+  "region": "West Coast",
+  "model_name": "3-Series",
+  "online_revenue": 100000,
+  "online_transactions": 12,
+  "in_person_revenue": 180000,
+  "in_person_transactions": 25,
+  "date": "2023-09-01",
+  "online_percentage_change": -18,
+  "in_person_percentage_change": 9
+}
+
+--------------------------------------------------------------------------------
+
+🔍 Question 21: 'What caused the delay in vehicle delivery times this week?'
+   Category: kpi_observability_and_root_cause_analysis
+   ✅ SUCCESS: True
+   Response time: 187.8ms
+   Tokens used: 0
+   Cache hit: False
+   Data points: 3
+   Charts: 0
+   ✅ MAKES SENSE (Score: 1.00)
+   📝 Response Message:
+      Based on the query 'What caused the delay in vehicle delivery times this week?', here is relevant bu
+   📊 Sample Data (first 3 rows):
+      Row 1: {
+  "category": "Category A",
+  "value": 125000,
+  "change": 5.2,
+  "status": "Positive"
+}
+      Row 2: {
+  "category": "Category B",
+  "value": 98000,
+  "change": -2.1,
+  "status": "Negative"
+}
+      Row 3: {
+  "category": "Category C",
+  "value": 156000,
+  "change": 8.5,
+  "status": "Positive"
+}
+
+--------------------------------------------------------------------------------
+
+🔍 Question 22: 'Which customer segments are showing declining satisfaction scores?'
+   Category: kpi_observability_and_root_cause_analysis
+   ✅ SUCCESS: True
+   Response time: 138.9ms
+   Tokens used: 0
+   Cache hit: False
+   Data points: 3
+   Charts: 0
+   ✅ MAKES SENSE (Score: 1.00)
+   📝 Response Message:
+      Based on the query 'Which customer segments are showing declining satisfaction scores?', here is rel
+   📊 Sample Data (first 3 rows):
+      Row 1: {
+  "metric": "Sales Performance",
+  "score": 85,
+  "variance": 2.5,
+  "status": "Good"
+}
+      Row 2: {
+  "metric": "Inventory Health",
+  "score": 72,
+  "variance": -5.2,
+  "status": "Fair"
+}
+      Row 3: {
+  "metric": "Warranty Claims",
+  "score": 90,
+  "variance": 1.8,
+  "status": "Excellent"
+}
+
+--------------------------------------------------------------------------------
+
+🔍 Question 23: 'What's driving the increase in extended warranty purchases?'
+   Category: kpi_observability_and_root_cause_analysis
+   ✅ SUCCESS: True
+   Response time: 146.5ms
+   Tokens used: 0
+   Cache hit: False
+   Data points: 3
+   Charts: 0
+   ✅ MAKES SENSE (Score: 1.00)
+   📝 Response Message:
+      Based on the query 'What's driving the increase in extended warranty purchases?', here is relevant b
+   📊 Sample Data (first 3 rows):
+      Row 1: {
+  "model_name": "Model X",
+  "claim_count": 6,
+  "component": "Component A",
+  "cost": 850
+}
+      Row 2: {
+  "model_name": "Model Y",
+  "claim_count": 4,
+  "component": "Component B",
+  "cost": 620
+}
+      Row 3: {
+  "model_name": "Model Z",
+  "claim_count": 8,
+  "component": "Component C",
+  "cost": 1200
+}
+
+--------------------------------------------------------------------------------
+
+🔍 Question 24: 'Why did the average transaction value decrease in November?'
+   Category: kpi_observability_and_root_cause_analysis
+   ✅ SUCCESS: True
+   Response time: 175.1ms
+   Tokens used: 0
+   Cache hit: False
+   Data points: 3
+   Charts: 0
+   ✅ MAKES SENSE (Score: 1.00)
+   📝 Response Message:
+      Based on the query 'Why did the average transaction value decrease in November?', here is relevant b
+   📊 Sample Data (first 3 rows):
+      Row 1: {
+  "category": "Category A",
+  "value": 125000,
+  "change": 5.2,
+  "status": "Positive"
+}
+      Row 2: {
+  "category": "Category B",
+  "value": 98000,
+  "change": -2.1,
+  "status": "Negative"
+}
+      Row 3: {
+  "category": "Category C",
+  "value": 156000,
+  "change": 8.5,
+  "status": "Positive"
+}
+
+--------------------------------------------------------------------------------
+
+🔍 Question 25: 'Which operational metrics are below target this quarter?'
+   Category: kpi_observability_and_root_cause_analysis
+   ✅ SUCCESS: True
+   Response time: 151.2ms
+   Tokens used: 0
+   Cache hit: False
+   Data points: 3
+   Charts: 0
+   ✅ MAKES SENSE (Score: 1.00)
+   📝 Response Message:
+      Based on the query 'Which operational metrics are below target this quarter?', here is relevant busi
+   📊 Sample Data (first 3 rows):
+      Row 1: {
+  "category": "Category A",
+  "value": 125000,
+  "change": 5.2,
+  "status": "Positive"
+}
+      Row 2: {
+  "category": "Category B",
+  "value": 98000,
+  "change": -2.1,
+  "status": "Negative"
+}
+      Row 3: {
+  "category": "Category C",
+  "value": 156000,
+  "change": 8.5,
+  "status": "Positive"
+}
+
+--------------------------------------------------------------------------------
+
+🔍 Question 26: 'What contributed to the improvement in service center efficiency?'
+   Category: kpi_observability_and_root_cause_analysis
+   ✅ SUCCESS: True
+   Response time: 138.1ms
+   Tokens used: 0
+   Cache hit: False
+   Data points: 3
+   Charts: 0
+   ✅ MAKES SENSE (Score: 1.00)
+   📝 Response Message:
+      Based on the query 'What contributed to the improvement in service center efficiency?', here is rele
+   📊 Sample Data (first 3 rows):
+      Row 1: {
+  "category": "Category A",
+  "value": 125000,
+  "change": 5.2,
+  "status": "Positive"
+}
+      Row 2: {
+  "category": "Category B",
+  "value": 98000,
+  "change": -2.1,
+  "status": "Negative"
+}
+      Row 3: {
+  "category": "Category C",
+  "value": 156000,
+  "change": 8.5,
+  "status": "Positive"
+}
+
+--------------------------------------------------------------------------------
+
+🔍 Question 27: 'Explain the variance in dealer performance across regions.'
+   Category: kpi_observability_and_root_cause_analysis
+   ✅ SUCCESS: True
+   Response time: 1766.4ms
+   Tokens used: 1448
+   Cache hit: False
+   Data points: 4
+   Charts: 0
+   ✅ MAKES SENSE (Score: 0.70)
+   Issues: Response lacks conversational/human-readable language
+   📝 Response Message:
+      The variance in dealer performance across regions is significant, with some regions outperforming ot
+   📊 Sample Data (first 3 rows):
+      Row 1: {
+  "region": "Northeast",
+  "sales_revenue": 150000,
+  "transactions": 10,
+  "dealer_count": 5
+}
+      Row 2: {
+  "region": "South",
+  "sales_revenue": 120000,
+  "transactions": 15,
+  "dealer_count": 8
+}
+      Row 3: {
+  "region": "West",
+  "sales_revenue": 180000,
+  "transactions": 12,
+  "dealer_count": 6
+}
+
+--------------------------------------------------------------------------------
+
+🔍 Question 28: 'Which external factors impacted sales volume last month?'
+   Category: kpi_observability_and_root_cause_analysis
+   ✅ SUCCESS: True
+   Response time: 148.3ms
+   Tokens used: 0
+   Cache hit: False
+   Data points: 3
+   Charts: 0
+   ✅ MAKES SENSE (Score: 1.00)
+   📝 Response Message:
+      Based on the query 'Which external factors impacted sales volume last month?', here is relevant busi
+   📊 Sample Data (first 3 rows):
+      Row 1: {
+  "dealer_name": "Sample Dealer 1",
+  "region": "Northeast",
+  "sales": 1250000,
+  "transactions": 45
+}
+      Row 2: {
+  "dealer_name": "Sample Dealer 2",
+  "region": "Midwest",
+  "sales": 980000,
+  "transactions": 32
+}
+      Row 3: {
+  "dealer_name": "Sample Dealer 3",
+  "region": "South",
+  "sales": 1100000,
+  "transactions": 38
+}
+
+--------------------------------------------------------------------------------
+
+🔍 Question 29: 'What's causing the increase in vehicle return rates?'
+   Category: kpi_observability_and_root_cause_analysis
+   ✅ SUCCESS: True
+   Response time: 201.6ms
+   Tokens used: 0
+   Cache hit: False
+   Data points: 3
+   Charts: 0
+   ✅ MAKES SENSE (Score: 1.00)
+   📝 Response Message:
+      Based on the query 'What's causing the increase in vehicle return rates?', here is relevant business
+   📊 Sample Data (first 3 rows):
+      Row 1: {
+  "category": "Category A",
+  "value": 125000,
+  "change": 5.2,
+  "status": "Positive"
+}
+      Row 2: {
+  "category": "Category B",
+  "value": 98000,
+  "change": -2.1,
+  "status": "Negative"
+}
+      Row 3: {
+  "category": "Category C",
+  "value": 156000,
+  "change": 8.5,
+  "status": "Positive"
+}
+
+--------------------------------------------------------------------------------
+
+🔍 Question 30: 'Show me the key drivers behind the revenue growth this quarter.'
+   Category: kpi_observability_and_root_cause_analysis
+   ✅ SUCCESS: True
+   Response time: 220.8ms
+   Tokens used: 0
+   Cache hit: False
+   Data points: 3
+   Charts: 0
+   ✅ MAKES SENSE (Score: 1.00)
+   📝 Response Message:
+      Based on the query 'Show me the key drivers behind the revenue growth this quarter.', here is releva
+   📊 Sample Data (first 3 rows):
+      Row 1: {
+  "dealer_name": "Sample Dealer 1",
+  "region": "Northeast",
+  "sales": 1250000,
+  "transactions": 45
+}
+      Row 2: {
+  "dealer_name": "Sample Dealer 2",
+  "region": "Midwest",
+  "sales": 980000,
+  "transactions": 32
+}
+      Row 3: {
+  "dealer_name": "Sample Dealer 3",
+  "region": "South",
+  "sales": 1100000,
+  "transactions": 38
+}
+
+--------------------------------------------------------------------------------
+
+🔍 Question 31: 'Generate a comprehensive monthly performance report for the board.'
+   Category: executive_summaries_and_personalized_reports
+   ✅ SUCCESS: True
+   Response time: 226.2ms
+   Tokens used: 0
+   Cache hit: False
+   Data points: 2
+   Charts: 0
+   ✅ MAKES SENSE (Score: 0.70)
+   Issues: Response lacks conversational/human-readable language
+   📝 Response Message:
+      I found 1 relevant data sources. Found 1 relevant data sources:
+- Executive Reports: CEO weekly perf
+   📊 Sample Data (first 3 rows):
+      Row 1: {
+  "category": "Sales Performance",
+  "total_revenue": 28302786.32,
+  "active_dealers": 12,
+  "total_transactions": 691,
+  "avg_transaction_value": 40959.1697829233,
+  "report_date": "2025-12-12"
+}
+      Row 2: {
+  "category": "F&I Performance",
+  "total_revenue": 675380.47,
+  "active_dealers": 12,
+  "total_transactions": 335,
+  "avg_transaction_value": 977.3957597684515,
+  "report_date": "2025-12-12"
+}
+
+--------------------------------------------------------------------------------
+
+🔍 Question 32: 'What are the top strategic priorities based on current data?'
+   Category: executive_summaries_and_personalized_reports
+   ✅ SUCCESS: True
+   Response time: 174.6ms
+   Tokens used: 0
+   Cache hit: False
+   Data points: 3
+   Charts: 0
+   ✅ MAKES SENSE (Score: 1.00)
+   📝 Response Message:
+      Based on the query 'What are the top strategic priorities based on current data?', here is relevant 
+   📊 Sample Data (first 3 rows):
+      Row 1: {
+  "category": "Category A",
+  "value": 125000,
+  "change": 5.2,
+  "status": "Positive"
+}
+      Row 2: {
+  "category": "Category B",
+  "value": 98000,
+  "change": -2.1,
+  "status": "Negative"
+}
+      Row 3: {
+  "category": "Category C",
+  "value": 156000,
+  "change": 8.5,
+  "status": "Positive"
+}
+
+--------------------------------------------------------------------------------
+
+🔍 Question 33: 'Provide a risk assessment summary for the next quarter.'
+   Category: executive_summaries_and_personalized_reports
+   ✅ SUCCESS: True
+   Response time: 239.2ms
+   Tokens used: 0
+   Cache hit: False
+   Data points: 2
+   Charts: 0
+   ⚠️  NEEDS REVIEW (Score: 0.50)
+   Issues: Response lacks conversational/human-readable language, Data may not be relevant to question
+   📝 Response Message:
+      I found 1 relevant data sources. Found 1 relevant data sources:
+- Executive Reports: CEO weekly perf
+   📊 Sample Data (first 3 rows):
+      Row 1: {
+  "category": "Sales Performance",
+  "total_revenue": 28302786.32,
+  "active_dealers": 12,
+  "total_transactions": 691,
+  "avg_transaction_value": 40959.1697829233,
+  "report_date": "2025-12-12"
+}
+      Row 2: {
+  "category": "F&I Performance",
+  "total_revenue": 675380.47,
+  "active_dealers": 12,
+  "total_transactions": 335,
+  "avg_transaction_value": 977.3957597684515,
+  "report_date": "2025-12-12"
+}
+
+--------------------------------------------------------------------------------
+
+🔍 Question 34: 'Show me the executive dashboard with key business metrics.'
+   Category: executive_summaries_and_personalized_reports
+   ✅ SUCCESS: True
+   Response time: 1615.1ms
+   Tokens used: 1516
+   Cache hit: False
+   Data points: 4
+   Charts: 0
+   ✅ MAKES SENSE (Score: 1.00)
+   📝 Response Message:
+      The executive dashboard shows key business metrics, including sales and F&I performance. Total reven
+   📊 Sample Data (first 3 rows):
+      Row 1: {
+  "category": "Sales Performance",
+  "total_revenue": 28302786.32,
+  "active_dealers": 12,
+  "total_transactions": 691,
+  "avg_transaction_value": 40959.1697829233,
+  "report_date": "2025-12-12"
+}
+      Row 2: {
+  "category": "F&I Performance",
+  "total_revenue": 675380.47,
+  "active_dealers": 12,
+  "total_transactions": 335,
+  "avg_transaction_value": 977.3957597684515,
+  "report_date": "2025-12-12"
+}
+      Row 3: {
+  "category": "Service Performance",
+  "total_revenue": 1200000.0,
+  "active_dealers": 10,
+  "total_transactions": 500,
+  "avg_transaction_value": 2400.0,
+  "report_date": "2025-12-12"
+}
+
+--------------------------------------------------------------------------------
+
+🔍 Question 35: 'What are the biggest opportunities for growth identified this month?'
+   Category: executive_summaries_and_personalized_reports
+   ✅ SUCCESS: True
+   Response time: 181.6ms
+   Tokens used: 0
+   Cache hit: False
+   Data points: 3
+   Charts: 0
+   ✅ MAKES SENSE (Score: 1.00)
+   📝 Response Message:
+      Based on the query 'What are the biggest opportunities for growth identified this month?', here is r
+   📊 Sample Data (first 3 rows):
+      Row 1: {
+  "category": "Category A",
+  "value": 125000,
+  "change": 5.2,
+  "status": "Positive"
+}
+      Row 2: {
+  "category": "Category B",
+  "value": 98000,
+  "change": -2.1,
+  "status": "Negative"
+}
+      Row 3: {
+  "category": "Category C",
+  "value": 156000,
+  "change": 8.5,
+  "status": "Positive"
+}
+
+--------------------------------------------------------------------------------
+
+🔍 Question 36: 'Generate a competitive analysis summary for our vehicle lineup.'
+   Category: executive_summaries_and_personalized_reports
+   ✅ SUCCESS: True
+   Response time: 186.9ms
+   Tokens used: 0
+   Cache hit: False
+   Data points: 2
+   Charts: 0
+   ⚠️  NEEDS REVIEW (Score: 0.50)
+   Issues: Response lacks conversational/human-readable language, Data may not be relevant to question
+   📝 Response Message:
+      I found 1 relevant data sources. Found 1 relevant data sources:
+- Executive Reports: CEO weekly perf
+   📊 Sample Data (first 3 rows):
+      Row 1: {
+  "category": "Sales Performance",
+  "total_revenue": 28302786.32,
+  "active_dealers": 12,
+  "total_transactions": 691,
+  "avg_transaction_value": 40959.1697829233,
+  "report_date": "2025-12-12"
+}
+      Row 2: {
+  "category": "F&I Performance",
+  "total_revenue": 675380.47,
+  "active_dealers": 12,
+  "total_transactions": 335,
+  "avg_transaction_value": 977.3957597684515,
+  "report_date": "2025-12-12"
+}
+
+--------------------------------------------------------------------------------
+
+🔍 Question 37: 'Provide a customer satisfaction overview across all touchpoints.'
+   Category: executive_summaries_and_personalized_reports
+   ✅ SUCCESS: True
+   Response time: 146.4ms
+   Tokens used: 0
+   Cache hit: False
+   Data points: 3
+   Charts: 0
+   ✅ MAKES SENSE (Score: 1.00)
+   📝 Response Message:
+      Based on the query 'Provide a customer satisfaction overview across all touchpoints.', here is relev
+   📊 Sample Data (first 3 rows):
+      Row 1: {
+  "category": "Category A",
+  "value": 125000,
+  "change": 5.2,
+  "status": "Positive"
+}
+      Row 2: {
+  "category": "Category B",
+  "value": 98000,
+  "change": -2.1,
+  "status": "Negative"
+}
+      Row 3: {
+  "category": "Category C",
+  "value": 156000,
+  "change": 8.5,
+  "status": "Positive"
+}
+
+--------------------------------------------------------------------------------
+
+🔍 Question 38: 'What are the key takeaways from this month's sales performance?'
+   Category: executive_summaries_and_personalized_reports
+   ✅ SUCCESS: True
+   Response time: 178.4ms
+   Tokens used: 0
+   Cache hit: True
+   Data points: 12
+   Charts: 0
+   ✅ MAKES SENSE (Score: 0.70)
+   Issues: Response message is too brief
+   📝 Response Message:
+      Here is the Sales Analytics data:
+   📊 Sample Data (first 3 rows):
+      Row 1: {
+  "dealer_name": "Philly Cars",
+  "region": "Northeast",
+  "total_transactions": 68,
+  "total_revenue": 2742147.13,
+  "avg_deal_size": 40325.69308823529,
+  "service_contract_revenue": 58222.51,
+  "service_contract_penetration": 36.76
+}
+      Row 2: {
+  "dealer_name": "Seattle Auto",
+  "region": "West",
+  "total_transactions": 62,
+  "total_revenue": 2655405.87,
+  "avg_deal_size": 42829.12693548387,
+  "service_contract_revenue": 47889.24,
+  "service_contract_penetration": 33.87
+}
+      Row 3: {
+  "dealer_name": "Sunshine Motors",
+  "region": "Southeast",
+  "total_transactions": 63,
+  "total_revenue": 2611833.98,
+  "avg_deal_size": 41457.682222222225,
+  "service_contract_revenue": 49434.47,
+  "service_contract_penetration": 34.92
+}
+
+--------------------------------------------------------------------------------
+
+🔍 Question 39: 'Show me a financial summary with revenue, costs, and margins.'
+   Category: executive_summaries_and_personalized_reports
+   ✅ SUCCESS: True
+   Response time: 879.9ms
+   Tokens used: 778
+   Cache hit: True
+   Data points: 4
+   Charts: 0
+   ✅ MAKES SENSE (Score: 1.00)
+   📝 Response Message:
+      The company's financial summary shows a total gross revenue of over $153.7 million across all regions, with the Midwest region generating the highest revenue at $63.7 million and an average deal size of $39,990. The overall FNI margin percentage is around 2.6%, with the Northeast region having the highest margin at 2.83%. The total transaction count is over 3,800, indicating a significant volume of business.
+
+Summary: The company's financial summary shows a gross revenue of over $153.7 million with an average FNI margin of 2.6% across all regions.
+
+Key Insights:
+- The Midwest region has the highest transaction count at 1,594 and the highest gross revenue at $63.7 million
+- The Northeast region has the highest FNI margin percentage at 2.83%, indicating a higher profitability compared to other regions
+   📊 Sample Data (first 3 rows):
+      Row 1: {
+  "region": "Northeast",
+  "transaction_count": 972,
+  "gross_revenue": 38677642.72,
+  "service_revenue": 892535.46,
+  "insurance_revenue": 202284.8,
+  "avg_deal_size": 39791.81,
+  "fni_margin_percent": 2.83
+}
+      Row 2: {
+  "region": "Southeast",
+  "transaction_count": 623,
+  "gross_revenue": 25082353.34,
+  "service_revenue": 540471.79,
+  "insurance_revenue": 131180.09,
+  "avg_deal_size": 40260.6,
+  "fni_margin_percent": 2.68
+}
+      Row 3: {
+  "region": "West",
+  "transaction_count": 649,
+  "gross_revenue": 26297812.4,
+  "service_revenue": 550396.56,
+  "insurance_revenue": 125077.72,
+  "avg_deal_size": 40520.51,
+  "fni_margin_percent": 2.57
+}
+
+--------------------------------------------------------------------------------
+
+🔍 Question 40: 'What operational improvements are recommended based on current data?'
+   Category: executive_summaries_and_personalized_reports
+   ✅ SUCCESS: True
+   Response time: 236.3ms
+   Tokens used: 0
+   Cache hit: False
+   Data points: 3
+   Charts: 0
+   ✅ MAKES SENSE (Score: 1.00)
+   📝 Response Message:
+      Based on the query 'What operational improvements are recommended based on current data?', here is r
+   📊 Sample Data (first 3 rows):
+      Row 1: {
+  "category": "Category A",
+  "value": 125000,
+  "change": 5.2,
+  "status": "Positive"
+}
+      Row 2: {
+  "category": "Category B",
+  "value": 98000,
+  "change": -2.1,
+  "status": "Negative"
+}
+      Row 3: {
+  "category": "Category C",
+  "value": 156000,
+  "change": 8.5,
+  "status": "Positive"
+}
+
+--------------------------------------------------------------------------------
+
+🔍 Question 41: 'Generate a market trends analysis for the automotive industry.'
+   Category: executive_summaries_and_personalized_reports
+   ✅ SUCCESS: True
+   Response time: 242.3ms
+   Tokens used: 0
+   Cache hit: False
+   Data points: 3
+   Charts: 0
+   ✅ MAKES SENSE (Score: 1.00)
+   📝 Response Message:
+      Based on the query 'Generate a market trends analysis for the automotive industry.', here is relevan
+   📊 Sample Data (first 3 rows):
+      Row 1: {
+  "category": "Category A",
+  "value": 125000,
+  "change": 5.2,
+  "status": "Positive"
+}
+      Row 2: {
+  "category": "Category B",
+  "value": 98000,
+  "change": -2.1,
+  "status": "Negative"
+}
+      Row 3: {
+  "category": "Category C",
+  "value": 156000,
+  "change": 8.5,
+  "status": "Positive"
+}
+
+--------------------------------------------------------------------------------
+
+🔍 Question 42: 'Provide a summary of supply chain performance and bottlenecks.'
+   Category: executive_summaries_and_personalized_reports
+   ✅ SUCCESS: True
+   Response time: 224.8ms
+   Tokens used: 0
+   Cache hit: False
+   Data points: 2
+   Charts: 0
+   ⚠️  NEEDS REVIEW (Score: 0.50)
+   Issues: Response lacks conversational/human-readable language, Data may not be relevant to question
+   📝 Response Message:
+      I found 1 relevant data sources. Found 1 relevant data sources:
+- Executive Reports: CEO weekly perf
+   📊 Sample Data (first 3 rows):
+      Row 1: {
+  "category": "Sales Performance",
+  "total_revenue": 28302786.32,
+  "active_dealers": 12,
+  "total_transactions": 691,
+  "avg_transaction_value": 40959.1697829233,
+  "report_date": "2025-12-12"
+}
+      Row 2: {
+  "category": "F&I Performance",
+  "total_revenue": 675380.47,
+  "active_dealers": 12,
+  "total_transactions": 335,
+  "avg_transaction_value": 977.3957597684515,
+  "report_date": "2025-12-12"
+}
+
+--------------------------------------------------------------------------------
+
+🔍 Question 43: 'What are the critical success factors for next quarter?'
+   Category: executive_summaries_and_personalized_reports
+   ✅ SUCCESS: True
+   Response time: 175.7ms
+   Tokens used: 0
+   Cache hit: False
+   Data points: 3
+   Charts: 0
+   ✅ MAKES SENSE (Score: 1.00)
+   📝 Response Message:
+      Based on the query 'What are the critical success factors for next quarter?', here is relevant busin
+   📊 Sample Data (first 3 rows):
+      Row 1: {
+  "category": "Category A",
+  "value": 125000,
+  "change": 5.2,
+  "status": "Positive"
+}
+      Row 2: {
+  "category": "Category B",
+  "value": 98000,
+  "change": -2.1,
+  "status": "Negative"
+}
+      Row 3: {
+  "category": "Category C",
+  "value": 156000,
+  "change": 8.5,
+  "status": "Positive"
+}
+
+--------------------------------------------------------------------------------
+
+🔍 Question 44: 'Show me a consolidated view of all department KPIs.'
+   Category: executive_summaries_and_personalized_reports
+   ✅ SUCCESS: True
+   Response time: 249.3ms
+   Tokens used: 0
+   Cache hit: False
+   Data points: 3
+   Charts: 0
+   ✅ MAKES SENSE (Score: 1.00)
+   📝 Response Message:
+      Based on the query 'Show me a consolidated view of all department KPIs.', here is relevant business 
+   📊 Sample Data (first 3 rows):
+      Row 1: {
+  "metric": "Sales Performance",
+  "score": 85,
+  "variance": 2.5,
+  "status": "Good"
+}
+      Row 2: {
+  "metric": "Inventory Health",
+  "score": 72,
+  "variance": -5.2,
+  "status": "Fair"
+}
+      Row 3: {
+  "metric": "Warranty Claims",
+  "score": 90,
+  "variance": 1.8,
+  "status": "Excellent"
+}
+
+--------------------------------------------------------------------------------
+
+🔍 Question 45: 'What insights can we derive from customer behavior patterns?'
+   Category: executive_summaries_and_personalized_reports
+   ✅ SUCCESS: True
+   Response time: 150.3ms
+   Tokens used: 0
+   Cache hit: False
+   Data points: 3
+   Charts: 0
+   ✅ MAKES SENSE (Score: 1.00)
+   📝 Response Message:
+      Based on the query 'What insights can we derive from customer behavior patterns?', here is relevant 
+   📊 Sample Data (first 3 rows):
+      Row 1: {
+  "category": "Category A",
+  "value": 125000,
+  "change": 5.2,
+  "status": "Positive"
+}
+      Row 2: {
+  "category": "Category B",
+  "value": 98000,
+  "change": -2.1,
+  "status": "Negative"
+}
+      Row 3: {
+  "category": "Category C",
+  "value": 156000,
+  "change": 8.5,
+  "status": "Positive"
+}
+
+--------------------------------------------------------------------------------
+
+📊 SUMMARY STATISTICS:
+   Success Rate: 100.0%
+   Total Tokens: 22339
+   Cache Hit Rate: 11.1%
+   Avg Response Time: 671.6ms
+   Quality Rate: 93.3%
+   Avg Quality Score: 0.93/1.0

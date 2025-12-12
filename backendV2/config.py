@@ -27,6 +27,14 @@ class Settings(BaseSettings):
     log_level: str = "INFO"
     log_file: str = "./logs/token_optimizer.log"
     
+    # Groq API settings for AI enhancement
+    grock_api_key: str = ""
+    grock_model: str = "llama-3.3-70b-versatile"  # Groq model (fast inference)
+    grock_base_url: str = "https://api.groq.com/openai/v1"  # Groq API endpoint
+    max_fallback_tokens: int = 1000  # Max tokens per fallback query
+    max_context_tokens: int = 3000  # Max tokens for context extraction
+    use_ai_for_cached_responses: bool = True  # Use AI to make cached responses human-readable
+    
     class Config:
         env_file = ".env"
         extra = "ignore"
