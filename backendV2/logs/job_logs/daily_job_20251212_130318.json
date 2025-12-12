@@ -1,0 +1,12 @@
+{
+  "success": true,
+  "timestamp": "2025-12-12T13:03:18.684694",
+  "job_type": "daily",
+  "categories_processed": [
+    "sales_analytics",
+    "kpi_monitoring",
+    "inventory_management"
+  ],
+  "total_files": 7,
+  "errors": []
+}

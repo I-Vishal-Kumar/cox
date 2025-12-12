@@ -1,0 +1,69 @@
+{
+  "query_name": "conversion_rates",
+  "category": "sales_analytics",
+  "description": "F&I conversion rates by region (last 30 days)",
+  "keywords": [
+    "conversion",
+    "rates",
+    "penetration",
+    "f&i",
+    "fni"
+  ],
+  "sql_query": "\n            SELECT \n                d.region,\n                COUNT(f.id) as total_opportunities,\n                SUM(CASE WHEN f.service_contract_sold = 1 THEN 1 ELSE 0 END) as service_contracts_sold,\n                SUM(CASE WHEN f.gap_insurance_sold = 1 THEN 1 ELSE 0 END) as gap_insurance_sold,\n                ROUND(AVG(CASE WHEN f.service_contract_sold = 1 THEN 1.0 ELSE 0.0 END) * 100, 2) as service_contract_rate,\n                ROUND(AVG(CASE WHEN f.gap_insurance_sold = 1 THEN 1.0 ELSE 0.0 END) * 100, 2) as gap_insurance_rate\n            FROM fni_transactions f\n            JOIN dealers d ON f.dealer_id = d.id\n            WHERE f.transaction_date >= date('now', '-30 days')\n            GROUP BY d.region\n            ORDER BY service_contract_rate DESC\n            ",
+  "data": [
+    {
+      "region": "Northeast",
+      "total_opportunities": 972,
+      "service_contracts_sold": 396,
+      "gap_insurance_sold": 236,
+      "service_contract_rate": 40.74,
+      "gap_insurance_rate": 24.28
+    },
+    {
+      "region": "Southeast",
+      "total_opportunities": 623,
+      "service_contracts_sold": 241,
+      "gap_insurance_sold": 156,
+      "service_contract_rate": 38.68,
+      "gap_insurance_rate": 25.04
+    },
+    {
+      "region": "West",
+      "total_opportunities": 649,
+      "service_contracts_sold": 248,
+      "gap_insurance_sold": 149,
+      "service_contract_rate": 38.21,
+      "gap_insurance_rate": 22.96
+    },
+    {
+      "region": "Midwest",
+      "total_opportunities": 1594,
+      "service_contracts_sold": 581,
+      "gap_insurance_sold": 334,
+      "service_contract_rate": 36.45,
+      "gap_insurance_rate": 20.95
+    }
+  ],
+  "metadata": {
+    "generated_at": "2025-12-12T13:03:18.797756",
+    "row_count": 4,
+    "data_size_kb": 0.666015625
+  },
+  "chart_config": {
+    "type": "bar",
+    "title": "Conversion Rates",
+    "responsive": true,
+    "data": {
+      "labels": [],
+      "datasets": []
+    },
+    "options": {
+      "plugins": {
+        "title": {
+          "display": true,
+          "text": "Conversion Rates"
+        }
+      }
+    }
+  }
+}

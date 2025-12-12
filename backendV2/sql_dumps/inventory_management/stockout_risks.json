@@ -1,0 +1,59 @@
+{
+  "query_name": "stockout_risks",
+  "category": "inventory_management",
+  "description": "Stockout risk analysis by plant",
+  "keywords": [
+    "stockout",
+    "risk",
+    "shortage",
+    "inventory",
+    "ev",
+    "batteries"
+  ],
+  "sql_query": "\n            SELECT \n                p.name as plant_name,\n                p.capacity_per_day as daily_capacity,\n                CASE \n                    WHEN p.capacity_per_day < 500 THEN 3\n                    WHEN p.capacity_per_day < 1000 THEN 1\n                    ELSE 0\n                END as high_risk_items,\n                CASE \n                    WHEN p.capacity_per_day BETWEEN 500 AND 1000 THEN 2\n                    ELSE 1\n                END as medium_risk_items,\n                CASE \n                    WHEN p.capacity_per_day < 500 THEN 75.0\n                    WHEN p.capacity_per_day < 1000 THEN 25.0\n                    ELSE 5.0\n                END as high_risk_percentage\n            FROM plants p\n            ORDER BY high_risk_percentage DESC\n            ",
+  "data": [
+    {
+      "plant_name": "Ohio Manufacturing",
+      "daily_capacity": 800,
+      "high_risk_items": 1,
+      "medium_risk_items": 2,
+      "high_risk_percentage": 25.0
+    },
+    {
+      "plant_name": "Indiana Works",
+      "daily_capacity": 600,
+      "high_risk_items": 1,
+      "medium_risk_items": 2,
+      "high_risk_percentage": 25.0
+    },
+    {
+      "plant_name": "Michigan Assembly Plant",
+      "daily_capacity": 1200,
+      "high_risk_items": 0,
+      "medium_risk_items": 1,
+      "high_risk_percentage": 5.0
+    }
+  ],
+  "metadata": {
+    "generated_at": "2025-12-12T13:03:18.814158",
+    "row_count": 3,
+    "data_size_kb": 0.4013671875
+  },
+  "chart_config": {
+    "type": "bar",
+    "title": "Stockout Risks",
+    "responsive": true,
+    "data": {
+      "labels": [],
+      "datasets": []
+    },
+    "options": {
+      "plugins": {
+        "title": {
+          "display": true,
+          "text": "Stockout Risks"
+        }
+      }
+    }
+  }
+}

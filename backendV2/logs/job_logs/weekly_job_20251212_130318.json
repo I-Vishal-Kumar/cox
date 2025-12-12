@@ -1,0 +1,11 @@
+{
+  "success": true,
+  "timestamp": "2025-12-12T13:03:18.743346",
+  "job_type": "weekly",
+  "categories_processed": [
+    "executive_reports",
+    "warranty_analysis"
+  ],
+  "total_files": 4,
+  "errors": []
+}

@@ -1,0 +1,53 @@
+{
+  "query_name": "ceo_digest",
+  "category": "executive_reports",
+  "description": "CEO weekly performance summary",
+  "keywords": [
+    "ceo",
+    "weekly",
+    "summary",
+    "executive",
+    "digest"
+  ],
+  "sql_query": "\n            SELECT \n                'Sales Performance' as category,\n                SUM(f.sale_price) as total_revenue,\n                COUNT(DISTINCT f.dealer_id) as active_dealers,\n                COUNT(*) as total_transactions,\n                AVG(f.sale_price) as avg_transaction_value,\n                date('now') as report_date\n            FROM fni_transactions f\n            WHERE f.transaction_date >= date('now', '-7 days')\n            \n            UNION ALL\n            \n            SELECT \n                'F&I Performance' as category,\n                SUM(f.service_contract_revenue + f.gap_insurance_revenue) as total_revenue,\n                COUNT(DISTINCT f.dealer_id) as active_dealers,\n                SUM(CASE WHEN f.service_contract_sold = 1 OR f.gap_insurance_sold = 1 THEN 1 ELSE 0 END) as total_transactions,\n                AVG(f.service_contract_revenue + f.gap_insurance_revenue) as avg_transaction_value,\n                date('now') as report_date\n            FROM fni_transactions f\n            WHERE f.transaction_date >= date('now', '-7 days')\n            ",
+  "data": [
+    {
+      "category": "Sales Performance",
+      "total_revenue": 28302786.32,
+      "active_dealers": 12,
+      "total_transactions": 691,
+      "avg_transaction_value": 40959.1697829233,
+      "report_date": "2025-12-12"
+    },
+    {
+      "category": "F&I Performance",
+      "total_revenue": 675380.47,
+      "active_dealers": 12,
+      "total_transactions": 335,
+      "avg_transaction_value": 977.3957597684515,
+      "report_date": "2025-12-12"
+    }
+  ],
+  "metadata": {
+    "generated_at": "2025-12-12T13:03:18.830738",
+    "row_count": 2,
+    "data_size_kb": 0.3603515625
+  },
+  "chart_config": {
+    "type": "bar",
+    "title": "Ceo Digest",
+    "responsive": true,
+    "data": {
+      "labels": [],
+      "datasets": []
+    },
+    "options": {
+      "plugins": {
+        "title": {
+          "display": true,
+          "text": "Ceo Digest"
+        }
+      }
+    }
+  }
+}

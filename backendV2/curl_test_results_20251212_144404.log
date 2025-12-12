@@ -1,0 +1,267 @@
+🎯 BUSINESS INTELLIGENCE API TESTING WITH CURL
+=
+Testing backendV2 API server with real business questions
+Base URL: http://localhost:8001
+Log file: curl_test_results_20251212_144404.log
+Started at: Fri Dec 12 02:44:04 PM IST 2025
+
+🔍 Checking server health...
+✅ Server is healthy and responding
+
+📋 Loading business intelligence questions...
+Loaded 45 questions from 3 categories
+
+🚀 Starting API tests...
+
+🔍 Question 1: 'What were the top-selling vehicle models in the Northeast last week?'
+   Category: conversational_business_intelligence
+   ❌ FAILED: HTTP 000
+   Response: ...
+
+🔍 Question 2: 'Break this down by dealer.'
+   Category: conversational_business_intelligence
+   ❌ FAILED: HTTP 000
+   Response: ...
+
+🔍 Question 3: 'Show the year-over-year change in warranty claims.'
+   Category: conversational_business_intelligence
+   ❌ FAILED: HTTP 000
+   Response: ...
+
+🔍 Question 4: 'Why did EV sales drop yesterday?'
+   Category: conversational_business_intelligence
+   ❌ FAILED: HTTP 000
+   Response: ...
+
+🔍 Question 5: 'Create a pivot table of service revenue by region.'
+   Category: conversational_business_intelligence
+   ❌ FAILED: HTTP 000
+   Response: ...
+
+🔍 Question 6: 'Show me inventory levels by model and factory.'
+   Category: conversational_business_intelligence
+   ❌ FAILED: HTTP 000
+   Response: ...
+
+🔍 Question 7: 'What\u2019s the current stock-out risk for EV batteries?'
+   Category: conversational_business_intelligence
+   ❌ FAILED: HTTP 000
+   Response: ...
+
+🔍 Question 8: 'Which components caused the most repeat repairs last quarter?'
+   Category: conversational_business_intelligence
+   ❌ FAILED: HTTP 000
+   Response: ...
+
+🔍 Question 9: 'Drill down into underperforming models vs forecast.'
+   Category: conversational_business_intelligence
+   ❌ FAILED: HTTP 000
+   Response: ...
+
+🔍 Question 10: 'Which dealers have the highest sales conversion rates?'
+   Category: conversational_business_intelligence
+   ❌ FAILED: HTTP 000
+   Response: ...
+
+🔍 Question 11: 'Show me trends for customer service complaints over the last 6 months.'
+   Category: conversational_business_intelligence
+   ❌ FAILED: HTTP 000
+   Response: ...
+
+🔍 Question 12: 'Which plants have the slowest repair turnaround times?'
+   Category: conversational_business_intelligence
+   ❌ FAILED: HTTP 000
+   Response: ...
+
+🔍 Question 13: 'Give me a dashboard of sales, inventory, and warranty KPIs.'
+   Category: conversational_business_intelligence
+   ❌ FAILED: HTTP 000
+   Response: ...
+
+🔍 Question 14: 'Flag any data-quality issues in this dataset.'
+   Category: conversational_business_intelligence
+   ❌ FAILED: HTTP 000
+   Response: ...
+
+🔍 Question 15: 'What\u2019s the mix of ICE vs EV vehicles sold last week?'
+   Category: conversational_business_intelligence
+   ❌ FAILED: HTTP 000
+   Response: ...
+
+🔍 Question 16: 'Why did F&I revenue drop across Midwest dealers this week?'
+   Category: kpi_observability_and_root_cause_analysis
+   ❌ FAILED: HTTP 000
+   Response: ...
+
+🔍 Question 17: 'Explain the change in warranty claim rates from last month.'
+   Category: kpi_observability_and_root_cause_analysis
+   ❌ FAILED: HTTP 000
+   Response: ...
+
+🔍 Question 18: 'Which drivers influenced the margin movement yesterday?'
+   Category: kpi_observability_and_root_cause_analysis
+   ❌ FAILED: HTTP 000
+   Response: ...
+
+🔍 Question 19: 'Why did dealer footfall decline after the pricing update?'
+   Category: kpi_observability_and_root_cause_analysis
+   ❌ FAILED: HTTP 000
+   Response: ...
+
+🔍 Question 20: 'Which supplier caused production downtime this week?'
+   Category: kpi_observability_and_root_cause_analysis
+   ❌ FAILED: HTTP 000
+   Response: ...
+
+🔍 Question 21: 'What is the predicted variance for next week\u2019s sales?'
+   Category: kpi_observability_and_root_cause_analysis
+   ❌ FAILED: HTTP 000
+   Response: ...
+
+🔍 Question 22: 'Why did plant uptime decrease yesterday?'
+   Category: kpi_observability_and_root_cause_analysis
+   ❌ FAILED: HTTP 000
+   Response: ...
+
+🔍 Question 23: 'What contributed most to the drop in service revenue?'
+   Category: kpi_observability_and_root_cause_analysis
+   ❌ FAILED: HTTP 000
+   Response: ...
+
+🔍 Question 24: 'Which model categories are driving the increase in customer complaints?'
+   Category: kpi_observability_and_root_cause_analysis
+   ❌ FAILED: HTTP 000
+   Response: ...
+
+🔍 Question 25: 'Explain the spike in EV battery failure claims.'
+   Category: kpi_observability_and_root_cause_analysis
+   ❌ FAILED: HTTP 000
+   Response: ...
+
+🔍 Question 26: 'What is the KPI Health Score for today?'
+   Category: kpi_observability_and_root_cause_analysis
+   ❌ FAILED: HTTP 000
+   Response: ...
+
+🔍 Question 27: 'What actions do you recommend for the variance detected?'
+   Category: kpi_observability_and_root_cause_analysis
+   ❌ FAILED: HTTP 000
+   Response: ...
+
+🔍 Question 28: 'Break down the revenue decline by price, mix, and region.'
+   Category: kpi_observability_and_root_cause_analysis
+   ❌ FAILED: HTTP 000
+   Response: ...
+
+🔍 Question 29: 'Did weather or logistics cause delivery delays this week?'
+   Category: kpi_observability_and_root_cause_analysis
+   ❌ FAILED: HTTP 000
+   Response: ...
+
+🔍 Question 30: 'Show anomaly drivers for yesterday\u2019s warranty spikes.'
+   Category: kpi_observability_and_root_cause_analysis
+   ❌ FAILED: HTTP 000
+   Response: ...
+
+🔍 Question 31: 'Give me the CEO weekly summary.'
+   Category: executive_summaries_and_personalized_reports
+   ❌ FAILED: HTTP 000
+   Response: ...
+
+🔍 Question 32: 'Summarize the top wins and risks for this week.'
+   Category: executive_summaries_and_personalized_reports
+   ❌ FAILED: HTTP 000
+   Response: ...
+
+🔍 Question 33: 'What were the biggest contributors to margin movement?'
+   Category: executive_summaries_and_personalized_reports
+   ❌ FAILED: HTTP 000
+   Response: ...
+
+🔍 Question 34: 'Show the top 10 risks and opportunities right now.'
+   Category: executive_summaries_and_personalized_reports
+   ❌ FAILED: HTTP 000
+   Response: ...
+
+🔍 Question 35: 'Provide a supply-chain performance summary for the COO.'
+   Category: executive_summaries_and_personalized_reports
+   ❌ FAILED: HTTP 000
+   Response: ...
+
+🔍 Question 36: 'Give me a sales forecast summary for next week.'
+   Category: executive_summaries_and_personalized_reports
+   ❌ FAILED: HTTP 000
+   Response: ...
+
+🔍 Question 37: 'What were the major anomalies in plant performance?'
+   Category: executive_summaries_and_personalized_reports
+   ❌ FAILED: HTTP 000
+   Response: ...
+
+🔍 Question 38: 'Generate a downloadable narrative report with charts.'
+   Category: executive_summaries_and_personalized_reports
+   ❌ FAILED: HTTP 000
+   Response: ...
+
+🔍 Question 39: 'Show me a summary of customer sentiment trends.'
+   Category: executive_summaries_and_personalized_reports
+   ❌ FAILED: HTTP 000
+   Response: ...
+
+🔍 Question 40: 'Provide a VP of Sales dashboard summary.'
+   Category: executive_summaries_and_personalized_reports
+   ❌ FAILED: HTTP 000
+   Response: ...
+
+🔍 Question 41: 'Highlight any emerging issues in warranty claims.'
+   Category: executive_summaries_and_personalized_reports
+   ❌ FAILED: HTTP 000
+   Response: ...
+
+🔍 Question 42: 'Give me the week-over-week performance changes.'
+   Category: executive_summaries_and_personalized_reports
+   ❌ FAILED: HTTP 000
+   Response: ...
+
+🔍 Question 43: 'Which areas need immediate executive attention?'
+   Category: executive_summaries_and_personalized_reports
+   ❌ FAILED: HTTP 000
+   Response: ...
+
+🔍 Question 44: 'Provide a summary of throughput and defect trends by plant.'
+   Category: executive_summaries_and_personalized_reports
+   ❌ FAILED: HTTP 000
+   Response: ...
+
+🔍 Question 45: 'What\u2019s the consolidated multi-department weekly report?'
+   Category: executive_summaries_and_personalized_reports
+   ❌ FAILED: HTTP 000
+   Response: ...
+
+=
+🎉 CURL TEST SUMMARY REPORT
+=
+
+📊 OVERALL RESULTS:
+   Total Questions Tested: 45
+   Successful Responses: 0
+   Failed Responses: 45
+   Success Rate: 0%
+
+⚡ PERFORMANCE METRICS:
+   Cache Hit Rate: 0%
+   Total Tokens Used: 0
+   Average Tokens per Query: 0
+   Zero-Token Queries: 0
+   Average Response Time: 14ms
+
+🎯 TOKEN OPTIMIZATION ANALYSIS:
+   ⚠️  NEEDS IMPROVEMENT: 0% cache hit rate
+   🔧 Consider expanding cached patterns
+
+⚠️  NEEDS ATTENTION!
+   🔧 System requires optimization for better coverage
+   📋 Review failed queries for pattern improvements
+
+Completed at: Fri Dec 12 02:44:16 PM IST 2025
+📄 Full results logged to: curl_test_results_20251212_144404.log
