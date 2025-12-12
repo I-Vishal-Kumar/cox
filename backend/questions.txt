@@ -1,73 +1,65 @@
 {
-  "test_suite": {
-    "kpi_monitoring": {
-      "description": "KPI scanning, variance detection, RCA, forecasting, action recommendations.",
-      "questions": [
-        "How are my KPIs trending today across sales, inventory, warranty, and production?",
-        "Generate today’s KPI Health Score and tell me what needs attention.",
-        "Which KPI deviated most from target this week?",
-        "Why is Midwest warranty cost 18% above target?",
-        "Explain the drop in production uptime yesterday.",
-        "Predict next week’s sales variance vs target.",
-        "Break down the change in revenue using price vs mix vs volume.",
-        "What caused the spike in service workload last Friday?",
-        "Give me three recommended actions to stabilize inventory turns.",
-        "Should we check supplier X? Any signs of delay?"
-      ]
-    },
+  "conversational_business_intelligence": {
+    "description": "Questions users may ask an NL → SQL analytics bot that generates charts, tables, and dashboards.",
+    "questions": [
+      "What were the top-selling vehicle models in the Northeast last week?",
+      "Break this down by dealer.",
+      "Show the year-over-year change in warranty claims.",
+      "Why did EV sales drop yesterday?",
+      "Create a pivot table of service revenue by region.",
+      "Show me inventory levels by model and factory.",
+      "What’s the current stock-out risk for EV batteries?",
+      "Which components caused the most repeat repairs last quarter?",
+      "Drill down into underperforming models vs forecast.",
+      "Which dealers have the highest sales conversion rates?",
+      "Show me trends for customer service complaints over the last 6 months.",
+      "Which plants have the slowest repair turnaround times?",
+      "Give me a dashboard of sales, inventory, and warranty KPIs.",
+      "Flag any data-quality issues in this dataset.",
+      "What’s the mix of ICE vs EV vehicles sold last week?"
+    ]
+  },
 
-    "executive_digests": {
-      "description": "CEO/COO/CFO/VP Sales weekly digests, forecasts, anomaly summaries, narrative-linked visuals.",
-      "questions": [
-        "Create the weekly CEO digest with wins, risks, and forecast.",
-        "Send me the CFO view of margin risks for this quarter.",
-        "What should the VP of Sales know about this week’s performance?",
-        "Summarize top anomalies and sentiment drivers for the COO.",
-        "Generate a downloadable report with charts linked to the narrative.",
-        "Show me the top 5 risks with visuals and one-click drilldowns.",
-        "Ask deeper: break down the margin drop by region.",
-        "Drill into the forecast deviation by SKU."
-      ]
-    },
+  "kpi_observability_and_root_cause_analysis": {
+    "description": "Questions for automated KPI deviation detection and root-cause analysis.",
+    "questions": [
+      "Why did F&I revenue drop across Midwest dealers this week?",
+      "Explain the change in warranty claim rates from last month.",
+      "Which drivers influenced the margin movement yesterday?",
+      "Why did dealer footfall decline after the pricing update?",
+      "Which supplier caused production downtime this week?",
+      "What is the predicted variance for next week’s sales?",
+      "Why did plant uptime decrease yesterday?",
+      "What contributed most to the drop in service revenue?",
+      "Which model categories are driving the increase in customer complaints?",
+      "Explain the spike in EV battery failure claims.",
+      "What is the KPI Health Score for today?",
+      "What actions do you recommend for the variance detected?",
+      "Break down the revenue decline by price, mix, and region.",
+      "Did weather or logistics cause delivery delays this week?",
+      "Show anomaly drivers for yesterday’s warranty spikes."
+    ]
+  },
 
-    "data_catalog_lineage": {
-      "description": "Dataset discovery, schemas, lineage, quality scores, recommended datasets.",
-      "questions": [
-        "Where can I find dealership service history data?",
-        "Which tables contain supplier performance metrics?",
-        "Show example rows from the warranty_claims table.",
-        "Are any of the sales datasets outdated or low quality?",
-        "What’s the lineage for the monthly revenue table?",
-        "Which dataset should I use for analyzing regional mix shifts?"
-      ]
-    },
-
-    "anomaly_detection": {
-      "description": "Detection of unusual movements, contextual reasoning, drilldowns, notifications.",
-      "questions": [
-        "Any unusual movement in defects this week?",
-        "Alert me on spikes in inventory aging.",
-        "Brake sensor claims increased—what’s driving it?",
-        "Are cold-weather conditions affecting warranty claims?",
-        "Predict which region is at risk for service load spikes next week.",
-        "Drill into the service workload spike by dealer and technician.",
-        "Show the SKU-level breakdown for the defect increase.",
-        "Send this anomaly report to Teams for the quality engineering group."
-      ]
-    },
-
-    "self_service_automation": {
-      "description": "HR/Finance/IT automations, ticket creation, password resets, multilingual support.",
-      "questions": [
-        "Create a service ticket to unlock my account.",
-        "Reset my payroll portal password.",
-        "What is the PTO policy for contractors?",
-        "Show the status of my laptop replacement request.",
-        "This error keeps happening—any recommended instant fixes?",
-        "Summarize the top recurring IT tickets this month.",
-        "Explain my benefits package in Spanish.",
-        "Give me the travel reimbursement steps for mobile users."
-      ]
-    }
+  "executive_summaries_and_personalized_reports": {
+    "description": "Questions for automated executive summaries, weekly digests, and persona-based analysis.",
+    "questions": [
+      "Give me the CEO weekly summary.",
+      "Summarize the top wins and risks for this week.",
+      "What were the biggest contributors to margin movement?",
+      "Show the top 10 risks and opportunities right now.",
+      "Provide a supply-chain performance summary for the COO.",
+      "Give me a sales forecast summary for next week.",
+      "What were the major anomalies in plant performance?",
+      "Generate a downloadable narrative report with charts.",
+      "Show me a summary of customer sentiment trends.",
+      "Provide a VP of Sales dashboard summary.",
+      "Highlight any emerging issues in warranty claims.",
+      "Give me the week-over-week performance changes.",
+      "Which areas need immediate executive attention?",
+      "Provide a summary of throughput and defect trends by plant.",
+      "What’s the consolidated multi-department weekly report?"
+    ]
   }
+
 }
