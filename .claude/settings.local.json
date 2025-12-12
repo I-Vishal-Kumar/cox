@@ -8,7 +8,26 @@
       "Bash(dir c:UsersJIPLDesktopcoxfontendsrcapp /s /b)",
       "Bash(find:*)",
       "Bash(npx tsc --noEmit)",
-      "Bash(python -c:*)"
+      "Bash(python -c:*)",
+      "Bash(\".venv/Scripts/python.exe\" -c \"from main import app; print(''Backend imports OK'')\")",
+      "Bash(\".venv/Scripts/python.exe\" -c \"import sqlalchemy; print(sqlalchemy.__version__)\")",
+      "Bash(\".venv/Scripts/python.exe\":*)",
+      "Bash(\".venv/Scripts/python.exe\" -c \"from app.services.kpi_monitoring_service import KPIMonitoringService, KPIScheduler; print(''Service imports OK'')\")",
+      "Bash(\".venv/Scripts/python.exe\" -c \"from app.services.analytics_service import AnalyticsService; print(''Analytics service imports OK'')\")",
+      "Bash(\".venv/Scripts/python.exe\" -c \"from app.agents.langchain_orchestrator import LangChainAnalyticsOrchestrator; print(''Orchestrator imports OK'')\")",
+      "Bash(\".venv/Scripts/python.exe\" -c \"from app.agents.tools import format_data_for_display; print(''Function imported OK''); test_data = [{''metric_name'': ''Test'', ''value'': 123.456}]; print(format_data_for_display(test_data))\")",
+      "Bash(\".venv\\Scripts\\python.exe\" -c \"from app.agents.tools import format_data_for_display; print(''Function imported OK''); test_data = [{''metric_name'': ''Test'', ''value'': 123.456}]; print(format_data_for_display(test_data))\")",
+      "Bash(tasklist:*)",
+      "Bash(findstr:*)",
+      "Bash(\".venv\\Scripts\\python.exe\" -c \"from app.agents.tools import generate_sql_query, format_data_for_display; print(''All imports OK'')\")",
+      "Bash(dir:*)",
+      "Bash(\".venv\\Scripts\\python.exe\" -c \"from app.agents.langchain_orchestrator import LangChainAnalyticsOrchestrator; print(''Orchestrator imports OK'')\")",
+      "Bash(\".venv\\Scripts\\python.exe\" -c \"import sqlite3; conn = sqlite3.connect(''data/cox_analytics.db''); cursor = conn.cursor(); cursor.execute(''PRAGMA table_info(service_appointments)''); print([col[1] for col in cursor.fetchall()])\")",
+      "Bash(\".venv\\Scripts\\python.exe\" -c \"import sqlite3; conn = sqlite3.connect(''data/cox_analytics.db''); cursor = conn.cursor(); cursor.execute(''SELECT name FROM sqlite_master WHERE type=\"\"table\"\" ORDER BY name''); print([t[0] for t in cursor.fetchall()])\")",
+      "Bash(\".venv\\Scripts\\python.exe\" -c \"import sqlite3; conn = sqlite3.connect(''data/cox_automotive.db''); cursor = conn.cursor(); cursor.execute(''PRAGMA table_info(service_appointments)''); print([col[1] for col in cursor.fetchall()])\")",
+      "Bash(\".venv\\Scripts\\python.exe\":*)",
+      "Bash(\".venv\\Scripts\\python.exe\" -c \"\nimport sqlite3\nconn = sqlite3.connect(''data/cox_automotive.db'')\ncursor = conn.cursor()\n\n# Make F&I revenue lower for last week to create a bigger anomaly\n# Reduce revenue by 25% for records from 7-14 days ago\ncursor.execute(''''''\n    UPDATE fni_transactions \n    SET fni_revenue = fni_revenue * 0.75 \n    WHERE transaction_date >= date(''now'', ''-14 days'') \n    AND transaction_date < date(''now'', ''-7 days'')\n'''''')\nprint(f''Updated {cursor.rowcount} fni_transactions to create revenue anomaly'')\n\n# Add some more delayed shipments in current week to create anomaly\ncursor.execute(''''''\n    UPDATE shipments \n    SET status = ''Delayed'' \n    WHERE scheduled_departure >= datetime(''now'', ''-7 days'')\n    AND id IN (SELECT id FROM shipments WHERE scheduled_departure >= datetime(''now'', ''-7 days'') LIMIT 50)\n'''''')\nprint(f''Updated {cursor.rowcount} shipments to delayed status'')\n\nconn.commit()\n\n# Verify changes\ncursor.execute(''''''\n    SELECT \n        AVG(CASE WHEN transaction_date >= date(''now'', ''-7 days'') THEN fni_revenue END) as current_avg,\n        AVG(CASE WHEN transaction_date >= date(''now'', ''-14 days'') AND transaction_date < date(''now'', ''-7 days'') THEN fni_revenue END) as prev_avg\n    FROM fni_transactions\n'''''')\nrow = cursor.fetchone()\nif row[0] and row[1]:\n    change = ((row[0] - row[1]) / row[1]) * 100\n    print(f''F&I Revenue: Current {row[0]:.0f}, Previous {row[1]:.0f}, Change: {change:.1f}%'')\n\ncursor.execute(''''''\n    SELECT\n        AVG(CASE WHEN scheduled_departure >= datetime(''now'', ''-7 days'') THEN\n            CASE WHEN status = ''Delayed'' THEN 1.0 ELSE 0.0 END\n        END) * 100 as current_delay_rate,\n        AVG(CASE WHEN scheduled_departure >= datetime(''now'', ''-14 days'') AND scheduled_departure < datetime(''now'', ''-7 days'') THEN\n            CASE WHEN status = ''Delayed'' THEN 1.0 ELSE 0.0 END\n        END) * 100 as prev_delay_rate\n    FROM shipments\n    WHERE scheduled_departure >= datetime(''now'', ''-14 days'')\n'''''')\nrow = cursor.fetchone()\nif row[0] and row[1]:\n    change = ((row[0] - row[1]) / row[1]) * 100\n    print(f''Shipment Delay: Current {row[0]:.1f}%, Previous {row[1]:.1f}%, Change: {change:.1f}%'')\n\nconn.close()\n\")",
+      "Bash(\".venv\\Scripts\\python.exe\" -c \"from app.services.kpi_monitoring_service import KPIMonitoringService; print(''Service imports OK'')\")"
     ]
   }
 }

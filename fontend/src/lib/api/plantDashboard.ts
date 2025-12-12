@@ -84,24 +84,31 @@ export const transformCauseBreakdown = (details: DowntimeDetail[]): CauseBreakdo
   }));
 };
 
+// Backend API response type
+interface BackendPlantResponse {
+  plant_summary?: Array<Record<string, unknown>>;
+  downtime_details?: Array<Record<string, unknown>>;
+  detailed_events?: Array<Record<string, unknown>>;
+}
+
 export const plantDashboardService = {
   getPlantDashboard: async (): Promise<PlantDashboardResponse> => {
     try {
-      const response = await apiClient.get('/dashboard/plant');
-      
+      const response = await apiClient.get<BackendPlantResponse>('/dashboard/plant');
+
       // Transform backend response
       const plantSummary = (response.plant_summary || []).map(transformPlantSummary);
       // Backend returns "detailed_events" but we expect "downtime_details"
       const downtimeDetails = ((response.downtime_details || response.detailed_events) || []).map(transformDowntimeDetail);
       const causeBreakdown = transformCauseBreakdown(downtimeDetails);
-      
+
       // Calculate overall stats
-      const totalDowntime = plantSummary.reduce((sum, p) => sum + p.total_downtime, 0);
+      const totalDowntime = plantSummary.reduce((sum: number, p: PlantSummary) => sum + p.total_downtime, 0);
       const totalEvents = downtimeDetails.length;
       const unplannedDowntime = downtimeDetails
-        .filter(d => !d.is_planned)
-        .reduce((sum, d) => sum + d.downtime_hours, 0);
-      const plantsAffected = new Set(plantSummary.map(p => p.plant_code)).size;
+        .filter((d: DowntimeDetail) => !d.is_planned)
+        .reduce((sum: number, d: DowntimeDetail) => sum + d.downtime_hours, 0);
+      const plantsAffected = new Set(plantSummary.map((p: PlantSummary) => p.plant_code)).size;
       
       return {
         plant_summary: plantSummary,

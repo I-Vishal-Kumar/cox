@@ -35,6 +35,13 @@ export interface InviteDashboardResponse {
     sms?: ChannelPerformance;
     direct_mail?: ChannelPerformance;
   };
+  program_summary?: {
+    total_emails?: number;
+    total_opens?: number;
+    total_ros?: number;
+    total_revenue?: number;
+    avg_open_rate?: number;
+  };
   analysis_date: string;
 }
 
@@ -148,24 +155,47 @@ const parseJSONResponse = (response: ChatResponse): any => {
   }
 };
 
+// Backend API response type
+interface BackendInviteResponse {
+  program_performance?: Array<{
+    campaign_name: string;
+    category?: string;
+    campaign_type?: string;
+    emails_sent?: number;
+    unique_opens?: number;
+    open_rate?: number;
+    ro_count?: number;
+    revenue?: number;
+  }>;
+  monthly_metrics?: Array<{
+    month?: string;
+    emails_sent?: number;
+    unique_opens?: number;
+    ro_count?: number;
+    revenue?: number;
+  }>;
+  channel_performance?: Record<string, ChannelPerformance>;
+  last_updated?: string;
+}
+
 export const inviteDashboardService = {
   getInviteDashboard: async (dateRange?: string): Promise<InviteDashboardResponse> => {
     try {
       const params = dateRange ? `?date_range=${encodeURIComponent(dateRange)}` : '';
-      const response = await apiClient.get(`/dashboard/invite${params}`);
-      
+      const response = await apiClient.get<BackendInviteResponse>(`/dashboard/invite${params}`);
+
       // Transform backend response to match frontend expectations
       return {
-        campaign_performance: (response.program_performance || []).map((item: any) => ({
+        campaign_performance: (response.program_performance || []).map((item) => ({
           campaign_name: item.campaign_name,
-          category: item.category || item.campaign_type,
+          category: item.category || item.campaign_type || '',
           emails_sent: item.emails_sent || 0,
           unique_opens: item.unique_opens || 0,
           open_rate: item.open_rate || 0,
           ro_count: item.ro_count || 0,
           revenue: item.revenue || 0,
         })),
-        monthly_trends: (response.monthly_metrics || []).map((item: any) => ({
+        monthly_trends: (response.monthly_metrics || []).map((item) => ({
           month: item.month || '',
           emails: item.emails_sent || 0,
           opens: item.unique_opens || 0,

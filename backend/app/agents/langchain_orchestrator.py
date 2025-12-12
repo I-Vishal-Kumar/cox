@@ -564,20 +564,190 @@ Respond directly to the user's query below."""
     def _extract_analysis(self, response: Any) -> str:
         """
         Extract analysis text from agent response.
-        
+
         Args:
             response: Agent response object
-            
+
         Returns:
             Analysis text string
         """
-        # Extract content from response
+        # Handle LangChain agent response with messages
+        if isinstance(response, dict):
+            # Check for messages array (common LangChain response format)
+            if 'messages' in response and isinstance(response['messages'], list):
+                # Get the last AI message
+                for msg in reversed(response['messages']):
+                    if hasattr(msg, 'content') and msg.content:
+                        content = msg.content
+                        # Ensure it's a string, not an object
+                        if isinstance(content, str):
+                            return content
+                        elif isinstance(content, list):
+                            # Handle list of content blocks
+                            return self._format_content_list(content)
+                        elif isinstance(content, dict):
+                            return self._format_dict_response(content)
+
+            # Check for output key
+            if 'output' in response:
+                output = response['output']
+                if isinstance(output, str):
+                    return output
+                return self._format_dict_response(output) if isinstance(output, dict) else str(output)
+
+            # Fallback - format the whole dict nicely
+            return self._format_dict_response(response)
+
+        # Handle response object with content attribute
         if hasattr(response, 'content'):
-            return response.content
-        elif isinstance(response, dict):
-            return response.get('output', str(response))
-        else:
-            return str(response)
+            content = response.content
+            if isinstance(content, str):
+                return content
+            elif isinstance(content, list):
+                return self._format_content_list(content)
+            elif isinstance(content, dict):
+                return self._format_dict_response(content)
+            return str(content)
+
+        # Fallback to string conversion
+        return str(response)
+
+    def _extract_text_content(self, content: Any) -> str:
+        """
+        Extract text content from various LangChain content formats.
+
+        LangChain content can be:
+        - A plain string
+        - A list of content blocks (each can be string or dict with 'text'/'type')
+        - A dict with 'text' or 'content' key
+        """
+        if content is None:
+            return ""
+
+        if isinstance(content, str):
+            return content
+
+        if isinstance(content, list):
+            text_parts = []
+            for item in content:
+                if isinstance(item, str):
+                    text_parts.append(item)
+                elif isinstance(item, dict):
+                    # Handle content block format: {'type': 'text', 'text': '...'}
+                    if item.get('type') == 'text' and 'text' in item:
+                        text_parts.append(item['text'])
+                    elif 'text' in item:
+                        text_parts.append(item['text'])
+                    elif 'content' in item:
+                        text_parts.append(self._extract_text_content(item['content']))
+                    # Skip tool_use blocks - they don't contain displayable text
+                    elif item.get('type') == 'tool_use':
+                        continue
+                    else:
+                        # Skip unrecognized dict formats instead of converting to string
+                        continue
+                elif hasattr(item, 'text'):
+                    text_parts.append(str(item.text))
+                elif hasattr(item, 'content'):
+                    text_parts.append(self._extract_text_content(item.content))
+            return "".join(text_parts)
+
+        if isinstance(content, dict):
+            if 'text' in content:
+                return str(content['text'])
+            if 'content' in content:
+                return self._extract_text_content(content['content'])
+            # Don't convert arbitrary dicts to string
+            return ""
+
+        # For other objects with text attribute
+        if hasattr(content, 'text'):
+            return str(content.text)
+        if hasattr(content, 'content'):
+            return self._extract_text_content(content.content)
+
+        # Last resort - convert to string only if it's a simple type
+        if isinstance(content, (int, float, bool)):
+            return str(content)
+
+        return ""
+
+    def _format_content_list(self, content_list: list) -> str:
+        """Format a list of content items into a readable string."""
+        parts = []
+        for item in content_list:
+            if isinstance(item, str):
+                parts.append(item)
+            elif isinstance(item, dict):
+                # Handle dict items - could be tool results, data, etc.
+                if 'text' in item:
+                    parts.append(item['text'])
+                elif 'content' in item:
+                    parts.append(str(item['content']))
+                else:
+                    parts.append(self._format_dict_response(item))
+            else:
+                parts.append(str(item))
+        return '\n'.join(parts)
+
+    def _format_dict_response(self, data: dict) -> str:
+        """Format a dictionary response into a readable string."""
+        # Check for common response patterns
+        if 'analysis' in data:
+            return str(data['analysis'])
+        if 'message' in data:
+            return str(data['message'])
+        if 'result' in data:
+            result = data['result']
+            if isinstance(result, str):
+                return result
+            elif isinstance(result, list):
+                return self._format_data_table(result)
+            return str(result)
+        if 'data' in data and isinstance(data['data'], list):
+            return self._format_data_table(data['data'])
+
+        # Format as readable text
+        try:
+            import json
+            return json.dumps(data, indent=2, default=str)
+        except:
+            return str(data)
+
+    def _format_data_table(self, data: list, max_rows: int = 20) -> str:
+        """Format a list of dicts as a readable table."""
+        if not data:
+            return "No data found."
+
+        # Limit rows for display
+        display_data = data[:max_rows]
+        total_rows = len(data)
+
+        # Get all keys
+        keys = list(display_data[0].keys()) if display_data else []
+
+        # Build formatted output
+        lines = []
+        lines.append(f"Found {total_rows} records" + (f" (showing first {max_rows}):" if total_rows > max_rows else ":"))
+        lines.append("")
+
+        # Format each row
+        for i, row in enumerate(display_data, 1):
+            lines.append(f"**Record {i}:**")
+            for key in keys:
+                value = row.get(key, 'N/A')
+                # Format numbers nicely
+                if isinstance(value, float):
+                    value = f"{value:,.2f}"
+                elif value is None:
+                    value = "N/A"
+                lines.append(f"  • {key}: {value}")
+            lines.append("")
+
+        if total_rows > max_rows:
+            lines.append(f"... and {total_rows - max_rows} more records.")
+
+        return '\n'.join(lines)
     
 
 
@@ -690,8 +860,8 @@ Respond directly to the user's query below."""
                             
                             session_msg = SessionMessage.from_message(message=ai_msg, index=next_id)
                             session_manager.create_message(actual_session_id, AGENT_ID, session_msg)
-                        except Exception as e:
-                            print(f"Failed to save assistant message: {e}")
+                        except Exception:
+                            pass  # Non-critical
                     return
             
             # Use demo scenario as query type
@@ -700,57 +870,36 @@ Respond directly to the user's query below."""
             # Ensure agent exists BEFORE building messages (so history can be loaded)
             if session_manager and SessionAgent:
                 try:
-                    # Use session_manager.session_id to get the actual session ID (with prefix)
                     actual_session_id = session_manager.session_id
-                    print(f"[DEBUG] Checking if agent exists for session {actual_session_id}")
                     agent = session_manager.read_agent(actual_session_id, AGENT_ID)
-                    print(f"[DEBUG] Agent read result: {agent}")
                     if not agent:
-                        print(f"[DEBUG] Creating agent for session {actual_session_id}")
                         session_agent = SessionAgent(
                             agent_id=AGENT_ID,
                             state={},
                             conversation_manager_state={}
                         )
-                        print(f"[DEBUG] SessionAgent object created: {session_agent}")
                         session_manager.create_agent(actual_session_id, session_agent)
-                        print(f"[DEBUG] Agent created successfully")
-                except Exception as e:
-                    print(f"[ERROR] Failed to ensure agent exists: {e}")
-                    import traceback
-                    traceback.print_exc()
-            
+                except Exception:
+                    pass  # Non-critical, continue without session persistence
+
             # Build messages (with session manager support)
-            print(f"[DEBUG] Building messages for query: {query}")
-            print(f"[DEBUG] Conversation history provided: {conversation_history}")
-            print(f"[DEBUG] Session manager: {session_manager}")
             messages = self._build_messages(
                 query=query,
                 conversation_history=conversation_history,
                 session_manager=session_manager
             )
-            print(f"[DEBUG] Built messages count: {len(messages)}")
-            for i, msg in enumerate(messages):
-                print(f"[DEBUG] Message {i}: {type(msg).__name__} - {msg.content[:100] if hasattr(msg, 'content') else msg}")
             
-            # Save user message to session
-            if session_manager and SessionMessage:
+            # Save user message to session (skip if corrupted)
+            if session_manager and SessionMessage and not self._is_corrupted_message(query):
                 try:
-                    # Use session_manager.session_id to get the actual session ID (with prefix)
                     actual_session_id = session_manager.session_id
-                    
-                    # Create user message
                     user_msg = Message(role="user", content=query)
-                    
-                    # Determine next message ID
                     messages_list = session_manager.list_messages(actual_session_id, AGENT_ID)
                     next_id = len(messages_list)
-                    
                     session_msg = SessionMessage.from_message(message=user_msg, index=next_id)
                     session_manager.create_message(actual_session_id, AGENT_ID, session_msg)
-                    print(f"[DEBUG] Saved user message with ID {next_id} to session {actual_session_id}")
-                except Exception as e:
-                    print(f"Failed to save user message: {e}")
+                except Exception:
+                    pass  # Non-critical
             
             # Configure runnable with context
             config = RunnableConfig(
@@ -779,25 +928,25 @@ Respond directly to the user's query below."""
                                 if messages and isinstance(messages, list):
                                     last_message = messages[-1]
                                     if hasattr(last_message, "content"):
-                                        content = last_message.content
+                                        content = self._extract_text_content(last_message.content)
                                         if content:
                                             analysis_chunks.append(content)
                                             yield {
                                                 "type": "chunk",
                                                 "content": content
                                             }
-                        
+
                         # Handle standard dict format (fallback)
                         if "output" in chunk:
-                            content = chunk["output"]
-                            analysis_chunks.append(str(content))
+                            content = self._extract_text_content(chunk["output"])
+                            analysis_chunks.append(content)
                             yield {
                                 "type": "chunk",
-                                "content": str(content)
+                                "content": content
                             }
-                            
+
                     elif hasattr(chunk, "content"):
-                        content = chunk.content
+                        content = self._extract_text_content(chunk.content)
                         if content:
                             analysis_chunks.append(content)
                             yield {
@@ -851,9 +1000,8 @@ Respond directly to the user's query below."""
                         
                         session_msg = SessionMessage.from_message(message=ai_msg, index=next_id)
                         session_manager.create_message(actual_session_id, AGENT_ID, session_msg)
-                        print(f"[DEBUG] Saved assistant message with ID {next_id} to session {actual_session_id}")
-                    except Exception as e:
-                        print(f"Failed to save assistant message: {e}")
+                    except Exception:
+                        pass  # Non-critical
                 
             except asyncio.CancelledError:
                 # Handle streaming interruption gracefully
@@ -890,36 +1038,20 @@ Respond directly to the user's query below."""
         Returns:
             List of conversation messages
         """
-        print(f"[DEBUG _get_conversation_history_from_session] Called with session_manager: {session_manager}")
         if not session_manager:
-            print(f"[DEBUG _get_conversation_history_from_session] No session manager, returning empty list")
             return []
-        
+
         try:
             # Use list_messages API
             if hasattr(session_manager, 'list_messages'):
-                # We need the session_id used to initialize the manager.
-                # The manager instance might have it.
                 session_id = getattr(session_manager, 'session_id', None)
-                
+
                 if session_id:
-                    print(f"[DEBUG _get_conversation_history_from_session] Found session_id: {session_id}")
-                    # We pass None for agent_id as we are not using agents in that sense yet
-                    # But wait, we are using AGENT_ID constant now
-                    # Let's try to use AGENT_ID if available, or fallback
                     agent_id = AGENT_ID if 'AGENT_ID' in globals() else "langchain_orchestrator"
-                    print(f"[DEBUG _get_conversation_history_from_session] Using agent_id: {agent_id}")
-                    
+
                     try:
                         messages = session_manager.list_messages(session_id=session_id, agent_id=agent_id, limit=20)
-                        print(f"[DEBUG _get_conversation_history_from_session] Retrieved {len(messages)} messages")
-                    except Exception as e:
-                        # Fallback if agent doesn't exist yet or messages directory not created
-                        error_msg = str(e)
-                        if "Messages directory missing" in error_msg or "does not exist" in error_msg:
-                            print(f"[DEBUG _get_conversation_history_from_session] No messages yet (first conversation): {error_msg}")
-                        else:
-                            print(f"[DEBUG _get_conversation_history_from_session] Failed to list messages: {e}")
+                    except Exception:
                         return []
                     
                     history = []
@@ -937,12 +1069,10 @@ Respond directly to the user's query below."""
                                 "role": msg.role,
                                 "content": msg.content
                             })
-                    print(history)
                     return history
-        except Exception as e:
-            print(f"Error reading history: {e}")
+        except Exception:
             pass
-        
+
         return []
     
     def _build_messages(
@@ -964,21 +1094,21 @@ Respond directly to the user's query below."""
             List of LangChain message objects
         """
         messages = []
-        
+
         # Get conversation history from session manager if not provided
-        print(f"[DEBUG _build_messages] conversation_history param: {conversation_history}")
-        print(f"[DEBUG _build_messages] session_manager: {session_manager}")
         if not conversation_history and session_manager:
-            print(f"[DEBUG _build_messages] Loading history from session manager...")
             conversation_history = self._get_conversation_history_from_session(session_manager)
-            print(f"[DEBUG _build_messages] Loaded history: {conversation_history}")
-        
+
         # Add conversation history (last 5 messages for context)
         if conversation_history:
             for msg in conversation_history[-5:]:
                 role = msg.get("role", "user")
                 content = msg.get("content", "")
-                
+
+                # Skip corrupted messages (debug logs, SQL engine logs, etc.)
+                if self._is_corrupted_message(content):
+                    continue
+
                 if role == "user" or role == "human":
                     messages.append(HumanMessage(content=content))
                 elif role == "assistant" or role == "ai":
@@ -986,9 +1116,40 @@ Respond directly to the user's query below."""
         
         # Add current query
         messages.append(HumanMessage(content=query))
-        
+
         return messages
-    
+
+    def _is_corrupted_message(self, content: str) -> bool:
+        """Check if a message content appears to be corrupted (debug logs, SQL logs, etc.)."""
+        if not content:
+            return True
+
+        # Patterns that indicate corrupted/debug messages
+        corrupted_patterns = [
+            "[DEBUG]",
+            "INFO sqlalchemy.engine.Engine",
+            "PRAGMA table_info",
+            "PRAGMA foreign_key_list",
+            "SELECT name FROM sqlite_master",
+            "[generated in",
+            "[cached since",
+            "127.0.0.1:",
+            "HTTP/1.1",
+        ]
+
+        for pattern in corrupted_patterns:
+            if pattern in content:
+                return True
+
+        # If the message is mostly debug/log lines, skip it
+        lines = content.split("\n")
+        if len(lines) > 3:
+            debug_lines = sum(1 for line in lines if any(p in line for p in corrupted_patterns))
+            if debug_lines > len(lines) * 0.3:  # More than 30% debug lines
+                return True
+
+        return False
+
     async def _handle_demo_scenario(self, demo_scenario: str, db_session, result: Dict[str, Any]) -> Dict[str, Any]:
         """Handle demo scenarios without LLM."""
         

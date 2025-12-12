@@ -3,7 +3,7 @@
 from typing import Dict, Any, List, Optional
 from datetime import date, datetime, timedelta
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import text, select, func
+from sqlalchemy import text, select, func, case
 import json
 from app.db.models import (
     Dealer, FNITransaction, Shipment, Plant, PlantDowntime,
@@ -451,14 +451,15 @@ class AnalyticsService:
 
     async def get_alerts(self) -> List[Dict[str, Any]]:
         """Get current KPI alerts from stored KPIAlert table."""
+        severity_order = case(
+            (KPIAlert.severity == 'critical', 1),
+            (KPIAlert.severity == 'warning', 2),
+            else_=3
+        )
         query = select(KPIAlert).where(
             KPIAlert.status == 'active'
         ).order_by(
-            func.case(
-                (KPIAlert.severity == 'critical', 1),
-                (KPIAlert.severity == 'warning', 2),
-                else_=3
-            ),
+            severity_order,
             KPIAlert.detected_at.desc()
         ).limit(50)
         
@@ -480,22 +481,143 @@ class AnalyticsService:
         } for alert in alerts]
 
     async def detect_and_store_anomalies(self) -> Dict[str, Any]:
-        """Detect anomalies using the detect_anomalies tool and store them in KPIAlert table."""
-        from app.agents.advanced_tools import detect_anomalies
+        """Detect anomalies using direct database queries and store them in KPIAlert table."""
         import uuid
-        
-        # Use the detect_anomalies tool (it's a @tool decorated function, call it directly)
-        anomalies_json = await detect_anomalies(
-            user_query="Detect all anomalies in sales, service, and logistics metrics for the last 7 days"
-        )
-        
-        # Parse the JSON response
-        if isinstance(anomalies_json, str):
-            anomalies_data = json.loads(anomalies_json)
-        else:
-            anomalies_data = anomalies_json
-        
-        anomaly_list = anomalies_data.get('anomaly_detection', {}).get('anomalies', [])
+        from sqlalchemy import text
+
+        anomaly_list = []
+
+        try:
+            # Direct anomaly detection using SQL queries (more reliable than LLM tool)
+
+            # 1. Detect F&I Revenue anomalies by region
+            fni_query = """
+                SELECT
+                    d.region,
+                    AVG(CASE WHEN f.transaction_date >= date('now', '-7 days') THEN f.fni_revenue END) as current_avg,
+                    AVG(CASE WHEN f.transaction_date >= date('now', '-14 days') AND f.transaction_date < date('now', '-7 days') THEN f.fni_revenue END) as prev_avg,
+                    COUNT(CASE WHEN f.transaction_date >= date('now', '-7 days') THEN 1 END) as current_count
+                FROM fni_transactions f
+                JOIN dealers d ON f.dealer_id = d.id
+                WHERE f.transaction_date >= date('now', '-14 days')
+                GROUP BY d.region
+                HAVING current_avg IS NOT NULL AND prev_avg IS NOT NULL
+            """
+            result = await self.session.execute(text(fni_query))
+            for row in result.fetchall():
+                region, current_avg, prev_avg, count = row
+                if prev_avg and prev_avg > 0:
+                    change_pct = ((current_avg - prev_avg) / prev_avg) * 100
+                    if abs(change_pct) >= 10:  # 10% threshold
+                        anomaly_list.append({
+                            'type': 'sales_anomaly',
+                            'metric': f'F&I Revenue',
+                            'region': region,
+                            'current_value': float(current_avg),
+                            'previous_value': float(prev_avg),
+                            'change_percent': round(change_pct, 2),
+                            'severity': 'high' if abs(change_pct) >= 20 else 'medium',
+                            'contextual_message': f"F&I revenue in {region} {'increased' if change_pct > 0 else 'decreased'} by {abs(change_pct):.1f}%",
+                            'suggested_root_cause': f"Review dealer performance in {region}. Check finance manager metrics and promotional campaigns."
+                        })
+
+            # 2. Detect Service Appointment volume changes
+            service_query = """
+                SELECT
+                    AVG(CASE WHEN appointment_date >= date('now', '-7 days') THEN daily_count END) as current_avg,
+                    AVG(CASE WHEN appointment_date >= date('now', '-14 days') AND appointment_date < date('now', '-7 days') THEN daily_count END) as prev_avg
+                FROM (
+                    SELECT DATE(appointment_date) as appointment_date, COUNT(*) as daily_count
+                    FROM service_appointments
+                    WHERE appointment_date >= date('now', '-14 days')
+                    GROUP BY DATE(appointment_date)
+                )
+            """
+            result = await self.session.execute(text(service_query))
+            row = result.fetchone()
+            if row and row[0] and row[1]:
+                current_avg, prev_avg = float(row[0]), float(row[1])
+                if prev_avg > 0:
+                    change_pct = ((current_avg - prev_avg) / prev_avg) * 100
+                    if abs(change_pct) >= 15:
+                        anomaly_list.append({
+                            'type': 'service_anomaly',
+                            'metric': 'Service Appointments',
+                            'region': 'All',
+                            'current_value': current_avg,
+                            'previous_value': prev_avg,
+                            'change_percent': round(change_pct, 2),
+                            'severity': 'medium',
+                            'contextual_message': f"Service appointment volume {'increased' if change_pct > 0 else 'decreased'} by {abs(change_pct):.1f}%",
+                            'suggested_root_cause': 'Check for seasonal patterns, marketing campaigns, or operational changes affecting service demand.'
+                        })
+
+            # 3. Detect Shipment delay anomalies
+            shipment_query = """
+                SELECT
+                    AVG(CASE WHEN scheduled_departure >= datetime('now', '-7 days') THEN
+                        CASE WHEN status = 'Delayed' THEN 1.0 ELSE 0.0 END
+                    END) * 100 as current_delay_rate,
+                    AVG(CASE WHEN scheduled_departure >= datetime('now', '-14 days') AND scheduled_departure < datetime('now', '-7 days') THEN
+                        CASE WHEN status = 'Delayed' THEN 1.0 ELSE 0.0 END
+                    END) * 100 as prev_delay_rate
+                FROM shipments
+                WHERE scheduled_departure >= datetime('now', '-14 days')
+            """
+            result = await self.session.execute(text(shipment_query))
+            row = result.fetchone()
+            if row and row[0] is not None and row[1] is not None:
+                current_rate, prev_rate = float(row[0]), float(row[1])
+                if prev_rate > 0:
+                    change_pct = ((current_rate - prev_rate) / prev_rate) * 100
+                    if abs(change_pct) >= 25 or current_rate > 15:  # Significant change or high absolute rate
+                        anomaly_list.append({
+                            'type': 'logistics_anomaly',
+                            'metric': 'Shipment Delay Rate',
+                            'region': 'All',
+                            'current_value': current_rate,
+                            'previous_value': prev_rate,
+                            'change_percent': round(change_pct, 2),
+                            'severity': 'high' if current_rate > 20 else 'medium',
+                            'contextual_message': f"Shipment delay rate is {current_rate:.1f}% (was {prev_rate:.1f}%)",
+                            'suggested_root_cause': 'Review carrier performance, check for supply chain disruptions or capacity issues.'
+                        })
+
+            # 4. Detect Plant Downtime anomalies
+            downtime_query = """
+                SELECT
+                    p.name,
+                    SUM(CASE WHEN pd.event_date >= date('now', '-7 days') THEN pd.downtime_hours ELSE 0 END) as current_downtime,
+                    SUM(CASE WHEN pd.event_date >= date('now', '-14 days') AND pd.event_date < date('now', '-7 days') THEN pd.downtime_hours ELSE 0 END) as prev_downtime
+                FROM plants p
+                LEFT JOIN plant_downtime pd ON p.id = pd.plant_id
+                WHERE pd.event_date >= date('now', '-14 days')
+                GROUP BY p.id, p.name
+                HAVING current_downtime > 0 OR prev_downtime > 0
+            """
+            result = await self.session.execute(text(downtime_query))
+            for row in result.fetchall():
+                plant_name, current_downtime, prev_downtime = row
+                current_downtime = float(current_downtime or 0)
+                prev_downtime = float(prev_downtime or 0)
+                if prev_downtime > 0:
+                    change_pct = ((current_downtime - prev_downtime) / prev_downtime) * 100
+                    if change_pct >= 50 or current_downtime > 10:  # 50% increase or > 10 hours
+                        anomaly_list.append({
+                            'type': 'manufacturing_anomaly',
+                            'metric': f'Plant Downtime - {plant_name}',
+                            'region': 'Manufacturing',
+                            'current_value': current_downtime,
+                            'previous_value': prev_downtime,
+                            'change_percent': round(change_pct, 2),
+                            'severity': 'high' if current_downtime > 15 else 'medium',
+                            'contextual_message': f"{plant_name} downtime: {current_downtime:.1f} hours this week vs {prev_downtime:.1f} hours last week",
+                            'suggested_root_cause': f"Equipment maintenance may be needed at {plant_name}. Check maintenance logs and equipment status."
+                        })
+
+        except Exception as e:
+            # Log error but continue - we'll still return what we found
+            print(f"Error during anomaly detection: {e}")
         stored_count = 0
         
         for idx, anomaly in enumerate(anomaly_list):

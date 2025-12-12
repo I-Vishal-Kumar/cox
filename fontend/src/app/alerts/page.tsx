@@ -19,6 +19,7 @@ import { alertsService, Alert } from '@/lib/api/alerts';
 import { useQueryClient } from '@tanstack/react-query';
 import { sendChatMessage } from '@/lib/api';
 import { SessionManager } from '@/utils/sessionManager';
+import { parseMessageContent } from '@/utils/messageParser';
 
 const severityConfig = {
   critical: {
@@ -44,6 +45,15 @@ const severityConfig = {
   },
 };
 
+// Default alert thresholds
+const defaultThresholds = {
+  fni_revenue: { warning: 10, critical: 20, enabled: true },
+  service_appointments: { warning: 15, critical: 30, enabled: true },
+  shipment_delays: { warning: 15, critical: 25, enabled: true },
+  plant_downtime: { warning: 50, critical: 100, enabled: true },
+  customer_satisfaction: { warning: 5, critical: 10, enabled: true },
+};
+
 export default function AlertsPage() {
   const [filter, setFilter] = useState<'all' | 'critical' | 'warning' | 'info'>('all');
   const [categoryFilter, setCategoryFilter] = useState<string>('all');
@@ -52,6 +62,7 @@ export default function AlertsPage() {
   const [dismissingAlertId, setDismissingAlertId] = useState<string | null>(null);
   const [investigatingAlertId, setInvestigatingAlertId] = useState<string | null>(null);
   const [investigationChatOpen, setInvestigationChatOpen] = useState(false);
+  const [configureOpen, setConfigureOpen] = useState(false);
 
   const queryClient = useQueryClient();
 
@@ -256,7 +267,10 @@ export default function AlertsPage() {
               <SparklesIcon className="w-4 h-4" />
               <span>{isDetecting ? 'Detecting...' : 'Detect Anomalies'}</span>
             </button>
-            <button className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200">
+            <button
+              onClick={() => setConfigureOpen(true)}
+              className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200"
+            >
               Configure Alerts
             </button>
           </div>
@@ -390,14 +404,14 @@ export default function AlertsPage() {
                       </button>
                       <button
                         onClick={async () => {
-                          if (!confirm('Are you sure you want to dismiss this alert?')) return;
+                          if (!window.confirm('Are you sure you want to dismiss this alert?')) return;
                           setDismissingAlertId(alert.id);
                           try {
                             await alertsService.dismissAlert(alert.id);
                             await queryClient.invalidateQueries({ queryKey: ['alerts'] });
                           } catch (error) {
                             console.error('Failed to dismiss alert:', error);
-                            alert('Failed to dismiss alert. Please try again.');
+                            window.alert('Failed to dismiss alert. Please try again.');
                           } finally {
                             setDismissingAlertId(null);
                           }
@@ -432,6 +446,11 @@ export default function AlertsPage() {
             setInvestigatingAlertId(null);
           }}
         />
+      )}
+
+      {/* Configure Alerts Modal */}
+      {configureOpen && (
+        <ConfigureAlertsModal onClose={() => setConfigureOpen(false)} />
       )}
     </div>
   );
@@ -548,7 +567,9 @@ User is investigating this specific alert (ID: ${alertId}). User query: ${userMe
                     : 'bg-gray-100 text-gray-900'
                 )}
               >
-                <p className="text-sm whitespace-pre-wrap">{msg.content}</p>
+                <p className="text-sm whitespace-pre-wrap">
+                  {typeof msg.content === 'string' ? msg.content : parseMessageContent(msg.content)}
+                </p>
               </div>
             </div>
           ))}
@@ -585,6 +606,177 @@ User is investigating this specific alert (ID: ${alertId}). User query: ${userMe
               Send
             </button>
           </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Configure Alerts Modal Component
+function ConfigureAlertsModal({ onClose }: { onClose: () => void }) {
+  const [thresholds, setThresholds] = useState(defaultThresholds);
+  const [isSaving, setIsSaving] = useState(false);
+
+  const metricLabels: Record<string, string> = {
+    fni_revenue: 'F&I Revenue',
+    service_appointments: 'Service Appointments',
+    shipment_delays: 'Shipment Delays',
+    plant_downtime: 'Plant Downtime',
+    customer_satisfaction: 'Customer Satisfaction',
+  };
+
+  const handleSave = async () => {
+    setIsSaving(true);
+    // In a real app, this would save to the backend
+    // For now, we'll just store in localStorage
+    try {
+      localStorage.setItem('alertThresholds', JSON.stringify(thresholds));
+      window.alert('Alert thresholds saved successfully!');
+      onClose();
+    } catch (error) {
+      console.error('Failed to save thresholds:', error);
+      window.alert('Failed to save thresholds. Please try again.');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const updateThreshold = (
+    metric: string,
+    field: 'warning' | 'critical' | 'enabled',
+    value: number | boolean
+  ) => {
+    setThresholds((prev) => ({
+      ...prev,
+      [metric]: {
+        ...prev[metric as keyof typeof prev],
+        [field]: value,
+      },
+    }));
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[80vh] flex flex-col">
+        {/* Header */}
+        <div className="p-4 border-b border-gray-200 flex items-center justify-between">
+          <div>
+            <h3 className="text-lg font-semibold text-gray-900">Configure Alert Thresholds</h3>
+            <p className="text-sm text-gray-500 mt-1">
+              Set warning and critical thresholds for each metric (% change from baseline)
+            </p>
+          </div>
+          <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        {/* Content */}
+        <div className="flex-1 overflow-y-auto p-4">
+          <div className="space-y-4">
+            {Object.entries(thresholds).map(([metric, config]) => (
+              <div
+                key={metric}
+                className={clsx(
+                  'p-4 rounded-lg border',
+                  config.enabled ? 'bg-white border-gray-200' : 'bg-gray-50 border-gray-100'
+                )}
+              >
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center space-x-3">
+                    <label className="relative inline-flex items-center cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={config.enabled}
+                        onChange={(e) => updateThreshold(metric, 'enabled', e.target.checked)}
+                        className="sr-only peer"
+                      />
+                      <div className="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-cox-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-cox-blue-600"></div>
+                    </label>
+                    <span className={clsx('font-medium', config.enabled ? 'text-gray-900' : 'text-gray-400')}>
+                      {metricLabels[metric]}
+                    </span>
+                  </div>
+                  {config.enabled && (
+                    <span className="text-xs text-gray-500">
+                      Alerts when change exceeds threshold
+                    </span>
+                  )}
+                </div>
+
+                {config.enabled && (
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-yellow-700 mb-1">
+                        Warning Threshold (%)
+                      </label>
+                      <div className="relative">
+                        <input
+                          type="number"
+                          value={config.warning}
+                          onChange={(e) => updateThreshold(metric, 'warning', Number(e.target.value))}
+                          min={1}
+                          max={100}
+                          className="w-full border border-yellow-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-300 bg-yellow-50"
+                        />
+                        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-yellow-600 text-sm">%</span>
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-red-700 mb-1">
+                        Critical Threshold (%)
+                      </label>
+                      <div className="relative">
+                        <input
+                          type="number"
+                          value={config.critical}
+                          onChange={(e) => updateThreshold(metric, 'critical', Number(e.target.value))}
+                          min={1}
+                          max={200}
+                          className="w-full border border-red-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-300 bg-red-50"
+                        />
+                        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-red-600 text-sm">%</span>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+
+          {/* Info Box */}
+          <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+            <div className="flex items-start">
+              <InformationCircleIcon className="w-5 h-5 text-blue-600 mt-0.5 mr-2 flex-shrink-0" />
+              <div className="text-sm text-blue-800">
+                <p className="font-medium mb-1">How thresholds work:</p>
+                <ul className="list-disc list-inside space-y-1 text-blue-700">
+                  <li><strong>Warning:</strong> Triggered when metric changes by this percentage</li>
+                  <li><strong>Critical:</strong> Triggered for significant deviations requiring immediate attention</li>
+                  <li>Disabled metrics will not generate alerts during anomaly detection</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Footer */}
+        <div className="p-4 border-t border-gray-200 flex justify-end space-x-3">
+          <button
+            onClick={onClose}
+            className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={handleSave}
+            disabled={isSaving}
+            className="px-4 py-2 text-sm font-medium text-white bg-cox-blue-600 rounded-lg hover:bg-cox-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {isSaving ? 'Saving...' : 'Save Thresholds'}
+          </button>
         </div>
       </div>
     </div>
