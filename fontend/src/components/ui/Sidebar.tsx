@@ -13,6 +13,8 @@ import {
   BuildingOffice2Icon,
   BellAlertIcon,
   CircleStackIcon,
+  HeartIcon,
+  PresentationChartLineIcon,
 } from '@heroicons/react/24/outline';
 
 const navigation = [
@@ -22,6 +24,8 @@ const navigation = [
   { name: 'Engage', href: '/engage', icon: ClipboardDocumentCheckIcon },
   { name: 'Inspect', href: '/inspect', icon: ClipboardDocumentCheckIcon },
   { name: 'KPI Alerts', href: '/alerts', icon: BellAlertIcon },
+  { name: 'Health Score', href: '/health-score', icon: HeartIcon },
+  { name: 'Forecasts', href: '/forecast', icon: PresentationChartLineIcon },
   { name: 'Data Catalog', href: '/catalog', icon: CircleStackIcon },
 ];
 
@@ -115,7 +119,7 @@ export default function Sidebar() {
           <div className="ml-3 flex-1">
             <p className="text-xs font-semibold text-gray-900">Cox Automotive</p>
             <p className="text-xs text-gray-500">AI Analytics Platform</p>
-            <p className="text-xs text-gray-400 mt-1">Powered by Xtime</p>
+            <p className="text-xs text-gray-400 mt-1">Powered by Jaiinfoway</p>
           </div>
         </div>
       </div>

@@ -18,6 +18,7 @@ from app.models.schemas import (
 from app.agents.orchestrator import AnalyticsOrchestrator  # Old orchestrator (kept for compatibility)
 from app.agents.langchain_orchestrator import LangChainAnalyticsOrchestrator  # New LangChain orchestrator
 from app.services.analytics_service import AnalyticsService
+from app.services.kpi_monitoring_service import KPIMonitoringService, KPIScheduler
 
 router = APIRouter()
 
@@ -595,10 +596,10 @@ async def get_data_catalog(
 async def get_demo_scenarios():
     """
     Get pre-built demo scenarios for testing.
-    
+
     **Expected Input:**
     - None (no query parameters)
-    
+
     **Expected Output (Dict[str, Any]):**
     - scenarios: List[Dict[str, Any]] - Demo scenarios with:
       - id: str - Scenario identifier
@@ -627,3 +628,259 @@ async def get_demo_scenarios():
         }
     ]
     return {"scenarios": scenarios}
+
+
+# ==================== KPI HEALTH SCORE ENDPOINTS ====================
+
+@router.get("/kpi/health-score")
+async def get_health_score(
+    db: AsyncSession = Depends(get_db)
+):
+    """
+    Get current daily KPI health score with recommendations.
+
+    **Expected Output (Dict[str, Any]):**
+    - score_date: str - Date of the health score
+    - overall_score: float - Overall health score (0-100)
+    - category_scores: Dict with sales, service, fni, logistics, manufacturing scores
+    - kpi_counts: Dict with total, on_target, at_risk, critical counts
+    - top_risks: List of top risk KPIs
+    - top_performers: List of top performing KPIs
+    - recommendations: List of actionable recommendations
+    """
+    service = KPIMonitoringService(db)
+    return await service.generate_daily_health_score()
+
+
+@router.post("/kpi/health-score/generate")
+async def generate_health_score(
+    db: AsyncSession = Depends(get_db)
+):
+    """
+    Manually trigger health score generation.
+
+    **Expected Output (Dict[str, Any]):**
+    - Same as GET /kpi/health-score
+    """
+    service = KPIMonitoringService(db)
+    return await service.generate_daily_health_score()
+
+
+@router.get("/kpi/health-score/history")
+async def get_health_score_history(
+    days: int = Query(30, ge=1, le=90),
+    db: AsyncSession = Depends(get_db)
+):
+    """
+    Get health score history for trending.
+
+    **Expected Input (Query Parameters):**
+    - days: int (default: 30, range: 1-90) - Number of days of history
+
+    **Expected Output (Dict[str, Any]):**
+    - history: List of daily health scores with category breakdowns
+    """
+    service = KPIMonitoringService(db)
+    history = await service.get_health_score_history(days)
+    return {"history": history}
+
+
+# ==================== KPI FORECAST ENDPOINTS ====================
+
+@router.get("/kpi/forecasts")
+async def get_forecasts(
+    metric_name: Optional[str] = Query(None),
+    days: int = Query(7, ge=1, le=30),
+    db: AsyncSession = Depends(get_db)
+):
+    """
+    Get KPI forecasts with confidence intervals.
+
+    **Expected Input (Query Parameters):**
+    - metric_name: Optional[str] - Filter by specific metric
+    - days: int (default: 7, range: 1-30) - Days ahead to forecast
+
+    **Expected Output (Dict[str, Any]):**
+    - forecasts: List of forecasts with predicted values and confidence intervals
+    """
+    service = KPIMonitoringService(db)
+    forecasts = await service.get_forecasts(metric_name, days)
+    return {"forecasts": forecasts}
+
+
+@router.post("/kpi/forecasts/generate")
+async def generate_forecasts(
+    days_ahead: int = Query(7, ge=1, le=30),
+    db: AsyncSession = Depends(get_db)
+):
+    """
+    Generate new KPI forecasts.
+
+    **Expected Input (Query Parameters):**
+    - days_ahead: int (default: 7, range: 1-30) - Number of days to forecast
+
+    **Expected Output (Dict[str, Any]):**
+    - forecasts_generated: int - Number of forecasts created
+    - forecasts: List of forecast summaries
+    """
+    service = KPIMonitoringService(db)
+    return await service.generate_forecasts(days_ahead)
+
+
+# ==================== DRIVER DECOMPOSITION ENDPOINTS ====================
+
+@router.get("/kpi/decomposition/{metric_name}")
+async def get_driver_decomposition(
+    metric_name: str,
+    region: Optional[str] = Query(None),
+    db: AsyncSession = Depends(get_db)
+):
+    """
+    Get driver decomposition analysis for a KPI.
+
+    **Expected Input:**
+    - metric_name: str (path) - Name of the metric to analyze
+    - region: Optional[str] - Filter by region
+
+    **Expected Output (Dict[str, Any]):**
+    - metric_name: str
+    - analysis_date: str
+    - decomposition: Dict with driver impacts (price, volume, mix, regional, seasonality)
+    """
+    service = KPIMonitoringService(db)
+
+    # First check if we have a stored decomposition
+    existing = await service.get_decomposition(metric_name)
+    if existing:
+        return existing
+
+    # Generate new decomposition
+    return await service.analyze_driver_decomposition(metric_name, region)
+
+
+@router.post("/kpi/decomposition/analyze")
+async def analyze_driver_decomposition(
+    metric_name: str = Query(..., description="Metric to analyze"),
+    region: Optional[str] = Query(None),
+    db: AsyncSession = Depends(get_db)
+):
+    """
+    Trigger driver decomposition analysis for a KPI.
+
+    **Expected Input (Query Parameters):**
+    - metric_name: str (required) - Name of the metric to analyze
+    - region: Optional[str] - Filter by region
+
+    **Expected Output (Dict[str, Any]):**
+    - metric_name: str
+    - analysis_date: str
+    - decomposition: Dict with driver impacts and insights
+    """
+    service = KPIMonitoringService(db)
+    return await service.analyze_driver_decomposition(metric_name, region)
+
+
+# ==================== SCHEDULED SCANNING ENDPOINTS ====================
+
+@router.post("/kpi/scan/trigger")
+async def trigger_scan(
+    scan_type: str = Query("manual", description="Type of scan (manual, hourly, daily)"),
+    db: AsyncSession = Depends(get_db)
+):
+    """
+    Manually trigger a KPI scan.
+
+    **Expected Input (Query Parameters):**
+    - scan_type: str (default: "manual") - Type of scan to run
+
+    **Expected Output (Dict[str, Any]):**
+    - status: str - completed or failed
+    - anomalies_detected: int
+    - alerts_created: int
+    - health_score: float
+    - forecasts_generated: int
+    """
+    from app.services.scheduler import background_scheduler
+    from app.db.database import async_session
+
+    # Use the scheduler to run the scan
+    scheduler = KPIScheduler(async_session)
+    return await scheduler.run_scheduled_scan(scan_type)
+
+
+@router.get("/kpi/scan/history")
+async def get_scan_history(
+    limit: int = Query(10, ge=1, le=50),
+    db: AsyncSession = Depends(get_db)
+):
+    """
+    Get history of scheduled scans.
+
+    **Expected Input (Query Parameters):**
+    - limit: int (default: 10, range: 1-50) - Number of records to return
+
+    **Expected Output (Dict[str, Any]):**
+    - scans: List of scan records with status and results
+    """
+    from app.db.database import async_session
+
+    scheduler = KPIScheduler(async_session)
+    history = await scheduler.get_scan_history(limit)
+    return {"scans": history}
+
+
+@router.get("/kpi/scan/status")
+async def get_scheduler_status():
+    """
+    Get current scheduler status.
+
+    **Expected Output (Dict[str, Any]):**
+    - running: bool - Whether scheduler is active
+    - next_hourly_scan: str - Next scheduled hourly scan time
+    - next_daily_scan: str - Next scheduled daily scan time
+    """
+    from app.services.scheduler import background_scheduler
+
+    return {
+        "running": background_scheduler.running,
+        "next_hourly_scan": "Runs every hour on the hour",
+        "next_daily_scan": "Runs daily at 6:00 AM UTC"
+    }
+
+
+# ==================== COMBINED KPI DASHBOARD ENDPOINT ====================
+
+@router.get("/kpi/dashboard")
+async def get_kpi_dashboard(
+    db: AsyncSession = Depends(get_db)
+):
+    """
+    Get comprehensive KPI dashboard data including health score, alerts, and forecasts.
+
+    **Expected Output (Dict[str, Any]):**
+    - health_score: Current health score data
+    - active_alerts: List of active alerts
+    - forecasts: Upcoming forecasts
+    - recommendations: Actionable recommendations
+    """
+    from app.services.analytics_service import AnalyticsService
+
+    monitoring_service = KPIMonitoringService(db)
+    analytics_service = AnalyticsService(db)
+
+    # Get health score
+    health_score = await monitoring_service.generate_daily_health_score()
+
+    # Get active alerts
+    alerts = await analytics_service.get_alerts()
+
+    # Get forecasts
+    forecasts = await monitoring_service.get_forecasts(days=7)
+
+    return {
+        "health_score": health_score,
+        "active_alerts": alerts[:10],  # Top 10 alerts
+        "forecasts": forecasts,
+        "recommendations": health_score.get('recommendations', []),
+        "last_updated": datetime.now().isoformat()
+    }

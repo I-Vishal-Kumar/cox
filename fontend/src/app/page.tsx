@@ -9,7 +9,7 @@ export default function Home() {
     <div className="flex flex-col h-screen">
       <Header
         title="Cox Automotive AI Analytics"
-        subtitle="Powered by Xtime • Ask questions in natural language and get instant insights"
+        subtitle="Powered by Jaiinfoway • Ask questions in natural language and get instant insights"
       />
       <div className="flex-1 p-6 overflow-hidden">
         <Suspense fallback={<div className="flex items-center justify-center h-full">Loading...</div>}>

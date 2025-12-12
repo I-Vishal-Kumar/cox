@@ -15,6 +15,9 @@ import {
   LineChart,
   Line,
   Legend,
+  PieChart,
+  Pie,
+  Cell,
 } from 'recharts';
 import {
   CurrencyDollarIcon,
@@ -26,6 +29,8 @@ import { useQuery } from '@tanstack/react-query';
 import LoadingSkeleton from '@/components/ui/LoadingSkeleton';
 import ErrorState from '@/components/ui/ErrorState';
 import { fniDashboardService, transformDealerData, transformManagerData } from '@/lib/api/fniDashboard';
+import { kpiMonitoringService } from '@/lib/api/kpiMonitoring';
+import FloatingChatBot from '@/components/ui/FloatingChatBot';
 
 const columns = [
   { key: 'dealer', header: 'Dealer', align: 'left' as const },
@@ -96,9 +101,27 @@ export default function FNIAnalysisPage() {
     staleTime: 2 * 60 * 1000, // Consider data stale after 2 minutes
   });
 
+  // Fetch driver decomposition data
+  const { data: decompositionData } = useQuery({
+    queryKey: ['fniDecomposition', region],
+    queryFn: () => kpiMonitoringService.getDecomposition('F&I Revenue', region),
+    refetchInterval: 10 * 60 * 1000, // Refetch every 10 minutes
+  });
+
   // Transform data for frontend use
   const dealerComparisonData = fniData?.dealer_comparison?.map(transformDealerData) || [];
   const managerBreakdown = fniData?.manager_breakdown?.map(transformManagerData) || [];
+
+  // Driver decomposition chart data
+  const DRIVER_COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ef4444', '#6b7280'];
+  const driverChartData = decompositionData?.drivers ? [
+    { name: 'Price', value: Math.abs(decompositionData.drivers.price?.impact || 0), impact: decompositionData.drivers.price?.impact || 0 },
+    { name: 'Volume', value: Math.abs(decompositionData.drivers.volume?.impact || 0), impact: decompositionData.drivers.volume?.impact || 0 },
+    { name: 'Mix', value: Math.abs(decompositionData.drivers.mix?.impact || 0), impact: decompositionData.drivers.mix?.impact || 0 },
+    { name: 'Regional', value: Math.abs(decompositionData.drivers.regional?.impact || 0), impact: decompositionData.drivers.regional?.impact || 0 },
+    { name: 'Seasonality', value: Math.abs(decompositionData.drivers.seasonality?.impact || 0), impact: decompositionData.drivers.seasonality?.impact || 0 },
+    { name: 'Other', value: Math.abs(decompositionData.drivers.other?.impact || 0), impact: decompositionData.drivers.other?.impact || 0 },
+  ].filter(d => d.value > 0) : [];
   
   // Use live weekly trends data or fallback to empty array
   const weeklyTrend = weeklyTrendsData || [];
@@ -316,6 +339,89 @@ export default function FNIAnalysisPage() {
               </div>
             </div>
 
+            {/* Driver Decomposition */}
+            {decompositionData && (
+              <div className="bg-white rounded-lg border border-gray-200 p-6">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                  Driver Decomposition - Why Did F&I Revenue Change?
+                </h3>
+                <div className="grid grid-cols-3 gap-6">
+                  {/* Pie Chart */}
+                  <div className="col-span-1">
+                    <h4 className="text-sm font-medium text-gray-700 mb-2 text-center">Impact by Driver</h4>
+                    {driverChartData.length > 0 ? (
+                      <ResponsiveContainer width="100%" height={200}>
+                        <PieChart>
+                          <Pie
+                            data={driverChartData}
+                            cx="50%"
+                            cy="50%"
+                            innerRadius={40}
+                            outerRadius={80}
+                            paddingAngle={2}
+                            dataKey="value"
+                            label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                          >
+                            {driverChartData.map((entry, index) => (
+                              <Cell key={`cell-${index}`} fill={DRIVER_COLORS[index % DRIVER_COLORS.length]} />
+                            ))}
+                          </Pie>
+                          <Tooltip formatter={(value: number) => `$${Math.abs(value).toLocaleString()}`} />
+                        </PieChart>
+                      </ResponsiveContainer>
+                    ) : (
+                      <div className="flex items-center justify-center h-[200px] text-gray-500">
+                        No decomposition data
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Driver Details */}
+                  <div className="col-span-2">
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <span className="font-medium text-gray-900">Total Change</span>
+                        <span className={`font-bold ${decompositionData.total_change < 0 ? 'text-red-600' : 'text-green-600'}`}>
+                          ${decompositionData.total_change?.toLocaleString()} ({decompositionData.total_change_percent?.toFixed(1)}%)
+                        </span>
+                      </div>
+                      <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
+                        <span className="text-blue-800">Primary Driver</span>
+                        <span className="font-medium text-blue-900 capitalize">{decompositionData.primary_driver || 'Unknown'}</span>
+                      </div>
+                      <div className="grid grid-cols-3 gap-2">
+                        {[
+                          { label: 'Price Impact', value: decompositionData.drivers?.price?.impact },
+                          { label: 'Volume Impact', value: decompositionData.drivers?.volume?.impact },
+                          { label: 'Mix Impact', value: decompositionData.drivers?.mix?.impact },
+                          { label: 'Regional Impact', value: decompositionData.drivers?.regional?.impact },
+                          { label: 'Seasonality', value: decompositionData.drivers?.seasonality?.impact },
+                          { label: 'Other', value: decompositionData.drivers?.other?.impact },
+                        ].map((item, idx) => (
+                          <div key={idx} className="p-2 bg-gray-50 rounded text-center">
+                            <p className="text-xs text-gray-500">{item.label}</p>
+                            <p className={`font-medium ${(item.value || 0) < 0 ? 'text-red-600' : 'text-green-600'}`}>
+                              ${(item.value || 0).toLocaleString()}
+                            </p>
+                          </div>
+                        ))}
+                      </div>
+                      {decompositionData.insights && decompositionData.insights.length > 0 && (
+                        <div className="mt-3 p-3 bg-yellow-50 rounded-lg border border-yellow-200">
+                          <p className="text-sm font-medium text-yellow-800 mb-1">Key Insights:</p>
+                          <ul className="text-sm text-yellow-700 space-y-1">
+                            {decompositionData.insights.map((insight: string, idx: number) => (
+                              <li key={idx}>• {insight}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* Root Cause Analysis */}
             <div className="bg-white rounded-lg border border-gray-200 p-6">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">Root Cause Analysis</h3>
@@ -372,6 +478,18 @@ export default function FNIAnalysisPage() {
           </>
         )}
       </div>
+
+      {/* Floating Chat Bot */}
+      <FloatingChatBot pageContext={{
+        page: 'F&I Analysis',
+        region: region,
+        dealerCount: dealerComparisonData.length,
+        decomposition: decompositionData ? {
+          totalChange: decompositionData.total_change,
+          primaryDriver: decompositionData.primary_driver,
+          insights: decompositionData.insights,
+        } : null,
+      }} />
     </div>
   );
 }

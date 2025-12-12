@@ -213,7 +213,7 @@ export default function InviteDashboard() {
                 <h1 className="text-2xl font-bold">Invite Dashboard</h1>
                 <span className="text-xs bg-white/20 px-2 py-1 rounded-full">Cox Automotive</span>
               </div>
-              <p className="text-cox-blue-100 mt-1">Service Marketing Campaign Performance • Powered by Xtime</p>
+              <p className="text-cox-blue-100 mt-1">Service Marketing Campaign Performance • Powered by Jaiinfoway</p>
             </div>
           </div>
           <div className="flex items-center space-x-3">

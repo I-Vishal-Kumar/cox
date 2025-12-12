@@ -435,7 +435,7 @@ Try one of the demo questions to see detailed analysis with data visualizations.
             </div>
             <h3 className="text-xl font-semibold text-gray-900 mb-2">Welcome to Cox Automotive AI Analytics</h3>
             <p className="text-gray-500 text-center max-w-md mb-2">
-              Powered by Xtime • Ask questions about your automotive data in natural language. Get instant insights,
+              Powered by Jaiinfoway • Ask questions about your automotive data in natural language. Get instant insights,
               visualizations, and recommendations.
             </p>
             <p className="text-xs text-gray-400 text-center mb-6">

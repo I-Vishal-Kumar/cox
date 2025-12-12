@@ -234,3 +234,128 @@ class KPIAlert(Base):
     investigation_notes = Column(Text, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+
+class KPIHealthScore(Base):
+    """Daily KPI Health Score tracking."""
+    __tablename__ = "kpi_health_scores"
+
+    id = Column(Integer, primary_key=True, index=True)
+    score_date = Column(Date, index=True, unique=True)
+    overall_score = Column(Float)  # 0-100 health score
+
+    # Category scores
+    sales_score = Column(Float, nullable=True)
+    service_score = Column(Float, nullable=True)
+    fni_score = Column(Float, nullable=True)
+    logistics_score = Column(Float, nullable=True)
+    manufacturing_score = Column(Float, nullable=True)
+
+    # Counts
+    total_kpis_monitored = Column(Integer, default=0)
+    kpis_on_target = Column(Integer, default=0)
+    kpis_at_risk = Column(Integer, default=0)
+    kpis_critical = Column(Integer, default=0)
+
+    # Summary
+    top_risks = Column(Text, nullable=True)  # JSON array of top risk KPIs
+    top_performers = Column(Text, nullable=True)  # JSON array of top performing KPIs
+    recommendations = Column(Text, nullable=True)  # JSON array of recommendations
+
+    # Metadata
+    generated_at = Column(DateTime, default=datetime.utcnow)
+    generated_by = Column(String(50), default='system')  # system or scheduled
+
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+
+class KPIForecast(Base):
+    """KPI forecasts and predictions."""
+    __tablename__ = "kpi_forecasts"
+
+    id = Column(Integer, primary_key=True, index=True)
+    metric_name = Column(String(100), index=True)
+    category = Column(String(50), index=True)
+    region = Column(String(50), nullable=True)
+
+    # Forecast data
+    forecast_date = Column(Date, index=True)  # Date being forecasted
+    predicted_value = Column(Float)
+    lower_bound = Column(Float, nullable=True)  # Lower confidence interval
+    upper_bound = Column(Float, nullable=True)  # Upper confidence interval
+    confidence_level = Column(Float, default=0.95)  # e.g., 95%
+
+    # Actual value (filled in when date passes)
+    actual_value = Column(Float, nullable=True)
+    forecast_error = Column(Float, nullable=True)  # Actual - Predicted
+
+    # Risk assessment
+    at_risk = Column(Boolean, default=False)
+    risk_reason = Column(String(200), nullable=True)
+
+    # Metadata
+    model_used = Column(String(50), default='moving_average')  # moving_average, linear_trend, seasonal
+    generated_at = Column(DateTime, default=datetime.utcnow)
+
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+
+class DriverDecomposition(Base):
+    """Driver decomposition analysis for KPI changes."""
+    __tablename__ = "driver_decompositions"
+
+    id = Column(Integer, primary_key=True, index=True)
+    analysis_date = Column(Date, index=True)
+    metric_name = Column(String(100), index=True)
+    category = Column(String(50))
+    region = Column(String(50), nullable=True)
+
+    # Total change
+    total_change = Column(Float)
+    total_change_percent = Column(Float)
+
+    # Driver contributions (stored as percentages of total change)
+    price_impact = Column(Float, nullable=True)  # Impact from price changes
+    volume_impact = Column(Float, nullable=True)  # Impact from volume changes
+    mix_impact = Column(Float, nullable=True)  # Impact from product/dealer mix shifts
+    regional_impact = Column(Float, nullable=True)  # Impact from regional differences
+    seasonality_impact = Column(Float, nullable=True)  # Impact from seasonal patterns
+    other_impact = Column(Float, nullable=True)  # Unexplained variance
+
+    # Detailed breakdown (JSON)
+    price_details = Column(Text, nullable=True)  # JSON with detailed price analysis
+    mix_details = Column(Text, nullable=True)  # JSON with product/dealer mix details
+    regional_details = Column(Text, nullable=True)  # JSON with regional breakdown
+    seasonality_details = Column(Text, nullable=True)  # JSON with seasonal analysis
+
+    # Generated insights
+    primary_driver = Column(String(50), nullable=True)  # Main driver of change
+    insights = Column(Text, nullable=True)  # JSON array of insights
+
+    generated_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+
+class ScheduledScan(Base):
+    """Track scheduled KPI scans."""
+    __tablename__ = "scheduled_scans"
+
+    id = Column(Integer, primary_key=True, index=True)
+    scan_type = Column(String(50), index=True)  # daily, hourly, weekly
+    status = Column(String(20), index=True)  # pending, running, completed, failed
+
+    scheduled_at = Column(DateTime, index=True)
+    started_at = Column(DateTime, nullable=True)
+    completed_at = Column(DateTime, nullable=True)
+
+    # Results
+    anomalies_detected = Column(Integer, default=0)
+    alerts_created = Column(Integer, default=0)
+    health_score_generated = Column(Boolean, default=False)
+    forecasts_generated = Column(Integer, default=0)
+
+    # Error tracking
+    error_message = Column(Text, nullable=True)
+
+    created_at = Column(DateTime, default=datetime.utcnow)

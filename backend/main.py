@@ -40,10 +40,17 @@ async def lifespan(app: FastAPI):
     # Sessions are stored in data/sessions directory
     print("✓ Session storage ready at data/sessions")
 
+    # Start background scheduler for automated KPI monitoring
+    from app.services.scheduler import background_scheduler
+    await background_scheduler.start(async_session)
+    print("✓ Background KPI scheduler started")
+
     yield
 
     # Shutdown
     print("👋 Shutting down...")
+    await background_scheduler.stop()
+    print("✓ Background scheduler stopped")
 
 
 app = FastAPI(

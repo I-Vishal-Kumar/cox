@@ -27,7 +27,7 @@ export default function Footer() {
           <div>
             <h3 className="text-white font-semibold text-sm mb-3">Our Brands</h3>
             <ul className="space-y-2 text-xs">
-              <li><Link href="#" className="hover:text-white transition-colors">Xtime</Link></li>
+              <li><Link href="#" className="hover:text-white transition-colors">Jaiinfoway</Link></li>
               <li><Link href="#" className="hover:text-white transition-colors">Manheim</Link></li>
               <li><Link href="#" className="hover:text-white transition-colors">Autotrader</Link></li>
               <li><Link href="#" className="hover:text-white transition-colors">Dealer.com</Link></li>

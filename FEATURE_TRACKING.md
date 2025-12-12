@@ -588,7 +588,7 @@ This document tracks all features, APIs, and their expected input/output types a
   - Added Cox Automotive branding to Invite Dashboard header
   - Updated chat interface welcome message with Cox branding
   - Updated FloatingChatBot with Cox Automotive branding
-  - Added "Powered by Xtime" references where appropriate
+  - Added "Powered by Jaiinfoway" references where appropriate
   - Updated metadata and page titles
 - ✅ **Plant Downtime Analysis Page**: Completed end-to-end implementation
   - Created `plantDashboard.ts` API service with TanStack Query integration

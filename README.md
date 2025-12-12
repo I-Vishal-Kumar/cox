@@ -170,9 +170,9 @@ The system auto-generates realistic demo data with cause-and-effect relationship
 - 6 months of data
 - Realistic open rates and revenue
 
-## Xtime Dashboards (PDF Reference)
+## Jaiinfoway Dashboards (PDF Reference)
 
-The UI is designed to match the Xtime Technology Suite:
+The UI is designed to match the Jaiinfoway Technology Suite:
 
 1. **Schedule** - Appointment management
 2. **Engage** - Customer experience management
