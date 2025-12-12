@@ -307,68 +307,88 @@ async def seed_anomalies(
 ):
     """
     Seed sample anomalies for testing/demo purposes.
-    
+
     **Expected Input:**
     - None (no body parameters)
-    
+
     **Expected Output (Dict[str, Any]):**
     - alerts_created: int - Number of alerts created
     - timestamp: str - Creation timestamp
     """
     from app.db.models import KPIAlert
-    from datetime import datetime, timedelta
-    
-    service = AnalyticsService(db)
-    
-    # Create sample alerts
+    from datetime import datetime
+    import uuid
+
+    # Generate unique suffix for each seed operation
+    unique_suffix = uuid.uuid4().hex[:8]
+    timestamp_str = datetime.now().strftime("%Y%m%d_%H%M%S")
+
+    # Create sample alerts with unique IDs
     sample_alerts = [
         {
-            'alert_id': f'seed_critical_{datetime.now().strftime("%Y%m%d_%H%M%S")}_1',
+            'alert_id': f'seed_critical_{timestamp_str}_{unique_suffix}_1',
             'metric_name': 'F&I Revenue - Midwest',
             'current_value': 42500.0,
             'previous_value': 47800.0,
             'change_percent': -11.1,
             'severity': 'critical',
-            'message': 'F&I revenue dropped significantly. Current: 42500.0, Target: 50000.0',
-            'root_cause': 'Anomaly detected in F&I Revenue - Midwest. Variance: -11.1%. Investigate root cause of decline.',
+            'message': 'F&I revenue dropped significantly. Current: $42,500, Previous: $47,800',
+            'root_cause': 'Potential causes: Decreased loan penetration rate, fewer extended warranty sales, or reduced finance manager performance. Recommend reviewing F&I training programs and incentive structures.',
             'region': 'Midwest',
             'category': 'F&I',
         },
         {
-            'alert_id': f'seed_warning_{datetime.now().strftime("%Y%m%d_%H%M%S")}_2',
+            'alert_id': f'seed_warning_{timestamp_str}_{unique_suffix}_2',
             'metric_name': 'Shipment Delays',
             'current_value': 18.0,
             'previous_value': 8.0,
             'change_percent': 125.0,
             'severity': 'warning',
-            'message': 'Shipment delay rate increased significantly. Current: 18.0%, Target: 5.0%',
-            'root_cause': 'Anomaly detected in Shipment Delays. Variance: 125.0%. Review factors driving increase.',
+            'message': 'Shipment delay rate increased significantly from 8% to 18%',
+            'root_cause': 'Potential causes: Supply chain disruptions, carrier capacity issues, or port congestion. Recommend auditing carrier performance and exploring backup logistics partners.',
             'region': 'All',
             'category': 'Logistics',
         },
         {
-            'alert_id': f'seed_info_{datetime.now().strftime("%Y%m%d_%H%M%S")}_3',
+            'alert_id': f'seed_info_{timestamp_str}_{unique_suffix}_3',
             'metric_name': 'Service Appointments',
             'current_value': 145.0,
             'previous_value': 132.0,
             'change_percent': 9.8,
             'severity': 'info',
-            'message': 'Service appointment volume increased. Current: 145.0, Target: 140.0',
-            'root_cause': 'Anomaly detected in Service Appointments. Variance: 9.8%. Monitor trend closely.',
+            'message': 'Service appointment volume increased by 9.8% to 145 daily appointments',
+            'root_cause': 'Positive trend likely due to: Seasonal maintenance demand, successful marketing campaigns, or improved customer retention. Monitor technician capacity to maintain service quality.',
             'region': 'All',
             'category': 'Service',
         },
+        {
+            'alert_id': f'seed_critical_{timestamp_str}_{unique_suffix}_4',
+            'metric_name': 'Plant Downtime - Atlanta',
+            'current_value': 12.5,
+            'previous_value': 4.2,
+            'change_percent': 197.6,
+            'severity': 'critical',
+            'message': 'Plant downtime increased dramatically from 4.2 to 12.5 hours this week',
+            'root_cause': 'Equipment malfunction on assembly line 3. Maintenance team dispatched. ETA for repair: 4 hours. Production impact: ~200 units delayed.',
+            'region': 'Southeast',
+            'category': 'Manufacturing',
+        },
+        {
+            'alert_id': f'seed_warning_{timestamp_str}_{unique_suffix}_5',
+            'metric_name': 'Customer Satisfaction Score',
+            'current_value': 78.5,
+            'previous_value': 85.2,
+            'change_percent': -7.9,
+            'severity': 'warning',
+            'message': 'Customer satisfaction dropped from 85.2 to 78.5 (-7.9%)',
+            'root_cause': 'Survey analysis indicates: Longer wait times in service department, perceived pricing concerns, and communication gaps during repair process. Recommend staff training and process review.',
+            'region': 'Northeast',
+            'category': 'Service',
+        },
     ]
-    
+
     created_count = 0
     for alert_data in sample_alerts:
-        # Check if already exists
-        existing = await db.execute(
-            select(KPIAlert).where(KPIAlert.alert_id == alert_data['alert_id'])
-        )
-        if existing.scalar_one_or_none():
-            continue
-        
         alert = KPIAlert(
             **alert_data,
             status='active',
@@ -376,9 +396,9 @@ async def seed_anomalies(
         )
         db.add(alert)
         created_count += 1
-    
+
     await db.commit()
-    
+
     return {
         'alerts_created': created_count,
         'timestamp': datetime.now().isoformat()

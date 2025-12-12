@@ -3,7 +3,7 @@
 from typing import Dict, Any, List, Optional
 from datetime import date, datetime, timedelta
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import text, select, func, and_
+from sqlalchemy import text, select, func, and_, case
 import json
 import numpy as np
 from app.db.models import (
@@ -223,14 +223,17 @@ class KPIMonitoringService:
 
     async def _get_top_risks(self, score_date: date) -> List[Dict[str, Any]]:
         """Get top risk KPIs."""
+        # Order by severity (critical first) then by change percent
+        severity_order = case(
+            (KPIAlert.severity == 'critical', 1),
+            (KPIAlert.severity == 'warning', 2),
+            else_=3
+        )
         query = select(KPIAlert).where(
             KPIAlert.status == 'active',
             KPIAlert.severity.in_(['critical', 'warning'])
         ).order_by(
-            func.case(
-                (KPIAlert.severity == 'critical', 1),
-                else_=2
-            ),
+            severity_order,
             KPIAlert.change_percent.desc()
         ).limit(5)
 
@@ -387,16 +390,16 @@ class KPIMonitoringService:
                     forecast_date = date.today() + timedelta(days=day_offset)
 
                     # Calculate prediction using moving average with trend
-                    prediction = self._calculate_forecast(historical, day_offset)
+                    prediction = float(self._calculate_forecast(historical, day_offset))
 
-                    # Calculate confidence intervals
-                    std_dev = np.std([h['value'] for h in historical]) if historical else 0
-                    lower_bound = prediction - (1.96 * std_dev)
-                    upper_bound = prediction + (1.96 * std_dev)
+                    # Calculate confidence intervals (convert numpy types to Python native)
+                    std_dev = float(np.std([h['value'] for h in historical])) if historical else 0.0
+                    lower_bound = float(prediction - (1.96 * std_dev))
+                    upper_bound = float(prediction + (1.96 * std_dev))
 
-                    # Determine if at risk
+                    # Determine if at risk (convert to Python bool for JSON serialization)
                     target = historical[-1].get('target', prediction * 1.1) if historical else prediction
-                    at_risk = prediction < target * 0.9
+                    at_risk = bool(prediction < target * 0.9)
                     risk_reason = f"Predicted to be {round((1 - prediction/target) * 100, 1)}% below target" if at_risk else None
 
                     # Check if forecast exists
@@ -494,27 +497,27 @@ class KPIMonitoringService:
     def _calculate_forecast(self, historical: List[Dict], days_ahead: int) -> float:
         """Calculate forecast using moving average with trend."""
         if not historical:
-            return 0
+            return 0.0
 
         values = [h['value'] for h in historical if h['value'] is not None]
         if len(values) < 3:
-            return values[-1] if values else 0
+            return float(values[-1]) if values else 0.0
 
-        # Simple moving average
-        ma_7 = np.mean(values[-7:]) if len(values) >= 7 else np.mean(values)
+        # Simple moving average (convert numpy to Python float)
+        ma_7 = float(np.mean(values[-7:])) if len(values) >= 7 else float(np.mean(values))
 
         # Calculate trend
         if len(values) >= 14:
-            recent_avg = np.mean(values[-7:])
-            older_avg = np.mean(values[-14:-7])
+            recent_avg = float(np.mean(values[-7:]))
+            older_avg = float(np.mean(values[-14:-7]))
             trend = (recent_avg - older_avg) / 7
         else:
-            trend = 0
+            trend = 0.0
 
         # Forecast with trend
         prediction = ma_7 + (trend * days_ahead)
 
-        return max(0, prediction)
+        return max(0.0, float(prediction))
 
     async def get_forecasts(
         self,

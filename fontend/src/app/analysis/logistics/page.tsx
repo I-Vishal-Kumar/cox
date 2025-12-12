@@ -314,59 +314,57 @@ export default function LogisticsPage() {
               Dwell Time Comparison (Hours)
             </h3>
             <div className="h-48">
-              <ResponsiveContainer width="100%" height="100%">
-                {dwellChartType === 'pie' ? (
-                  // For pie chart, we'll show the comparison for the first period
-                  dwellTimeComparison.length > 0 && carrierData.length > 0 ? (
-                    <PieChart>
-                      <Pie
-                        data={carrierData.slice(0, 5).map(carrier => {
-                          const periodData = dwellTimeComparison[0];
-                          return {
-                            name: carrier.carrier,
-                            value: periodData[carrier.carrier] as number || 0,
-                          };
-                        })}
-                        cx="50%"
-                        cy="50%"
-                        innerRadius={40}
-                        outerRadius={80}
-                        dataKey="value"
-                        label={({ name, value }) => `${name}: ${value.toFixed(1)}h`}
-                      >
-                        {carrierData.slice(0, 5).map((entry, index) => {
-                          const colors = ['#ef4444', '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6'];
-                          return (
-                            <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />
-                          );
-                        })}
-                      </Pie>
-                      <Tooltip />
-                    </PieChart>
-                  ) : null
-                ) : dwellChartType === 'line' ? (
-                  // For line chart, transpose data to show carriers on X-axis and periods as lines
-                  carrierData.length > 0 ? (
-                    <LineChart 
+              {dwellChartType === 'pie' && dwellTimeComparison.length > 0 && carrierData.length > 0 ? (
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
                       data={carrierData.slice(0, 5).map(carrier => {
-                        const lastWeek = dwellTimeComparison.find(d => d.period === 'Last Week');
-                        const thisWeek = dwellTimeComparison.find(d => d.period === 'This Week');
+                        const periodData = dwellTimeComparison[0];
                         return {
-                          carrier: carrier.carrier,
-                          'Last Week': lastWeek ? (lastWeek[carrier.carrier] as number || 0) : 0,
-                          'This Week': thisWeek ? (thisWeek[carrier.carrier] as number || 0) : 0,
+                          name: carrier.carrier,
+                          value: periodData[carrier.carrier] as number || 0,
                         };
                       })}
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={40}
+                      outerRadius={80}
+                      dataKey="value"
+                      label={({ name, value }) => `${name}: ${value.toFixed(1)}h`}
                     >
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="carrier" />
-                      <YAxis />
-                      <Tooltip />
-                      <Line type="monotone" dataKey="Last Week" stroke="#3b82f6" strokeWidth={2} name="Last Week" />
-                      <Line type="monotone" dataKey="This Week" stroke="#ef4444" strokeWidth={2} name="This Week" />
-                    </LineChart>
-                  ) : null
-                ) : (
+                      {carrierData.slice(0, 5).map((_, index) => {
+                        const colors = ['#ef4444', '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6'];
+                        return (
+                          <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />
+                        );
+                      })}
+                    </Pie>
+                    <Tooltip />
+                  </PieChart>
+                </ResponsiveContainer>
+              ) : dwellChartType === 'line' && carrierData.length > 0 ? (
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart
+                    data={carrierData.slice(0, 5).map(carrier => {
+                      const lastWeek = dwellTimeComparison.find(d => d.period === 'Last Week');
+                      const thisWeek = dwellTimeComparison.find(d => d.period === 'This Week');
+                      return {
+                        carrier: carrier.carrier,
+                        'Last Week': lastWeek ? (lastWeek[carrier.carrier] as number || 0) : 0,
+                        'This Week': thisWeek ? (thisWeek[carrier.carrier] as number || 0) : 0,
+                      };
+                    })}
+                  >
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="carrier" />
+                    <YAxis />
+                    <Tooltip />
+                    <Line type="monotone" dataKey="Last Week" stroke="#3b82f6" strokeWidth={2} name="Last Week" />
+                    <Line type="monotone" dataKey="This Week" stroke="#ef4444" strokeWidth={2} name="This Week" />
+                  </LineChart>
+                </ResponsiveContainer>
+              ) : (
+                <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={dwellTimeComparison} layout="vertical">
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis type="number" />
@@ -375,17 +373,17 @@ export default function LogisticsPage() {
                     {carrierData.length > 0 && carrierData.slice(0, 5).map((carrier, index) => {
                       const colors = ['#ef4444', '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6'];
                       return (
-                        <Bar 
-                          key={carrier.carrier} 
-                          dataKey={carrier.carrier} 
-                          fill={colors[index % colors.length]} 
-                          name={carrier.carrier} 
+                        <Bar
+                          key={carrier.carrier}
+                          dataKey={carrier.carrier}
+                          fill={colors[index % colors.length]}
+                          name={carrier.carrier}
                         />
                       );
                     })}
                   </BarChart>
-                )}
-              </ResponsiveContainer>
+                </ResponsiveContainer>
+              )}
             </div>
             {dwellTimeComparison.length >= 2 && carrierData.length > 0 && (() => {
               const lastWeek = dwellTimeComparison.find(d => d.period === 'Last Week');

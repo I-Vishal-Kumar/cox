@@ -157,6 +157,7 @@ export default function HealthScorePage() {
                 maxValue={100}
                 size="lg"
                 color={getScoreColor(healthScore?.overall_score)}
+                label="Overall"
               />
             </div>
             <div className="text-center mt-4">
@@ -191,6 +192,7 @@ export default function HealthScorePage() {
                     maxValue={100}
                     size="sm"
                     color={getScoreColor(cat.score)}
+                    label={cat.label}
                   />
                   <p className="text-sm font-medium text-gray-700 mt-2">{cat.label}</p>
                   <p className={clsx(

@@ -144,6 +144,13 @@ interface FloatingChatBotProps {
       topCarrier?: string;
       topDelayReason?: string;
     };
+    region?: string;
+    dealerCount?: number;
+    decomposition?: {
+      totalChange: number;
+      primaryDriver: string;
+      insights: string[];
+    } | null;
   };
   onChartUpdate?: (chartId: string, updates: { type?: string; data?: any }) => void;
 }
@@ -382,13 +389,13 @@ The tools handle all the complexity - you just need to route to the right tool b
               >
                 <div
                   className={clsx(
-                    'max-w-[80%] rounded-lg px-3 py-2 text-sm',
+                    'max-w-[80%] rounded-lg px-3 py-2 text-sm whitespace-pre-wrap',
                     msg.role === 'user'
                       ? 'bg-cox-blue-600 text-white'
                       : 'bg-gray-100 text-gray-900'
                   )}
                 >
-                  {msg.content}
+                  {typeof msg.content === 'string' ? msg.content : parseMessageContent(msg.content)}
                 </div>
               </div>
             ))}

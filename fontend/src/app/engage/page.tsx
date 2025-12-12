@@ -52,7 +52,10 @@ const transformAppointment = (apt: ServiceAppointment) => ({
   notes: apt.notes,
 });
 
-const statusConfig = {
+type AppointmentStatus = 'not_arrived' | 'checked_in' | 'in_progress' | 'completed' | 'cancelled';
+type IconColor = 'blue' | 'red' | 'gray';
+
+const statusConfig: Record<AppointmentStatus, { label: string; bg: string; border: string; icon: typeof ClockIcon; color: string }> = {
   not_arrived: {
     label: 'Not Arrived',
     bg: 'bg-white',
@@ -90,7 +93,7 @@ const statusConfig = {
   },
 };
 
-const iconColors = {
+const iconColors: Record<IconColor, string> = {
   blue: 'text-blue-600',
   red: 'text-red-600',
   gray: 'text-gray-400',
@@ -333,8 +336,8 @@ export default function EngagePage() {
                     {/* Appointments Column */}
                     <div className="flex-1 space-y-3">
                       {appointments.map((apt) => {
-                        const config = statusConfig[apt.status];
-                        const iconColor = iconColors[apt.vehicle.iconColor];
+                        const config = statusConfig[apt.status as AppointmentStatus];
+                        const iconColor = iconColors[apt.vehicle.iconColor as IconColor];
 
                         const StatusIcon = config.icon;
                         const loyaltyBadgeColor = apt.customer.loyaltyTier === 'Platinum' 
@@ -450,7 +453,7 @@ export default function EngagePage() {
                                     {/* Preferred Services */}
                                     {apt.customer.preferredServices && apt.customer.preferredServices.length > 0 && (
                                       <div className="mt-2 flex flex-wrap gap-1">
-                                        {apt.customer.preferredServices.map((service, idx) => (
+                                        {apt.customer.preferredServices.map((service: string, idx: number) => (
                                           <span
                                             key={idx}
                                             className="px-2 py-0.5 text-xs bg-cox-blue-50 text-cox-blue-700 rounded-full"
@@ -606,7 +609,7 @@ export default function EngagePage() {
                       <div>
                         <p className="text-sm text-gray-600 mb-2">Preferred Services</p>
                         <div className="flex flex-wrap gap-2">
-                          {selectedAppointment.customer.preferredServices.map((service, idx) => (
+                          {selectedAppointment.customer.preferredServices.map((service: string, idx: number) => (
                             <span
                               key={idx}
                               className="px-3 py-1 text-sm bg-cox-blue-600 text-white rounded-full"

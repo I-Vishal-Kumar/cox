@@ -12,10 +12,12 @@ interface Column {
 
 interface DataTableProps {
   columns: Column[];
-  data: Record<string, unknown>[];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  data: any[];
   compact?: boolean;
   striped?: boolean;
-  highlightRow?: (row: Record<string, unknown>) => boolean;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  highlightRow?: (row: any) => boolean;
 }
 
 export default function DataTable({

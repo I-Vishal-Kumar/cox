@@ -8,6 +8,75 @@ from sqlalchemy.exc import DatabaseError
 from pydantic import ValidationError
 
 
+def format_data_for_display(data: List[Dict[str, Any]], max_rows: int = 20) -> str:
+    """Format a list of dictionaries as a readable markdown table for display.
+
+    Args:
+        data: List of dictionaries containing query results
+        max_rows: Maximum number of rows to display
+
+    Returns:
+        Formatted string representation of the data
+    """
+    if not data:
+        return "No data found."
+
+    # Get all unique column names
+    columns = []
+    for row in data:
+        for key in row.keys():
+            if key not in columns:
+                columns.append(key)
+
+    if not columns:
+        return "No columns found in data."
+
+    # Limit rows for display
+    display_data = data[:max_rows]
+    total_rows = len(data)
+
+    # Build markdown table
+    lines = []
+
+    # Header row
+    header = "| " + " | ".join(str(col) for col in columns) + " |"
+    lines.append(header)
+
+    # Separator row
+    separator = "| " + " | ".join("---" for _ in columns) + " |"
+    lines.append(separator)
+
+    # Data rows
+    for row in display_data:
+        values = []
+        for col in columns:
+            value = row.get(col, '')
+            # Format numbers nicely
+            if isinstance(value, float):
+                value = f"{value:,.2f}"
+            elif isinstance(value, int):
+                value = f"{value:,}"
+            elif value is None:
+                value = "N/A"
+            else:
+                value = str(value)
+            # Truncate long strings
+            if len(value) > 50:
+                value = value[:47] + "..."
+            values.append(value)
+        lines.append("| " + " | ".join(values) + " |")
+
+    result = "\n".join(lines)
+
+    # Add row count info
+    if total_rows > max_rows:
+        result += f"\n\n*Showing {max_rows} of {total_rows} total rows.*"
+    else:
+        result += f"\n\n*{total_rows} row(s) returned.*"
+
+    return result
+
+
 # Tool error handling middleware
 def create_tool_error_handler():
     """Create error handling middleware for tools."""
@@ -289,12 +358,13 @@ SQL Query:""")
         try:
             result = await db_session.execute(text(sql_query))
             rows = result.fetchall()
-            
+
             # Convert to list of dicts
             if rows:
                 columns = result.keys()
                 data = [dict(zip(columns, row)) for row in rows]
-                return str(data)[:2000]  # Limit output like MCP example
+                # Format data nicely for display
+                return format_data_for_display(data, max_rows=20)
             else:
                 return "Query executed successfully. No rows returned."
         except Exception as e:
